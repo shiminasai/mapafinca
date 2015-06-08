@@ -58,3 +58,6 @@ docs/_build/
 target/
 local_settings.py
 .DS_Store
+*.sqlite3
+*.db
+*.sql

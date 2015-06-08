@@ -81,8 +81,8 @@ class Entrevistados(models.Model):
     sexo = models.IntegerField(choices=CHOICE_SEXO)
     jefe = models.IntegerField(choices=CHOICE_JEFE, verbose_name='Jefe del hogar')
     edad = models.IntegerField()
-    latitud = models.FloatField()
-    longitud = models.FloatField()
+    latitud = models.FloatField(blank=True)
+    longitud = models.FloatField(blank=True)
     pais = models.ForeignKey(Pais)
     departamento = models.ForeignKey(Departamento)
     municipio = models.ForeignKey(Municipio)
@@ -99,8 +99,15 @@ class Entrevistados(models.Model):
 
 class Encuesta(models.Model):
     entrevistado = models.ForeignKey(Entrevistados)
+    fecha = models.DateField()
     dueno = models.IntegerField(choices=CHOICE_JEFE,
                     verbose_name='¿Son dueños de la propiedad/finca?')
+
+    year = models.IntegerField(editable=False)
+
+    def save(self):
+        self.year = self.fecha.year
+        super(Encuesta, self).save()
 
     def __unicode__(self):
         return u'%s' % (self.entrevistado.nombre)
@@ -172,20 +179,176 @@ class Escolaridad(models.Model):
         verbose_name_plural = '10_Nivel de escolaridad (número por categoría)'
 
 
+class Energia(models.Model):
+    nombre = models.CharField(max_length=250)
+
+    def __unicode__(self):
+        return self.nombre
+
+    class Meta:
+        verbose_name = 'Energia'
+        verbose_name_plural = 'Energias'
+
+class TipoEnergia(models.Model):
+    encuesta = models.ForeignKey(Encuesta)
+    tipo = models.ManyToManyField(Energia)
+
+    class Meta:
+        verbose_name_plural = '11_¿Qué tipo de energía utiliza para alumbrar la vivienda?'
+
+CHOICE_PANEL_SOLAR = (
+                (1, 'Doméstico'),
+                (2, 'Agrícola'),
+                (3, 'Negocio'),
+              )
+
+class PanelSolar(models.Model):
+    encuesta = models.ForeignKey(Encuesta)
+    panel = models.IntegerField(choices=CHOICE_PANEL_SOLAR)
+
+    class Meta:
+        verbose_name_plural = '11.1_En el caso que tenga panel solar, cuál es el fin'
 
 
+class FuenteEnergia(models.Model):
+    nombre = models.CharField(max_length=250)
+
+    def __unicode__(self):
+        return self.nombre
+
+    class Meta:
+        verbose_name = 'Fuente de Energia'
+        verbose_name_plural = 'Fuentes de Energias'
 
 
+class PanelSolar(models.Model):
+    encuesta = models.ForeignKey(Encuesta)
+    fuente = models.ManyToManyField(FuenteEnergia)
+
+    class Meta:
+        verbose_name_plural = '12_Mencione el tipo de fuente de energía utiliza para cocinar'
 
 
+class Cocinas(models.Model):
+    nombre = models.CharField(max_length=250)
+
+    def __unicode__(self):
+        return self.nombre
+
+    class Meta:
+        verbose_name = 'Tipo Cocina'
+        verbose_name_plural = 'Tipos de cocinas'
 
 
+class TipoCocinas(models.Model):
+    encuesta = models.ForeignKey(Encuesta)
+    cocina = models.ManyToManyField(Cocinas)
+
+    class Meta:
+        verbose_name_plural = '13_Mencione el tipo de cocina que utiliza para cocinar'
+
+class AguaConsumo(models.Model):
+    nombre = models.CharField(max_length=250)
+
+    def __unicode__(self):
+        return self.nombre
+
+    class Meta:
+        verbose_name = 'Agua para consumo'
+        verbose_name_plural = 'Agua para consumo'
 
 
+class AccesoAgua(models.Model):
+    encuesta = models.ForeignKey(Encuesta)
+    agua = models.ManyToManyField(AguaConsumo)
+
+    class Meta:
+        verbose_name_plural = '14_Indique la forma que accede al agua para consumo humano'
 
 
+CHOICE_DISPONIBILIDAD = (
+                (1, 'Todo los días y toda hora'),
+                (2, 'Cada dos días y algunas horas'),
+                (3, 'Algunos días y algunas horas'),
+                (4, 'No confiable')
+              )
 
 
+class AccesoAgua(models.Model):
+    encuesta = models.ForeignKey(Encuesta)
+    disponibilidad = models.IntegerField(choices=CHOICE_DISPONIBILIDAD)
+
+    class Meta:
+        verbose_name_plural = '15_Mencione la disponibilidad del agua para consumo humano (en verano)'
 
 
+CHOICE_CALIDAD_AGUA = (
+                (1, 'De buena calidad'),
+                (2, 'De regular calidad'),
+                (3, 'Contaminada'),
+                (4, 'No sabe')
+              )
 
+
+class AccesoAgua(models.Model):
+    encuesta = models.ForeignKey(Encuesta)
+    calidad = models.IntegerField(choices=CHOICE_CALIDAD_AGUA)
+
+    class Meta:
+        verbose_name_plural = '16_Según Usted, cómo es la calidad del agua que consume'
+
+
+class TipoContamindaAgua(models.Model):
+    nombre = models.CharField(max_length=250)
+
+    def __unicode__(self):
+        return self.nombre
+
+    class Meta:
+        verbose_name = 'Tipo agua contaminada'
+        verbose_name_plural = 'Tipo agua contaminada'
+
+class Contaminada(models.Model):
+    encuesta = models.ForeignKey(Encuesta)
+    contaminada = models.ForeignKey(TipoContamindaAgua)
+
+    class Meta:
+        verbose_name_plural = '16.1_En caso de que esté contaminada, señala posibles causas'
+
+class Evidencia(models.Model):
+    encuesta = models.ForeignKey(Encuesta)
+    cual = models.CharField('¿Cuál?', max_length=250)
+
+    class Meta:
+        verbose_name_plural = '16.2_Existe alguna evidencia'
+
+
+CHOICE_TRATAMIENTO = (
+                (1, 'Se hierve'),
+                (2, 'Se clora'),
+                (3, 'Se usa filtro'),
+                (4, 'Se deja reposar'),
+                (5, 'Ninguno')
+              )
+
+CHOICE_OTRO_USO = (
+                (1, 'Uso doméstico'),
+                (2, 'Uso agrícola'),
+                (3, 'Uso turístico'),
+                (4, 'Crianza de peces'),
+                (5, 'Para ganado')
+              )
+
+class TratamientoAgua(models.Model):
+    encuesta = models.ForeignKey(Encuesta)
+    tratamiento = models.IntegerField(choices=CHOICE_TRATAMIENTO)
+
+    class Meta:
+        verbose_name_plural = '17_Realiza algún tratamiento al agua de consumo'
+
+class UsosAgua(models.Model):
+    encuesta = models.ForeignKey(Encuesta)
+    uso = models.IntegerField(choices=CHOICE_OTRO_USO)
+
+    class Meta:
+        verbose_name_plural = '18_Indique qué otros usos le dan al agua en la finca'
