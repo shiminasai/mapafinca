@@ -189,6 +189,7 @@ class Energia(models.Model):
         verbose_name = 'Energia'
         verbose_name_plural = 'Energias'
 
+
 class TipoEnergia(models.Model):
     encuesta = models.ForeignKey(Encuesta)
     tipo = models.ManyToManyField(Energia)
@@ -201,6 +202,7 @@ CHOICE_PANEL_SOLAR = (
                 (2, 'Agrícola'),
                 (3, 'Negocio'),
               )
+
 
 class PanelSolar(models.Model):
     encuesta = models.ForeignKey(Encuesta)
@@ -221,7 +223,7 @@ class FuenteEnergia(models.Model):
         verbose_name_plural = 'Fuentes de Energias'
 
 
-class PanelSolar(models.Model):
+class EnergiaSolarCocinar(models.Model):
     encuesta = models.ForeignKey(Encuesta)
     fuente = models.ManyToManyField(FuenteEnergia)
 
@@ -274,7 +276,7 @@ CHOICE_DISPONIBILIDAD = (
               )
 
 
-class AccesoAgua(models.Model):
+class DisponibilidadAgua(models.Model):
     encuesta = models.ForeignKey(Encuesta)
     disponibilidad = models.IntegerField(choices=CHOICE_DISPONIBILIDAD)
 
@@ -290,7 +292,7 @@ CHOICE_CALIDAD_AGUA = (
               )
 
 
-class AccesoAgua(models.Model):
+class CalidadAgua(models.Model):
     encuesta = models.ForeignKey(Encuesta)
     calidad = models.IntegerField(choices=CHOICE_CALIDAD_AGUA)
 
@@ -308,12 +310,14 @@ class TipoContamindaAgua(models.Model):
         verbose_name = 'Tipo agua contaminada'
         verbose_name_plural = 'Tipo agua contaminada'
 
+
 class Contaminada(models.Model):
     encuesta = models.ForeignKey(Encuesta)
     contaminada = models.ForeignKey(TipoContamindaAgua)
 
     class Meta:
         verbose_name_plural = '16.1_En caso de que esté contaminada, señala posibles causas'
+
 
 class Evidencia(models.Model):
     encuesta = models.ForeignKey(Encuesta)
@@ -339,6 +343,7 @@ CHOICE_OTRO_USO = (
                 (5, 'Para ganado')
               )
 
+
 class TratamientoAgua(models.Model):
     encuesta = models.ForeignKey(Encuesta)
     tratamiento = models.IntegerField(choices=CHOICE_TRATAMIENTO)
@@ -346,9 +351,58 @@ class TratamientoAgua(models.Model):
     class Meta:
         verbose_name_plural = '17_Realiza algún tratamiento al agua de consumo'
 
+
 class UsosAgua(models.Model):
     encuesta = models.ForeignKey(Encuesta)
     uso = models.IntegerField(choices=CHOICE_OTRO_USO)
 
     class Meta:
         verbose_name_plural = '18_Indique qué otros usos le dan al agua en la finca'
+
+
+class OrgComunitarias(models.Model):
+    nombre = models.CharField(max_length=250)
+
+    def __unicode__(self):
+        return self.nombre
+
+
+class BeneficiosOrganizados(models.Model):
+    nombre = models.CharField(max_length=250)
+
+    def __unicode__(self):
+        return self.nombre
+
+class OrganizacionComunitaria(models.Model):
+    encuesta = models.ForeignKey(Encuesta)
+    pertenece = models.IntegerField(choices=CHOICE_JEFE, verbose_name='19_¿Pertenece a alguna organización?')
+    caso_si = models.ManyToManyField(OrgComunitarias, verbose_name='19_1 qué organización comunitaria pertenece?')
+    cuales_beneficios = models.ManyToManyField(BeneficiosOrganizados, verbose_name='19_2 ¿Cuales son los beneficios de estar organizado?')
+
+
+class OrganizacionFinca(models.Model):
+    encuesta = models.ForeignKey(Encuesta)
+    area_finca = models.FloatField('20_¿Cuál es el área total en manzana de la finca?')
+
+CHOICE_TIERRA = (
+        (1,'Bosque'),
+        (2,'Tacotal'),
+        (3,'Cultivo anual'),
+        (4,'Plantación forestal'),
+        (5,'Potrero'),
+        (6,'Pasto en asocio con árboles'),
+        (7,'Frutales'),
+        (8,'Cultivos en asocio'),
+
+    )
+class DistribucionTierra(models.Model):
+    encuesta = models.ForeignKey(Encuesta)
+    tierra = models.IntegerField(choices=CHOICE_TIERRA, verbose_name='20.1_Distribución de la tierra en la finca')
+    manzanas = models.FloatField()
+
+
+
+
+
+
+
