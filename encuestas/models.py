@@ -401,8 +401,209 @@ class DistribucionTierra(models.Model):
     manzanas = models.FloatField()
 
 
+class PercibeIngreso(models.Model):
+    encuesta = models.ForeignKey(Encuesta)
+    si_no = models.IntegerField(choices=CHOICE_JEFE)
 
 
+CHOICE_TIPO_FUENTE = ((1,'Asalariado'),
+                      (2.'Jornalero'),
+                      (3,'Alquiler'),
+                      (4,'Negocio propio'),
+                      (5,'Remesas'),
+                      (6,'Otros'),
+                    )
 
+class TipoFuenteIngreso(models.Model):
+    tipo = models.IntegerField(choices=CHOICE_TIPO_FUENTE)
+    nombre = models.CharField('especifique tipo', max_length=250)
+
+    def __unicode__(self):
+        return self.nombre
+
+
+class Fuentes(models.Model):
+    encuesta = models.ForeignKey(Encuesta)
+    fuente_ingreso = models.ForeignKey(TipoFuenteIngreso)
+    cantidad = models.FloatField('Cantidad mensual C$')
+    cantidad_veces = models.FloatField('Cantidad de veces en el año')
+    hombres = models.IntegerField('Cantidad de miembros hombres')
+    mujeres = models.IntegerField('Cantidad de miembros mujeres')
+
+    class Meta:
+        verbose_name_plural = '21_ingresos diferentes a la actividad agropecuaria'
+
+
+CHOICE_MEDIDA = (
+                (1, 'Quintal'),
+                (2, 'Libras'),
+                (3, 'Docena'),
+                (4, 'Cien'),
+                (5, 'Cabeza'),
+                )
+
+CHOICE_PERIODO = (
+                (1, 'Primera'),
+                (2, 'Postrera'),
+                )
+
+
+class Cultivos(models.Model):
+    codigo = models.CharField(max_length=4)
+    nombre = models.CharField(max_length=250)
+    unidad_medida = models.IntegerField(choices=CHOICE_MEDIDA)
+
+    def __unicode__(self):
+        return u'%s-%s' % (self.codigo, self.nombre)
+
+class TipoMercado(models.Model):
+    codigo = models.CharField(max_length=4)
+    nombre = models.CharField(max_length=250)
+
+    def __unicode__(self):
+        return u'%s-%s' % (self.codigo, self.nombre)
+
+class CultivosTradicionales(models.Model):
+    encuesta = models.ForeignKey(Encuesta)
+    cultivo = models.ForeignKey(Cultivos)
+    area_sembrada = models.FloatField('Area sembrada (Mz)')
+    area_cosechada = models.FloatField('Area cosechada (Mz)')
+    cantidad_cosechada = models.FloatField()
+    consumo_familia = models.FloatField('Consumo de la familia')
+    consumo_animal = models.FloatField()
+    procesamiento = models.FloatField()
+    venta = models.FloatField()
+    precio = models.FloatField('Precio de venta en C$')
+    costo = models.FloatField('Costo por Mz en C$')
+    mercado = models.ForeignKey(TipoMercado)
+    periodo = models.IntegerField(choices=CHOICE_PERIODO)
+
+    class Meta:
+        verbose_name_plural = '22_Cultivos tradicionales  producidos en la finca'
+
+#cultivos de huertos familiares
+
+class CultivosHuertos(models.Model):
+    codigo = models.CharField(max_length=4)
+    nombre = models.CharField(max_length=250)
+    unidad_medida = models.IntegerField(choices=CHOICE_MEDIDA)
+
+    def __unicode__(self):
+        return u'%s-%s' % (self.codigo, self.nombre)
+
+
+class CultivosHuertosFamiliares(models.Model):
+    encuesta = models.ForeignKey(Encuesta)
+    cultivo = models.ForeignKey(CultivosHuertos)
+    cantidad_cosechada = models.FloatField()
+    consumo_familia = models.FloatField('Consumo de la familia')
+    consumo_animal = models.FloatField()
+    procesamiento = models.FloatField()
+    venta = models.FloatField()
+    precio = models.FloatField('Precio de venta en C$')
+    costo = models.FloatField('Costo por Mz en C$')
+    mercado = models.ForeignKey(TipoMercado)
+
+    class Meta:
+        verbose_name_plural = '23_Cultivos de huertos familiares en la finca'
+
+#24 ganaderia mayor y menor otros en la finca
+
+class Animales(models.Model):
+    codigo = models.CharField(max_length=4)
+    nombre = models.CharField(max_length=250)
+
+    def __unicode__(self):
+        return u'%s-%s' % (self.codigo, self.nombre)
+
+class Ganaderia(models.Model):
+    encuesta = models.ForeignKey(Encuesta)
+    animal = models.ForeignKey(Animales)
+    cantidad = models.IntegerField('Cantidad de animales')
+    si_no = models.IntegerField(choices=CHOICE_JEFE)
+    cantidad_vendida = models.IntegerField('Cantidad vendida este año')
+    precio = models.FloatField('Precio de venta en C$')
+    mercado = models.ForeignKey(TipoMercado)
+
+    class Meta:
+        verbose_name_plural = '24_1 Inventario de ganaderia mayor y menor'
+
+#procesamiento
+
+class ProductoProcesado(models.Model):
+    nombre = models.CharField(max_length=250)
+    unidad_medida = models.IntegerField(choices=CHOICE_MEDIDA)
+
+    def __unicode__(self):
+        return u'%s-%s' % (self.codigo, self.nombre)
+
+
+class Procesamiento(models.Model):
+    encuesta = models.ForeignKey(Encuesta)
+    producto = models.ForeignKey(ProductoProcesado)
+    cantidad = models.IntegerField('Cantidad')
+    cantidad_vendida = models.IntegerField('Cantidad vendida este año')
+    precio = models.FloatField('Precio de venta en C$')
+    mercado = models.ForeignKey(TipoMercado)
+
+    class Meta:
+        verbose_name_plural = '24_2 Procesamiento de la producción'
+
+#25  de la lista de los  productos  indicar cuales fueron introducidos/providos por 
+#el programa medios de vida sostenible
+
+class IntroducidosTradicionales(models.Model):
+    encuesta = models.ForeignKey(Encuesta)
+    cultivo = models.ForeignKey(Cultivos)
+    si_no = models.IntegerField(choices=CHOICE_JEFE)
+    anio = models.IntegerField('Año')
+
+    class Meta:
+        verbose_name_plural = 'Productos introducidos/promovidos tradicionales'
+
+
+class IntroducidosHuertos(models.Model):
+    encuesta = models.ForeignKey(Encuesta)
+    cultivo = models.ForeignKey(Cultivos)
+    si_no = models.IntegerField(choices=CHOICE_JEFE)
+    anio = models.IntegerField('Año')
+
+    class Meta:
+        verbose_name_plural = 'Productos introducidos/promovidos huertos familiares'
+
+#Gastos en el hogar
+
+CHOICE_TIPO_GASTOS = (
+                        (1,'Salud'),
+                        (2,'Educación'),
+                        (3,'Alquiler de vivienda'),
+                        (4,'Ropa'),
+                        (5,'Alimentación'),
+                        (6,'Recreación/Diversión'),
+                    )
+
+class GastoHogar(models.Model):
+    encuesta = models.ForeignKey(Encuesta)
+    tipo = models.IntegerField(choices=CHOICE_TIPO_GASTOS)
+    cantidad = models.FloatField('Cantidad mensual en C$')
+    cantidad_veces = models.FloatField('Cantidad de veces en el año')
+
+    class Meta:
+        verbose_name_plural = 'Gastos generales del hogar'
+
+class TipoGasto(models.Model):
+    nombre = models.CharField(max_length=250)
+
+    def __unicode__(self):
+        return self.nombre
+
+class GastoHogar(models.Model):
+    encuesta = models.ForeignKey(Encuesta)
+    tipo = models.ForeignKey(TipoGasto)
+    cantidad = models.FloatField('Cantidad mensual en C$')
+    cantidad_veces = models.FloatField('Cantidad de veces en el año')
+
+    class Meta:
+        verbose_name_plural = 'Gastos generales para la producción'
 
 
