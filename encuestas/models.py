@@ -751,7 +751,7 @@ class AdquiereAgua(models.Model):
     def __unicode__(self):
         return self.nombre
 
-class TratamientoAgua(models.Model):
+class TrataAgua(models.Model):
     nombre = models.CharField(max_length=250)
 
     def __unicode__(self):
@@ -763,7 +763,7 @@ class OtrasSeguridad(models.Model):
                     verbose_name='42_En momentos de sequía como adquiere el agua de consumo')
     tratamiento = models.IntegerField(choices=CHOICE_JEFE, 
                     verbose_name='42_1 Le da algún tipo de tratamiento:')
-    tipo_tratamiento = models.ForeignKey(TratamientoAgua)
+    tipo_tratamiento = models.ForeignKey(TrataAgua)
 
     class Meta:
         verbose_name_plural = 'Pregunta 42'

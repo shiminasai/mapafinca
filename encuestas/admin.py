@@ -3,18 +3,25 @@ from .models import *
 
 class InlineDuenoSi(admin.TabularInline):
 	model = DuenoSi
+	extra = 1
+	max_num = 1
 
 class InlineDuenoNo(admin.TabularInline):
 	model = DuenoNo
+	extra = 1
+	max_num = 1
 
 class InlineSexoMiembros(admin.TabularInline):
 	model = SexoMiembros
+	extra = 1
 
 class InlineDetalleMiembros(admin.TabularInline):
 	model = DetalleMiembros
+	extra = 1
 
 class InlineEscolaridad(admin.TabularInline):
 	model = Escolaridad
+	extra = 1
 
 class AdminEncuesta(admin.ModelAdmin):
 	inlines = [InlineDuenoSi,InlineDuenoNo,InlineSexoMiembros,

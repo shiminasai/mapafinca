@@ -5,6 +5,7 @@ from local_settings import *
 # Application definition
 
 INSTALLED_APPS = (
+    'wpadmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -50,7 +51,7 @@ WSGI_APPLICATION = 'mapafinca.wsgi.application'
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es-ni'
 
 TIME_ZONE = 'UTC'
 
@@ -65,3 +66,18 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
+
+WPADMIN = {
+    'admin': {
+        #'admin_site': 'mapafinca.admin',
+        'title': 'Django panel de administración',
+        'menu': {
+            'top': 'wpadmin.menu.menus.BasicTopMenu',
+            'left': 'wpadmin.menu.menus.BasicLeftMenu',
+        },
+        'dashboard': {
+            'breadcrumbs': True,
+        },
+        'custom_style': STATIC_URL + 'wpadmin/css/themes/light.css',
+    }
+}
