@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 from lugar.models import Pais, Departamento, Municipio, Comunidad
+from multiselectfield import MultiSelectField
 # Create your models here.
 #CHOICES ESTATICOS
 CHOICE_SEXO = (
@@ -407,7 +408,7 @@ class PercibeIngreso(models.Model):
 
 
 CHOICE_TIPO_FUENTE = ((1,'Asalariado'),
-                      (2.'Jornalero'),
+                      (2,'Jornalero'),
                       (3,'Alquiler'),
                       (4,'Negocio propio'),
                       (5,'Remesas'),
@@ -597,7 +598,7 @@ class TipoGasto(models.Model):
     def __unicode__(self):
         return self.nombre
 
-class GastoHogar(models.Model):
+class GastoProduccion(models.Model):
     encuesta = models.ForeignKey(Encuesta)
     tipo = models.ForeignKey(TipoGasto)
     cantidad = models.FloatField('Cantidad mensual en C$')
@@ -607,3 +608,180 @@ class GastoHogar(models.Model):
         verbose_name_plural = 'Gastos generales para la producción'
 
 
+class RecibePrestamo(models.Model):
+    nombre = models.CharField(max_length=250)
+
+    def __unicode__(self):
+        return self.nombre
+
+class UsoPrestamo(models.Model):
+    nombre = models.CharField(max_length=250)
+
+    def __unicode__(self):
+        return self.nombre
+
+class Prestamo(models.Model):
+    encuesta = models.ForeignKey(Encuesta)
+    algun_prestamo = models.IntegerField(choices=CHOICE_JEFE)
+    monto = models.FloatField('28.1_¿Cuál fue el monto en C$?')
+    pago = models.FloatField('28.2_¿Pago mensual en C$?')
+    recibe = models.ManyToManyField(RecibePrestamo, 
+                                    verbose_name='28.3_¿De quien recibe el prestamo/crédito')
+    uso = models.ManyToManyField(UsoPrestamo, 
+                                verbose_name='28.4_¿Cuál fue el uso del prestamo/crédito')
+
+
+    class Meta:
+        verbose_name_plural = '28_En el ultimo año ha recibido algún tipo de prestamo/crédito'
+
+# Prácticas agroecologicas
+
+class Practicas(models.Model):
+    nombre = models.CharField(max_length=250)
+
+    def __unicode__(self):
+        return self.nombre
+
+CHOICE_MANEJO = (
+                    (1,'Tala y quema'),
+                    (2,'Trabaja en crudo'),
+                    (3,'Arado'),
+                    (4,'Uso de cobertura'),
+    )
+
+CHOICE_TRACCION = (
+                    (1,'Animal'),
+                    (2,'Humana'),
+                    (3,'Tractor'),
+                    (4,'Ninguna'),
+    )
+
+class PracticasAgroecologicas(models.Model):
+    encuesta = models.ForeignKey(Encuesta)
+    si_no = models.IntegerField(choices=CHOICE_JEFE, 
+        verbose_name='29_¿En la finca aplican técnicas de manejo agro ecologico u orgánico')
+    cinco_principales = models.ManyToManyField(Practicas, 
+                                            verbose_name='29.1_Mencione cinco principales')
+    manejo = models.IntegerField(choices=CHOICE_MANEJO)
+    traccion = models.IntegerField(choices=CHOICE_TRACCION)
+    fertilidad = models.IntegerField(choices=CHOICE_JEFE)
+    control = models.IntegerField(choices=CHOICE_JEFE)
+
+    class Meta:
+        verbose_name_plural = 'Prácticas agroecológicas'
+
+CHOICE_PORCENTAJE = (
+                        (1,'10%'),
+                        (2,'20%'),
+                        (3,'30%'),
+                        (4,'40%'),
+                        (5,'50%'),
+                        (6,'60%'),
+                        (7,'70%'),
+                        (8,'80%'),
+                        (9,'90%'),
+                        (10,'100%'),
+                    )
+
+#seguridad alimentaria
+
+class TipoSecado(models.Model):
+    nombre = models.CharField(max_length=250)
+
+    def __unicode__(self):
+        return self.nombre
+
+
+class SeguridadAlimentaria(models.Model):
+    encuesta = models.ForeignKey(Encuesta)
+    misma_finca = models.IntegerField(choices=CHOICE_PORCENTAJE, 
+        verbose_name='35.1_¿Qué porcentaje alimentos que consumen en su hogar provienen de la misma finca?')
+    fuera_finca = models.IntegerField(choices=CHOICE_PORCENTAJE, 
+        verbose_name='35.2_¿Qué porcentaje alimentos que consumen en su hogar provienen fuera de la finca?')
+    economico = models.IntegerField(choices=CHOICE_JEFE, 
+        verbose_name='36_¿Disponen suficiente recursos económicos para manejo de finca?')
+    secado = models.IntegerField(choices=CHOICE_JEFE, 
+        verbose_name='37_¿Dispone de tecnología para el secado y almacenamiento de cosecha?')
+    tipo_secado = models.ForeignKey(TipoSecado, verbose_name='Si es si cuál?')
+    plan_cosecha = models.IntegerField(choices=CHOICE_JEFE, 
+        verbose_name='38_¿Cuentan con un plan de cosecha?')
+    ayuda = models.IntegerField(choices=CHOICE_JEFE, 
+        verbose_name='39_¿Cuentan con ayuda de alimentos en momentos de escasez?')
+    suficiente_alimento = models.IntegerField(choices=CHOICE_JEFE, 
+        verbose_name='40_¿Le ha preocupado que en su hogar no hubiera suficiente alimentos?')
+    consumo_diario = models.IntegerField(choices=CHOICE_JEFE, 
+        verbose_name='41_¿Considera que su familia cuenta con la cantidad necesaria de alimentos que necesitan para el consumo diario del hogar?')
+
+    class Meta:
+        verbose_name_plural = 'VI. Seguridad alimentaria'
+
+CHOICE_FENOMENOS = (
+            (1,'Sequía'),
+            (2,'Inundación'),
+            (3,'Deslizamiento'),
+            (4,'Viento'),
+        )
+CHOICE_AGRICOLA = (
+            (1,'Falta de semilla'),
+            (2,'Mala calidad de la semilla'),
+        )
+CHOICE_MERCADO = (
+            (1,'Bajo precio'),
+            (2,'Falta de venta'),
+            (3,'Mala calidad del producto'),
+        )
+CHOICE_INVERSION = (
+            (1,'Falta de crédito'),
+            (2,'Alto interés'),
+        )
+
+class RespuestaNo41(models.Model):
+    encuesta = models.ForeignKey(Encuesta)
+    fenomeno = MultiSelectField(CHOICE_FENOMENOS)
+    fenomeno = MultiSelectField(CHOICE_AGRICOLA)
+    fenomeno = MultiSelectField(CHOICE_MERCADO)
+    fenomeno = MultiSelectField(CHOICE_INVERSION)
+
+    class Meta:
+        verbose_name_plural = '41.1_Si responde NO, marque con una X las principales razones'
+
+class AdquiereAgua(models.Model):
+    nombre = models.CharField(max_length=250)
+
+    def __unicode__(self):
+        return self.nombre
+
+class TratamientoAgua(models.Model):
+    nombre = models.CharField(max_length=250)
+
+    def __unicode__(self):
+        return self.nombre
+
+class OtrasSeguridad(models.Model):
+    encuesta = models.ForeignKey(Encuesta)
+    adquiere_agua = models.ForeignKey(AdquiereAgua, 
+                    verbose_name='42_En momentos de sequía como adquiere el agua de consumo')
+    tratamiento = models.IntegerField(choices=CHOICE_JEFE, 
+                    verbose_name='42_1 Le da algún tipo de tratamiento:')
+    tipo_tratamiento = models.ForeignKey(TratamientoAgua)
+
+    class Meta:
+        verbose_name_plural = 'Pregunta 42'
+
+#VII. Consumo de alimentos
+
+class ProductosFueraFinca(models.Model):
+    nombre = models.CharField(max_length=250)
+    unidad_medida = models.CharField(max_length=150)
+
+    def __unicode__(self):
+        return self.nombre
+
+class AlimentosFueraFinca(models.Model):
+    encuesta = models.ForeignKey(Encuesta)
+    producto = models.ForeignKey(ProductosFueraFinca)
+    cantidad = models.FloatField('Cantidad mensual')
+    precio = models.FloatField('Precio en C$')
+
+    class Meta:
+        verbose_name_plural = '43_Indique los alimentos que compra fuera de la finca'
