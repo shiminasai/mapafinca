@@ -2,6 +2,7 @@
 from django.db import models
 from lugar.models import Pais, Departamento, Municipio, Comunidad
 from multiselectfield import MultiSelectField
+from sorl.thumbnail import ImageField
 # Create your models here.
 #CHOICES ESTATICOS
 CHOICE_SEXO = (
@@ -101,6 +102,7 @@ class Entrevistados(models.Model):
 class Encuesta(models.Model):
     entrevistado = models.ForeignKey(Entrevistados)
     fecha = models.DateField()
+    mapa_finca = ImageField(upload_to='mapas_fincas')
     dueno = models.IntegerField(choices=CHOICE_JEFE,
                     verbose_name='¿Son dueños de la propiedad/finca?')
 
