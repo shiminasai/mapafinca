@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from django.db import models, migrations
 import sorl.thumbnail.fields
+import smart_selects.db_fields
 import multiselectfield.db.fields
 
 
@@ -247,17 +248,17 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('nombre', models.CharField(max_length=250, verbose_name=b'Nombre Completo')),
-                ('cedula', models.CharField(max_length=50, verbose_name=b'No. C\xc3\xa9dula')),
+                ('cedula', models.CharField(max_length=50, null=True, verbose_name=b'No. C\xc3\xa9dula', blank=True)),
                 ('ocupacion', models.CharField(max_length=150, verbose_name=b'Ocupaci\xc3\xb3n')),
                 ('sexo', models.IntegerField(choices=[(1, b'Mujer'), (2, b'Hombre')])),
                 ('jefe', models.IntegerField(verbose_name=b'Jefe del hogar', choices=[(1, b'Si'), (2, b'No')])),
                 ('edad', models.IntegerField()),
-                ('latitud', models.FloatField(blank=True)),
-                ('longitud', models.FloatField(blank=True)),
+                ('latitud', models.FloatField(null=True, blank=True)),
+                ('longitud', models.FloatField(null=True, blank=True)),
                 ('finca', models.CharField(max_length=250, verbose_name=b'Nombre de la finca')),
-                ('comunidad', models.ForeignKey(to='lugar.Comunidad')),
-                ('departamento', models.ForeignKey(to='lugar.Departamento')),
-                ('municipio', models.ForeignKey(to='lugar.Municipio')),
+                ('comunidad', smart_selects.db_fields.ChainedForeignKey(chained_model_field=b'municipio', chained_field=b'municipio', blank=True, auto_choose=True, to='lugar.Comunidad', null=True)),
+                ('departamento', smart_selects.db_fields.ChainedForeignKey(chained_model_field=b'pais', chained_field=b'pais', auto_choose=True, to='lugar.Departamento')),
+                ('municipio', smart_selects.db_fields.ChainedForeignKey(chained_model_field=b'departamento', chained_field=b'departamento', auto_choose=True, to='lugar.Municipio')),
                 ('pais', models.ForeignKey(to='lugar.Pais')),
             ],
             options={

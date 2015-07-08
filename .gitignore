@@ -61,3 +61,4 @@ local_settings.py
 *.sqlite3
 *.db
 *.sql
+/media/

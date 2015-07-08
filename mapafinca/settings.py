@@ -14,6 +14,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'lugar',
     'encuestas',
+    'smart_selects',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -65,7 +66,14 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
+MEDIA_ROOT = os.environ.get('MEDIA_ROOT', os.path.join(BASE_DIR, 'media'))
+MEDIA_URL = '/media/'
+STATIC_ROOT = os.environ.get('STATIC_ROOT', os.path.join(BASE_DIR, 'static'))
 STATIC_URL = '/static/'
+
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, "static_media"),
+)
 
 WPADMIN = {
     'admin': {
@@ -81,3 +89,6 @@ WPADMIN = {
         'custom_style': STATIC_URL + 'wpadmin/css/themes/light.css',
     }
 }
+
+CKEDITOR_JQUERY_URL = 'https://code.jquery.com/jquery-2.1.3.min.js'
+SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'

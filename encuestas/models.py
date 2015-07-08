@@ -3,6 +3,7 @@ from django.db import models
 from lugar.models import Pais, Departamento, Municipio, Comunidad
 from multiselectfield import MultiSelectField
 from sorl.thumbnail import ImageField
+from smart_selects.db_fields import ChainedForeignKey 
 # Create your models here.
 #CHOICES ESTATICOS
 CHOICE_SEXO = (
@@ -78,17 +79,37 @@ class OrganizacionResp(models.Model):
 
 class Entrevistados(models.Model):
     nombre = models.CharField('Nombre Completo', max_length=250)
-    cedula = models.CharField('No. Cédula', max_length=50)
+    cedula = models.CharField('No. Cédula', max_length=50, null=True, blank=True)
     ocupacion = models.CharField('Ocupación', max_length=150)
     sexo = models.IntegerField(choices=CHOICE_SEXO)
     jefe = models.IntegerField(choices=CHOICE_JEFE, verbose_name='Jefe del hogar')
     edad = models.IntegerField()
-    latitud = models.FloatField(blank=True)
-    longitud = models.FloatField(blank=True)
+    latitud = models.FloatField(null=True, blank=True)
+    longitud = models.FloatField(null= True, blank=True)
     pais = models.ForeignKey(Pais)
-    departamento = models.ForeignKey(Departamento)
-    municipio = models.ForeignKey(Municipio)
-    comunidad = models.ForeignKey(Comunidad)
+    departamento = ChainedForeignKey(
+        Departamento, 
+        chained_field="pais",
+        chained_model_field="pais", 
+        show_all=False, 
+        auto_choose=True
+    )
+    municipio = ChainedForeignKey(
+        Municipio, 
+        chained_field="departamento",
+        chained_model_field="departamento", 
+        show_all=False, 
+        auto_choose=True
+    )
+    comunidad = ChainedForeignKey(
+        Comunidad, 
+        chained_field="municipio",
+        chained_model_field="municipio", 
+        show_all=False, 
+        auto_choose=True,
+        null=True,
+        blank=True,
+    )
     finca = models.CharField('Nombre de la finca', max_length=250)
 
     def __unicode__(self):
