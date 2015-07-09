@@ -3,7 +3,8 @@ from django.db import models
 from lugar.models import Pais, Departamento, Municipio, Comunidad
 from multiselectfield import MultiSelectField
 from sorl.thumbnail import ImageField
-from smart_selects.db_fields import ChainedForeignKey 
+from smart_selects.db_fields import ChainedForeignKey
+from django.contrib.auth.models import User
 # Create your models here.
 #CHOICES ESTATICOS
 CHOICE_SEXO = (
@@ -112,6 +113,8 @@ class Entrevistados(models.Model):
     )
     finca = models.CharField('Nombre de la finca', max_length=250)
 
+    user = models.ForeignKey(User)
+
     def __unicode__(self):
         return self.nombre
 
@@ -128,6 +131,8 @@ class Encuesta(models.Model):
                     verbose_name='¿Son dueños de la propiedad/finca?')
 
     year = models.IntegerField(editable=False)
+
+    user = models.ForeignKey(User)
 
     def save(self):
         self.year = self.fecha.year
@@ -583,7 +588,7 @@ class IntroducidosTradicionales(models.Model):
     anio = models.IntegerField('Año')
 
     class Meta:
-        verbose_name_plural = 'Productos introducidos/promovidos tradicionales'
+        verbose_name_plural = '25_1 Productos introducidos/promovidos tradicionales'
 
 
 class IntroducidosHuertos(models.Model):
@@ -593,7 +598,7 @@ class IntroducidosHuertos(models.Model):
     anio = models.IntegerField('Año')
 
     class Meta:
-        verbose_name_plural = 'Productos introducidos/promovidos huertos familiares'
+        verbose_name_plural = '25_2 Productos introducidos/promovidos huertos familiares'
 
 #Gastos en el hogar
 
@@ -613,7 +618,7 @@ class GastoHogar(models.Model):
     cantidad_veces = models.FloatField('Cantidad de veces en el año')
 
     class Meta:
-        verbose_name_plural = 'Gastos generales del hogar'
+        verbose_name_plural = '26_Gastos generales del hogar'
 
 class TipoGasto(models.Model):
     nombre = models.CharField(max_length=250)
@@ -628,7 +633,7 @@ class GastoProduccion(models.Model):
     cantidad_veces = models.FloatField('Cantidad de veces en el año')
 
     class Meta:
-        verbose_name_plural = 'Gastos generales para la producción'
+        verbose_name_plural = '27_Gastos generales para la producción'
 
 
 class RecibePrestamo(models.Model):
@@ -685,10 +690,14 @@ class PracticasAgroecologicas(models.Model):
         verbose_name='29_¿En la finca aplican técnicas de manejo agro ecologico u orgánico')
     cinco_principales = models.ManyToManyField(Practicas, 
                                             verbose_name='29.1_Mencione cinco principales')
-    manejo = models.IntegerField(choices=CHOICE_MANEJO)
-    traccion = models.IntegerField(choices=CHOICE_TRACCION)
-    fertilidad = models.IntegerField(choices=CHOICE_JEFE)
-    control = models.IntegerField(choices=CHOICE_JEFE)
+    manejo = models.IntegerField(choices=CHOICE_MANEJO, 
+                    verbose_name='31_Sobre el manejo del suelo ¿Cómo preparan el suelo?')
+    traccion = models.IntegerField(choices=CHOICE_TRACCION, 
+                    verbose_name='32_¿Qué tipo de tracción utilizan para la preparación del suelo?')
+    fertilidad = models.IntegerField(choices=CHOICE_JEFE, 
+                    verbose_name='33_¿Realizan análisis de fertilidad del suelo?')
+    control = models.IntegerField(choices=CHOICE_JEFE, 
+                    verbose_name='34_¿Realiza control y monitoreo de plagas y enfermedades?')
 
     class Meta:
         verbose_name_plural = 'Prácticas agroecológicas'
@@ -760,13 +769,13 @@ CHOICE_INVERSION = (
 
 class RespuestaNo41(models.Model):
     encuesta = models.ForeignKey(Encuesta)
-    fenomeno = MultiSelectField(CHOICE_FENOMENOS)
-    fenomeno = MultiSelectField(CHOICE_AGRICOLA)
-    fenomeno = MultiSelectField(CHOICE_MERCADO)
-    fenomeno = MultiSelectField(CHOICE_INVERSION)
+    fenomeno = MultiSelectField(choices=CHOICE_FENOMENOS)
+    agricola = MultiSelectField(choices=CHOICE_AGRICOLA)
+    mercado = MultiSelectField(choices=CHOICE_MERCADO)
+    inversion = MultiSelectField(choices=CHOICE_INVERSION)
 
     class Meta:
-        verbose_name_plural = '41.1_Si responde NO, marque con una X las principales razones'
+        verbose_name_plural = '41.1_Si responde NO'
 
 class AdquiereAgua(models.Model):
     nombre = models.CharField(max_length=250)

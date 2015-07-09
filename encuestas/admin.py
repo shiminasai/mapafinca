@@ -22,10 +22,147 @@ class InlineDetalleMiembros(admin.TabularInline):
 class InlineEscolaridad(admin.TabularInline):
     model = Escolaridad
     extra = 1
+    max_num = 8
+
+class InlineTipoEnergia(admin.TabularInline):
+    model = TipoEnergia
+    extra = 1
+
+class InlineEnergiaSolarCocinar(admin.TabularInline):
+    model = EnergiaSolarCocinar
+    extra = 1
+
+class InlineTipoCocinas(admin.TabularInline):
+    model = TipoCocinas
+    extra = 1
+
+class InlineAccesoAgua(admin.TabularInline):
+    model = AccesoAgua
+    extra = 1
+
+class InlineDisponibilidadAgua(admin.TabularInline):
+    model = DisponibilidadAgua
+    extra = 1
+
+class InlineCalidadAgua(admin.TabularInline):
+    model = CalidadAgua
+    extra = 1
+
+class InlineContaminada(admin.TabularInline):
+    model = Contaminada
+    extra = 1
+
+class InlineEvidencia(admin.TabularInline):
+    model = Evidencia
+    extra = 1
+
+class InlineTratamientoAgua(admin.TabularInline):
+    model = TratamientoAgua
+    extra = 1
+
+class InlineUsosAgua(admin.TabularInline):
+    model = UsosAgua
+    extra = 1
+
+class InlineOrganizacionComunitaria(admin.TabularInline):
+    model = OrganizacionComunitaria
+    extra = 1
+
+class InlineOrganizacionFinca(admin.TabularInline):
+    model = OrganizacionFinca
+    extra = 1
+
+class InlineDistribucionTierra(admin.TabularInline):
+    model = DistribucionTierra
+    extra = 1
+
+class InlinePercibeIngreso(admin.TabularInline):
+    model = PercibeIngreso
+    extra = 1
+
+class InlineFuentes(admin.TabularInline):
+    model = Fuentes
+    extra = 1
+
+class InlineCultivosTradicionales(admin.TabularInline):
+    model = CultivosTradicionales
+    extra = 1
+
+class InlineCultivosHuertosFamiliares(admin.TabularInline):
+    model = CultivosHuertosFamiliares
+    extra = 1
+
+class InlineGanaderia(admin.TabularInline):
+    model = Ganaderia
+    extra = 1
+
+class InlineProcesamiento(admin.TabularInline):
+    model = Procesamiento
+    extra = 1
+
+class InlineIntroducidosTradicionales(admin.TabularInline):
+    model = IntroducidosTradicionales
+    extra = 1
+
+class InlineIntroducidosHuertos(admin.TabularInline):
+    model = IntroducidosHuertos
+    extra = 1
+
+class InlineGastoHogar(admin.TabularInline):
+    model = GastoHogar
+    extra = 1
+
+class InlineGastoProduccion(admin.TabularInline):
+    model = GastoProduccion
+    extra = 1
+
+class InlinePrestamo(admin.TabularInline):
+    model = Prestamo
+    extra = 1
+
+class InlinePracticasAgroecologicas(admin.TabularInline):
+    model = PracticasAgroecologicas
+    extra = 1
+
+class InlineSeguridadAlimentaria(admin.TabularInline):
+    model = SeguridadAlimentaria
+    extra = 1
+
+class InlineRespuestaNo41(admin.TabularInline):
+    model = RespuestaNo41
+    extra = 1
+
+class InlineOtrasSeguridad(admin.TabularInline):
+    model = OtrasSeguridad
+    extra = 1
+
+class InlineAlimentosFueraFinca(admin.TabularInline):
+    model = AlimentosFueraFinca
+    extra = 1
 
 class AdminEncuesta(admin.ModelAdmin):
+    def queryset(self, request):
+        if request.user.is_superuser:
+            return Encuesta.objects.all()
+        return Encuesta.objects.filter(user=request.user)
+
+    def save_model(self, request, obj, form, change):
+      obj.user = request.user
+      obj.save()
+
+    exclude = ('user',)
     inlines = [InlineDuenoSi,InlineDuenoNo,InlineSexoMiembros,
-                InlineDetalleMiembros,InlineEscolaridad]
+                InlineDetalleMiembros,InlineEscolaridad,InlineTipoEnergia,
+                InlineEnergiaSolarCocinar,InlineTipoCocinas,InlineAccesoAgua,
+                InlineDisponibilidadAgua,InlineCalidadAgua,InlineContaminada,
+                InlineEvidencia,InlineTratamientoAgua,InlineUsosAgua,
+                InlineOrganizacionComunitaria,InlineOrganizacionFinca,
+                InlineDistribucionTierra,InlinePercibeIngreso,InlineFuentes,
+                InlineCultivosTradicionales,InlineCultivosHuertosFamiliares,
+                InlineGanaderia,InlineProcesamiento,InlineIntroducidosTradicionales,
+                InlineIntroducidosHuertos,InlineGastoHogar,InlineGastoProduccion,
+                InlinePrestamo,InlinePracticasAgroecologicas,InlineSeguridadAlimentaria,
+                InlineRespuestaNo41,InlineOtrasSeguridad,InlineAlimentosFueraFinca,]
 
     list_display = ('entrevistado','dueno',)
     search_fields = ('entrevistado__nombre',)

@@ -5,11 +5,13 @@ from django.db import models, migrations
 import sorl.thumbnail.fields
 import smart_selects.db_fields
 import multiselectfield.db.fields
+from django.conf import settings
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('lugar', '0001_initial'),
     ]
 
@@ -260,6 +262,7 @@ class Migration(migrations.Migration):
                 ('departamento', smart_selects.db_fields.ChainedForeignKey(chained_model_field=b'pais', chained_field=b'pais', auto_choose=True, to='lugar.Departamento')),
                 ('municipio', smart_selects.db_fields.ChainedForeignKey(chained_model_field=b'departamento', chained_field=b'departamento', auto_choose=True, to='lugar.Municipio')),
                 ('pais', models.ForeignKey(to='lugar.Pais')),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'verbose_name': 'Entrevistado',
@@ -346,7 +349,7 @@ class Migration(migrations.Migration):
                 ('encuesta', models.ForeignKey(to='encuestas.Encuesta')),
             ],
             options={
-                'verbose_name_plural': 'Gastos generales del hogar',
+                'verbose_name_plural': '26_Gastos generales del hogar',
             },
         ),
         migrations.CreateModel(
@@ -358,7 +361,7 @@ class Migration(migrations.Migration):
                 ('encuesta', models.ForeignKey(to='encuestas.Encuesta')),
             ],
             options={
-                'verbose_name_plural': 'Gastos generales para la producci\xf3n',
+                'verbose_name_plural': '27_Gastos generales para la producci\xf3n',
             },
         ),
         migrations.CreateModel(
@@ -371,7 +374,7 @@ class Migration(migrations.Migration):
                 ('encuesta', models.ForeignKey(to='encuestas.Encuesta')),
             ],
             options={
-                'verbose_name_plural': 'Productos introducidos/promovidos huertos familiares',
+                'verbose_name_plural': '25_2 Productos introducidos/promovidos huertos familiares',
             },
         ),
         migrations.CreateModel(
@@ -384,7 +387,7 @@ class Migration(migrations.Migration):
                 ('encuesta', models.ForeignKey(to='encuestas.Encuesta')),
             ],
             options={
-                'verbose_name_plural': 'Productos introducidos/promovidos tradicionales',
+                'verbose_name_plural': '25_1 Productos introducidos/promovidos tradicionales',
             },
         ),
         migrations.CreateModel(
@@ -463,10 +466,10 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('si_no', models.IntegerField(verbose_name=b'29_\xc2\xbfEn la finca aplican t\xc3\xa9cnicas de manejo agro ecologico u org\xc3\xa1nico', choices=[(1, b'Si'), (2, b'No')])),
-                ('manejo', models.IntegerField(choices=[(1, b'Tala y quema'), (2, b'Trabaja en crudo'), (3, b'Arado'), (4, b'Uso de cobertura')])),
-                ('traccion', models.IntegerField(choices=[(1, b'Animal'), (2, b'Humana'), (3, b'Tractor'), (4, b'Ninguna')])),
-                ('fertilidad', models.IntegerField(choices=[(1, b'Si'), (2, b'No')])),
-                ('control', models.IntegerField(choices=[(1, b'Si'), (2, b'No')])),
+                ('manejo', models.IntegerField(verbose_name=b'31_Sobre el manejo del suelo \xc2\xbfC\xc3\xb3mo preparan el suelo?', choices=[(1, b'Tala y quema'), (2, b'Trabaja en crudo'), (3, b'Arado'), (4, b'Uso de cobertura')])),
+                ('traccion', models.IntegerField(verbose_name=b'32_\xc2\xbfQu\xc3\xa9 tipo de tracci\xc3\xb3n utilizan para la preparaci\xc3\xb3n del suelo?', choices=[(1, b'Animal'), (2, b'Humana'), (3, b'Tractor'), (4, b'Ninguna')])),
+                ('fertilidad', models.IntegerField(verbose_name=b'33_\xc2\xbfRealizan an\xc3\xa1lisis de fertilidad del suelo?', choices=[(1, b'Si'), (2, b'No')])),
+                ('control', models.IntegerField(verbose_name=b'34_\xc2\xbfRealiza control y monitoreo de plagas y enfermedades?', choices=[(1, b'Si'), (2, b'No')])),
                 ('cinco_principales', models.ManyToManyField(to='encuestas.Practicas', verbose_name=b'29.1_Mencione cinco principales')),
                 ('encuesta', models.ForeignKey(to='encuestas.Encuesta')),
             ],
@@ -527,11 +530,14 @@ class Migration(migrations.Migration):
             name='RespuestaNo41',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('fenomeno', multiselectfield.db.fields.MultiSelectField(max_length=200, verbose_name=((1, b'Falta de cr\xc3\xa9dito'), (2, b'Alto inter\xc3\xa9s')))),
+                ('fenomeno', multiselectfield.db.fields.MultiSelectField(max_length=200, verbose_name=((1, b'Sequ\xc3\xada'), (2, b'Inundaci\xc3\xb3n'), (3, b'Deslizamiento'), (4, b'Viento')))),
+                ('agricola', multiselectfield.db.fields.MultiSelectField(max_length=200, verbose_name=((1, b'Falta de semilla'), (2, b'Mala calidad de la semilla')))),
+                ('mercado', multiselectfield.db.fields.MultiSelectField(max_length=200, verbose_name=((1, b'Bajo precio'), (2, b'Falta de venta'), (3, b'Mala calidad del producto')))),
+                ('inversion', multiselectfield.db.fields.MultiSelectField(max_length=200, verbose_name=((1, b'Falta de cr\xc3\xa9dito'), (2, b'Alto inter\xc3\xa9s')))),
                 ('encuesta', models.ForeignKey(to='encuestas.Encuesta')),
             ],
             options={
-                'verbose_name_plural': '41.1_Si responde NO, marque con una X las principales razones',
+                'verbose_name_plural': '41.1_Si responde NO',
             },
         ),
         migrations.CreateModel(
@@ -732,6 +738,11 @@ class Migration(migrations.Migration):
             model_name='encuesta',
             name='entrevistado',
             field=models.ForeignKey(to='encuestas.Entrevistados'),
+        ),
+        migrations.AddField(
+            model_name='encuesta',
+            name='user',
+            field=models.ForeignKey(to=settings.AUTH_USER_MODEL),
         ),
         migrations.AddField(
             model_name='duenosi',
