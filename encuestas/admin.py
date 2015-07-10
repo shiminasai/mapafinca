@@ -141,6 +141,7 @@ class InlineAlimentosFueraFinca(admin.TabularInline):
     extra = 1
 
 class AdminEncuesta(admin.ModelAdmin):
+    fields = (('entrevistado','fecha'),'mapa_finca','dueno',)
     def queryset(self, request):
         if request.user.is_superuser:
             return Encuesta.objects.all()
@@ -184,4 +185,24 @@ admin.site.register(Encuestadores)
 admin.site.register(OrganizacionResp)
 admin.site.register(Entrevistados, EntrevistadoAdmin)
 admin.site.register(Encuesta, AdminEncuesta)
-#admin.site.register()
+admin.site.register(Energia)
+admin.site.register(FuenteEnergia)
+admin.site.register(Cocinas)
+admin.site.register(AguaConsumo)
+admin.site.register(TipoContamindaAgua)
+admin.site.register(OrgComunitarias)
+admin.site.register(BeneficiosOrganizados)
+admin.site.register(TipoFuenteIngreso)
+admin.site.register(Cultivos)
+admin.site.register(TipoMercado)
+admin.site.register(CultivosHuertos)
+admin.site.register(Animales)
+admin.site.register(ProductoProcesado)
+admin.site.register(TipoGasto)
+admin.site.register(RecibePrestamo)
+admin.site.register(UsoPrestamo)
+admin.site.register(Practicas)
+admin.site.register(TipoSecado)
+admin.site.register(AdquiereAgua)
+admin.site.register(TrataAgua)
+admin.site.register(ProductosFueraFinca)

@@ -141,6 +141,9 @@ class Encuesta(models.Model):
     def __unicode__(self):
         return u'%s' % (self.entrevistado.nombre)
 
+    class Meta:
+        verbose_name_plural = 'ENCUESTAS'
+
 
 class DuenoSi(models.Model):
     encuesta = models.ForeignKey(Encuesta)
