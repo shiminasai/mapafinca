@@ -620,6 +620,14 @@ class GastoHogar(models.Model):
     cantidad = models.FloatField('Cantidad mensual en C$')
     cantidad_veces = models.FloatField('Cantidad de veces en el año')
 
+    total = models.FloatField(editable=False)
+
+    def save(self, *args, **kwargs):
+        '''Save sobrecargado para calcular totales'''
+        
+        self.total = self.cantidad + self.cantidad_veces
+        super(GastoProduccion, self).save(*args, **kwargs)
+
     class Meta:
         verbose_name_plural = '26_Gastos generales del hogar'
 
@@ -634,6 +642,14 @@ class GastoProduccion(models.Model):
     tipo = models.ForeignKey(TipoGasto)
     cantidad = models.FloatField('Cantidad mensual en C$')
     cantidad_veces = models.FloatField('Cantidad de veces en el año')
+
+    total = models.FloatField(editable=False)
+
+    def save(self, *args, **kwargs):
+        '''Save sobrecargado para calcular totales'''
+        
+        self.total = self.cantidad + self.cantidad_veces
+        super(GastoProduccion, self).save(*args, **kwargs)
 
     class Meta:
         verbose_name_plural = '27_Gastos generales para la producción'
@@ -818,5 +834,56 @@ class AlimentosFueraFinca(models.Model):
     cantidad = models.FloatField('Cantidad mensual')
     precio = models.FloatField('Precio en C$')
 
+    total = models.FloatField(editable=False)
+
+    def save(self, *args, **kwargs):
+        '''Save sobrecargado para calcular totales'''
+        
+        self.total = self.cantidad * self.precio
+        super(AlimentosFueraFinca, self).save(*args, **kwargs)
+
+        # activar signal post_save de encuesta
+        signals.post_save.send(sender=Encuesta, instance=self.encuesta)
+
     class Meta:
         verbose_name_plural = '43_Indique los alimentos que compra fuera de la finca'
+
+
+class TotalIngreso(models.Model):
+    encuesta = models.ForeignKey(Encuesta, unique=True)
+    total = models.FloatField(editable=False)
+    #total_ap = models.FloatField(editable=False)
+
+    class Meta:
+        verbose_name_plural = 'Totales'
+
+    #def __unicode__(self):
+    #    return 'Total para la encuesta %s' % self.encuesta
+
+    def save(self, *args, **kwargs):
+        self.total = self._get_total()
+        #self.total_ap = self._get_total() - (OtrosIngresos.objects.filter(encuesta=self.encuesta).aggregate(t=models.Sum('total'))['t'] or 0)
+        #print self.total, self.total_ap
+        super(TotalIngreso, self).save(*args, **kwargs)
+    
+    def _get_total(self):
+        params = dict(encuesta = self.encuesta)
+        totales = [AlimentosFueraFinca.objects.filter(**params).aggregate(t=models.Sum('total'))['t'], \
+                    GastoProduccion.objects.filter(**params).aggregate(t=models.Sum('total'))['t'], \
+                    GastoHogar.objects.filter(**params).aggregate(t=models.Sum('total'))['t'], \
+                ] 
+        total = sum(filter(None, totales))
+        return total
+
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+@receiver(post_save, sender=Encuesta)
+def create_encuesta_callback(sender, **kwargs):
+    encuesta = kwargs['instance']
+    try:
+        total_ingreso = TotalIngreso.objects.get(encuesta=encuesta)
+        total_ingreso.save()
+    except:
+        total_ingreso = TotalIngreso(encuesta=encuesta)
+        total_ingreso.save()
