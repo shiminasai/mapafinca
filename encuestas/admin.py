@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models import *
+from .forms import *
 
 class InlineDuenoSi(admin.TabularInline):
     model = DuenoSi
@@ -25,18 +26,22 @@ class InlineEscolaridad(admin.TabularInline):
     max_num = 8
 
 class InlineTipoEnergia(admin.TabularInline):
+    form = TipoEnergiaForm
     model = TipoEnergia
     extra = 1
 
 class InlineEnergiaSolarCocinar(admin.TabularInline):
+    form = EnergiaSolarCocinarForm
     model = EnergiaSolarCocinar
     extra = 1
 
 class InlineTipoCocinas(admin.TabularInline):
+    form = TipoCocinasForm
     model = TipoCocinas
     extra = 1
 
 class InlineAccesoAgua(admin.TabularInline):
+    form = AccesoAguaForm
     model = AccesoAgua
     extra = 1
 

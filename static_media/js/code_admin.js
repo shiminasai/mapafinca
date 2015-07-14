@@ -16,9 +16,13 @@
 	$('.field-monto').hide();
 	$('.field-pago').hide();
 	$('.field-recibe').hide();
-	$('.field-uso').hide();
+	//$('.field-uso').hide();
 	$('#respuestano41_set-group').hide();
 	$('.field-tipo_tratamiento').hide();
+
+	$('#organizacioncomunitaria_set-group table tr th:gt(0)').hide();
+	$('#prestamo_set-group table tr th:gt(0)').hide();
+	$('#otrasseguridad_set-group table tr th:gt(1)').hide();
 
 	$('#id_dueno').change(function(){
 			var valor_tipo = $('#id_dueno').val();
