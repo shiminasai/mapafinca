@@ -16,12 +16,15 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
+import settings
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from encuestas import urls as encuestas_urls
 
 admin.site.site_header = "administración"
 admin.site.site_title = "sitio administrativo"
 
 urlpatterns = [
+	url(r'', include(encuestas_urls)),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^chaining/', include('smart_selects.urls')),
 ]
