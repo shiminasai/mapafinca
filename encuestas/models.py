@@ -5,6 +5,9 @@ from multiselectfield import MultiSelectField
 from sorl.thumbnail import ImageField
 from smart_selects.db_fields import ChainedForeignKey
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
 # Create your models here.
 #CHOICES ESTATICOS
 CHOICE_SEXO = (
@@ -126,7 +129,7 @@ class Entrevistados(models.Model):
 class Encuesta(models.Model):
     entrevistado = models.ForeignKey(Entrevistados)
     fecha = models.DateField()
-    mapa_finca = ImageField(upload_to='mapas_fincas')
+    mapa_finca = ImageField(upload_to='mapas_fincas', null=True, blank=True)
     dueno = models.IntegerField(choices=CHOICE_JEFE,
                     verbose_name='¿Son dueños de la propiedad/finca?')
 
@@ -186,7 +189,7 @@ class DetalleMiembros(models.Model):
     cantidad = models.IntegerField()
 
     def __unicode__(self):
-        return u'%s' % (self.get_sexo_display())
+        return u'%s' % (self.get_edad_display())
 
     class Meta:
         verbose_name_plural = '9_Detalle la cantidad de miembros del hogar según edad y sexo'
@@ -408,9 +411,11 @@ class BeneficiosOrganizados(models.Model):
 class OrganizacionComunitaria(models.Model):
     encuesta = models.ForeignKey(Encuesta)
     pertenece = models.IntegerField(choices=CHOICE_JEFE, verbose_name='19_¿Pertenece a alguna organización?')
-    caso_si = models.ManyToManyField(OrgComunitarias, verbose_name='19_1 qué organización comunitaria pertenece?')
-    cuales_beneficios = models.ManyToManyField(BeneficiosOrganizados, verbose_name='19_2 ¿Cuales son los beneficios de estar organizado?')
-
+    caso_si = models.ManyToManyField(OrgComunitarias, verbose_name='19_1 qué organización comunitaria pertenece?',
+                                    blank=True)
+    cuales_beneficios = models.ManyToManyField(BeneficiosOrganizados, 
+                                        verbose_name='19_2 ¿Cuales son los beneficios de estar organizado?',
+                                        blank=True)
 
 class OrganizacionFinca(models.Model):
     encuesta = models.ForeignKey(Encuesta)
@@ -462,6 +467,16 @@ class Fuentes(models.Model):
     hombres = models.IntegerField('Cantidad de miembros hombres')
     mujeres = models.IntegerField('Cantidad de miembros mujeres')
 
+    total = models.FloatField(editable=False)
+
+    def save(self, *args, **kwargs):
+        '''Save sobrecargado para calcular totales'''
+        
+        self.total = self.cantidad * self.cantidad_veces
+        super(Fuentes, self).save(*args, **kwargs)
+
+        models.signals.post_save.send(sender=Encuesta, instance=self.encuesta)
+
     class Meta:
         verbose_name_plural = '21_ingresos diferentes a la actividad agropecuaria'
 
@@ -510,6 +525,16 @@ class CultivosTradicionales(models.Model):
     mercado = models.ForeignKey(TipoMercado)
     periodo = models.IntegerField(choices=CHOICE_PERIODO)
 
+    total = models.FloatField(editable=False)
+
+    def save(self, *args, **kwargs):
+        '''Save sobrecargado para calcular totales'''
+        
+        self.total = self.venta * self.precio
+        super(CultivosTradicionales, self).save(*args, **kwargs)
+
+        models.signals.post_save.send(sender=Encuesta, instance=self.encuesta)
+
     class Meta:
         verbose_name_plural = '22_Cultivos tradicionales  producidos en la finca'
 
@@ -536,6 +561,16 @@ class CultivosHuertosFamiliares(models.Model):
     costo = models.FloatField('Costo por Mz en C$')
     mercado = models.ForeignKey(TipoMercado)
 
+    total = models.FloatField(editable=False)
+
+    def save(self, *args, **kwargs):
+        '''Save sobrecargado para calcular totales'''
+        
+        self.total = self.venta * self.precio
+        super(CultivosHuertosFamiliares, self).save(*args, **kwargs)
+
+        models.signals.post_save.send(sender=Encuesta, instance=self.encuesta)
+
     class Meta:
         verbose_name_plural = '23_Cultivos de huertos familiares en la finca'
 
@@ -557,6 +592,16 @@ class Ganaderia(models.Model):
     precio = models.FloatField('Precio de venta en C$')
     mercado = models.ForeignKey(TipoMercado)
 
+    total = models.FloatField(editable=False)
+
+    def save(self, *args, **kwargs):
+        '''Save sobrecargado para calcular totales'''
+        
+        self.total = self.cantidad_vendida * self.precio
+        super(Ganaderia, self).save(*args, **kwargs)
+
+        models.signals.post_save.send(sender=Encuesta, instance=self.encuesta)
+
     class Meta:
         verbose_name_plural = '24_1 Inventario de ganaderia mayor y menor'
 
@@ -567,7 +612,7 @@ class ProductoProcesado(models.Model):
     unidad_medida = models.IntegerField(choices=CHOICE_MEDIDA)
 
     def __unicode__(self):
-        return u'%s-%s' % (self.codigo, self.nombre)
+        return u'%s-%s' % (self.nombre, self.unidad_medida)
 
 
 class Procesamiento(models.Model):
@@ -577,6 +622,16 @@ class Procesamiento(models.Model):
     cantidad_vendida = models.IntegerField('Cantidad vendida este año')
     precio = models.FloatField('Precio de venta en C$')
     mercado = models.ForeignKey(TipoMercado)
+
+    total = models.FloatField(editable=False)
+
+    def save(self, *args, **kwargs):
+        '''Save sobrecargado para calcular totales'''
+        
+        self.total = self.cantidad_vendida * self.precio
+        super(Procesamiento, self).save(*args, **kwargs)
+
+        models.signals.post_save.send(sender=Encuesta, instance=self.encuesta)
 
     class Meta:
         verbose_name_plural = '24_2 Procesamiento de la producción'
@@ -588,7 +643,7 @@ class IntroducidosTradicionales(models.Model):
     encuesta = models.ForeignKey(Encuesta)
     cultivo = models.ForeignKey(Cultivos)
     si_no = models.IntegerField(choices=CHOICE_JEFE)
-    anio = models.IntegerField('Año')
+    anio = models.IntegerField('Año', null=True, blank=True)
 
     class Meta:
         verbose_name_plural = '25_1 Productos introducidos/promovidos tradicionales'
@@ -598,7 +653,7 @@ class IntroducidosHuertos(models.Model):
     encuesta = models.ForeignKey(Encuesta)
     cultivo = models.ForeignKey(Cultivos)
     si_no = models.IntegerField(choices=CHOICE_JEFE)
-    anio = models.IntegerField('Año')
+    anio = models.IntegerField('Año', null=True, blank=True)
 
     class Meta:
         verbose_name_plural = '25_2 Productos introducidos/promovidos huertos familiares'
@@ -625,8 +680,10 @@ class GastoHogar(models.Model):
     def save(self, *args, **kwargs):
         '''Save sobrecargado para calcular totales'''
         
-        self.total = self.cantidad + self.cantidad_veces
-        super(GastoProduccion, self).save(*args, **kwargs)
+        self.total = self.cantidad * self.cantidad_veces
+        super(GastoHogar, self).save(*args, **kwargs)
+
+        models.signals.post_save.send(sender=Encuesta, instance=self.encuesta)
 
     class Meta:
         verbose_name_plural = '26_Gastos generales del hogar'
@@ -648,8 +705,10 @@ class GastoProduccion(models.Model):
     def save(self, *args, **kwargs):
         '''Save sobrecargado para calcular totales'''
         
-        self.total = self.cantidad + self.cantidad_veces
+        self.total = self.cantidad * self.cantidad_veces
         super(GastoProduccion, self).save(*args, **kwargs)
+
+        models.signals.post_save.send(sender=Encuesta, instance=self.encuesta)
 
     class Meta:
         verbose_name_plural = '27_Gastos generales para la producción'
@@ -843,16 +902,16 @@ class AlimentosFueraFinca(models.Model):
         super(AlimentosFueraFinca, self).save(*args, **kwargs)
 
         # activar signal post_save de encuesta
-        signals.post_save.send(sender=Encuesta, instance=self.encuesta)
+        models.signals.post_save.send(sender=Encuesta, instance=self.encuesta)
 
     class Meta:
         verbose_name_plural = '43_Indique los alimentos que compra fuera de la finca'
 
 
 class TotalIngreso(models.Model):
-    encuesta = models.ForeignKey(Encuesta, unique=True)
+    encuesta = models.OneToOneField(Encuesta)
     total = models.FloatField(editable=False)
-    #total_ap = models.FloatField(editable=False)
+    total_gasto = models.FloatField(editable=False)
 
     class Meta:
         verbose_name_plural = 'Totales'
@@ -862,6 +921,7 @@ class TotalIngreso(models.Model):
 
     def save(self, *args, **kwargs):
         self.total = self._get_total()
+        self.total_gasto = self._get_total_gasto()
         #self.total_ap = self._get_total() - (OtrosIngresos.objects.filter(encuesta=self.encuesta).aggregate(t=models.Sum('total'))['t'] or 0)
         #print self.total, self.total_ap
         super(TotalIngreso, self).save(*args, **kwargs)
@@ -869,14 +929,23 @@ class TotalIngreso(models.Model):
     def _get_total(self):
         params = dict(encuesta = self.encuesta)
         totales = [AlimentosFueraFinca.objects.filter(**params).aggregate(t=models.Sum('total'))['t'], \
-                    GastoProduccion.objects.filter(**params).aggregate(t=models.Sum('total'))['t'], \
-                    GastoHogar.objects.filter(**params).aggregate(t=models.Sum('total'))['t'], \
+                    Procesamiento.objects.filter(**params).aggregate(t=models.Sum('total'))['t'], \
+                    Ganaderia.objects.filter(**params).aggregate(t=models.Sum('total'))['t'], \
+                    CultivosHuertosFamiliares.objects.filter(**params).aggregate(t=models.Sum('total'))['t'], \
+                    CultivosTradicionales.objects.filter(**params).aggregate(t=models.Sum('total'))['t'], \
+                    Fuentes.objects.filter(**params).aggregate(t=models.Sum('total'))['t'], \
                 ] 
         total = sum(filter(None, totales))
         return total
 
-from django.db.models.signals import post_save
-from django.dispatch import receiver
+    def _get_total_gasto(self):
+        params = dict(encuesta = self.encuesta)
+        totales = [
+                    GastoProduccion.objects.filter(**params).aggregate(t=models.Sum('total'))['t'], \
+                    GastoHogar.objects.filter(**params).aggregate(t=models.Sum('total'))['t'], \
+                ] 
+        total_gasto = sum(filter(None, totales))
+        return total_gasto
 
 @receiver(post_save, sender=Encuesta)
 def create_encuesta_callback(sender, **kwargs):

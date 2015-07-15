@@ -49,6 +49,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('cantidad', models.FloatField(verbose_name=b'Cantidad mensual')),
                 ('precio', models.FloatField(verbose_name=b'Precio en C$')),
+                ('total', models.FloatField(editable=False)),
             ],
             options={
                 'verbose_name_plural': '43_Indique los alimentos que compra fuera de la finca',
@@ -128,6 +129,7 @@ class Migration(migrations.Migration):
                 ('venta', models.FloatField()),
                 ('precio', models.FloatField(verbose_name=b'Precio de venta en C$')),
                 ('costo', models.FloatField(verbose_name=b'Costo por Mz en C$')),
+                ('total', models.FloatField(editable=False)),
                 ('cultivo', models.ForeignKey(to='encuestas.CultivosHuertos')),
             ],
             options={
@@ -148,6 +150,7 @@ class Migration(migrations.Migration):
                 ('precio', models.FloatField(verbose_name=b'Precio de venta en C$')),
                 ('costo', models.FloatField(verbose_name=b'Costo por Mz en C$')),
                 ('periodo', models.IntegerField(choices=[(1, b'Primera'), (2, b'Postrera')])),
+                ('total', models.FloatField(editable=False)),
                 ('cultivo', models.ForeignKey(to='encuestas.Cultivos')),
             ],
             options={
@@ -208,10 +211,13 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('fecha', models.DateField()),
-                ('mapa_finca', sorl.thumbnail.fields.ImageField(upload_to=b'mapas_fincas')),
+                ('mapa_finca', sorl.thumbnail.fields.ImageField(null=True, upload_to=b'mapas_fincas', blank=True)),
                 ('dueno', models.IntegerField(verbose_name=b'\xc2\xbfSon due\xc3\xb1os de la propiedad/finca?', choices=[(1, b'Si'), (2, b'No')])),
                 ('year', models.IntegerField(editable=False)),
             ],
+            options={
+                'verbose_name_plural': 'ENCUESTAS',
+            },
         ),
         migrations.CreateModel(
             name='Encuestadores',
@@ -318,6 +324,7 @@ class Migration(migrations.Migration):
                 ('cantidad_veces', models.FloatField(verbose_name=b'Cantidad de veces en el a\xc3\xb1o')),
                 ('hombres', models.IntegerField(verbose_name=b'Cantidad de miembros hombres')),
                 ('mujeres', models.IntegerField(verbose_name=b'Cantidad de miembros mujeres')),
+                ('total', models.FloatField(editable=False)),
                 ('encuesta', models.ForeignKey(to='encuestas.Encuesta')),
             ],
             options={
@@ -332,6 +339,7 @@ class Migration(migrations.Migration):
                 ('si_no', models.IntegerField(choices=[(1, b'Si'), (2, b'No')])),
                 ('cantidad_vendida', models.IntegerField(verbose_name=b'Cantidad vendida este a\xc3\xb1o')),
                 ('precio', models.FloatField(verbose_name=b'Precio de venta en C$')),
+                ('total', models.FloatField(editable=False)),
                 ('animal', models.ForeignKey(to='encuestas.Animales')),
                 ('encuesta', models.ForeignKey(to='encuestas.Encuesta')),
             ],
@@ -346,6 +354,7 @@ class Migration(migrations.Migration):
                 ('tipo', models.IntegerField(choices=[(1, b'Salud'), (2, b'Educaci\xc3\xb3n'), (3, b'Alquiler de vivienda'), (4, b'Ropa'), (5, b'Alimentaci\xc3\xb3n'), (6, b'Recreaci\xc3\xb3n/Diversi\xc3\xb3n')])),
                 ('cantidad', models.FloatField(verbose_name=b'Cantidad mensual en C$')),
                 ('cantidad_veces', models.FloatField(verbose_name=b'Cantidad de veces en el a\xc3\xb1o')),
+                ('total', models.FloatField(editable=False)),
                 ('encuesta', models.ForeignKey(to='encuestas.Encuesta')),
             ],
             options={
@@ -358,6 +367,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('cantidad', models.FloatField(verbose_name=b'Cantidad mensual en C$')),
                 ('cantidad_veces', models.FloatField(verbose_name=b'Cantidad de veces en el a\xc3\xb1o')),
+                ('total', models.FloatField(editable=False)),
                 ('encuesta', models.ForeignKey(to='encuestas.Encuesta')),
             ],
             options={
@@ -369,7 +379,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('si_no', models.IntegerField(choices=[(1, b'Si'), (2, b'No')])),
-                ('anio', models.IntegerField(verbose_name=b'A\xc3\xb1o')),
+                ('anio', models.IntegerField(null=True, verbose_name=b'A\xc3\xb1o', blank=True)),
                 ('cultivo', models.ForeignKey(to='encuestas.Cultivos')),
                 ('encuesta', models.ForeignKey(to='encuestas.Encuesta')),
             ],
@@ -382,7 +392,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('si_no', models.IntegerField(choices=[(1, b'Si'), (2, b'No')])),
-                ('anio', models.IntegerField(verbose_name=b'A\xc3\xb1o')),
+                ('anio', models.IntegerField(null=True, verbose_name=b'A\xc3\xb1o', blank=True)),
                 ('cultivo', models.ForeignKey(to='encuestas.Cultivos')),
                 ('encuesta', models.ForeignKey(to='encuestas.Encuesta')),
             ],
@@ -497,6 +507,7 @@ class Migration(migrations.Migration):
                 ('cantidad', models.IntegerField(verbose_name=b'Cantidad')),
                 ('cantidad_vendida', models.IntegerField(verbose_name=b'Cantidad vendida este a\xc3\xb1o')),
                 ('precio', models.FloatField(verbose_name=b'Precio de venta en C$')),
+                ('total', models.FloatField(editable=False)),
                 ('encuesta', models.ForeignKey(to='encuestas.Encuesta')),
             ],
             options={
@@ -530,10 +541,10 @@ class Migration(migrations.Migration):
             name='RespuestaNo41',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('fenomeno', multiselectfield.db.fields.MultiSelectField(max_length=200, verbose_name=((1, b'Sequ\xc3\xada'), (2, b'Inundaci\xc3\xb3n'), (3, b'Deslizamiento'), (4, b'Viento')))),
-                ('agricola', multiselectfield.db.fields.MultiSelectField(max_length=200, verbose_name=((1, b'Falta de semilla'), (2, b'Mala calidad de la semilla')))),
-                ('mercado', multiselectfield.db.fields.MultiSelectField(max_length=200, verbose_name=((1, b'Bajo precio'), (2, b'Falta de venta'), (3, b'Mala calidad del producto')))),
-                ('inversion', multiselectfield.db.fields.MultiSelectField(max_length=200, verbose_name=((1, b'Falta de cr\xc3\xa9dito'), (2, b'Alto inter\xc3\xa9s')))),
+                ('fenomeno', multiselectfield.db.fields.MultiSelectField(max_length=7, choices=[(1, b'Sequ\xc3\xada'), (2, b'Inundaci\xc3\xb3n'), (3, b'Deslizamiento'), (4, b'Viento')])),
+                ('agricola', multiselectfield.db.fields.MultiSelectField(max_length=3, choices=[(1, b'Falta de semilla'), (2, b'Mala calidad de la semilla')])),
+                ('mercado', multiselectfield.db.fields.MultiSelectField(max_length=5, choices=[(1, b'Bajo precio'), (2, b'Falta de venta'), (3, b'Mala calidad del producto')])),
+                ('inversion', multiselectfield.db.fields.MultiSelectField(max_length=3, choices=[(1, b'Falta de cr\xc3\xa9dito'), (2, b'Alto inter\xc3\xa9s')])),
                 ('encuesta', models.ForeignKey(to='encuestas.Encuesta')),
             ],
             options={
@@ -634,6 +645,18 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
+            name='TotalIngreso',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('total', models.FloatField(editable=False)),
+                ('total_gasto', models.FloatField(editable=False)),
+                ('encuesta', models.OneToOneField(to='encuestas.Encuesta')),
+            ],
+            options={
+                'verbose_name_plural': 'Totales',
+            },
+        ),
+        migrations.CreateModel(
             name='TrataAgua',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -702,12 +725,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='organizacioncomunitaria',
             name='caso_si',
-            field=models.ManyToManyField(to='encuestas.OrgComunitarias', verbose_name=b'19_1 qu\xc3\xa9 organizaci\xc3\xb3n comunitaria pertenece?'),
+            field=models.ManyToManyField(to='encuestas.OrgComunitarias', verbose_name=b'19_1 qu\xc3\xa9 organizaci\xc3\xb3n comunitaria pertenece?', blank=True),
         ),
         migrations.AddField(
             model_name='organizacioncomunitaria',
             name='cuales_beneficios',
-            field=models.ManyToManyField(to='encuestas.BeneficiosOrganizados', verbose_name=b'19_2 \xc2\xbfCuales son los beneficios de estar organizado?'),
+            field=models.ManyToManyField(to='encuestas.BeneficiosOrganizados', verbose_name=b'19_2 \xc2\xbfCuales son los beneficios de estar organizado?', blank=True),
         ),
         migrations.AddField(
             model_name='organizacioncomunitaria',
