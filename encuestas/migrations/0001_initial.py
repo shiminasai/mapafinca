@@ -460,9 +460,12 @@ class Migration(migrations.Migration):
             name='PercibeIngreso',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('si_no', models.IntegerField(choices=[(1, b'Si'), (2, b'No')])),
+                ('si_no', models.IntegerField(verbose_name=b'Opciones', choices=[(1, b'Si'), (2, b'No')])),
                 ('encuesta', models.ForeignKey(to='encuestas.Encuesta')),
             ],
+            options={
+                'verbose_name_plural': '\xbfLa familia percibe otros ingresos diferentes a la actividad agropecuaria?',
+            },
         ),
         migrations.CreateModel(
             name='Practicas',
@@ -650,6 +653,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('total', models.FloatField(editable=False)),
                 ('total_gasto', models.FloatField(editable=False)),
+                ('total_gasto_fuera_finca', models.FloatField(editable=False)),
                 ('encuesta', models.OneToOneField(to='encuestas.Encuesta')),
             ],
             options={
@@ -761,6 +765,11 @@ class Migration(migrations.Migration):
             model_name='encuesta',
             name='entrevistado',
             field=models.ForeignKey(to='encuestas.Entrevistados'),
+        ),
+        migrations.AddField(
+            model_name='encuesta',
+            name='org_responsable',
+            field=models.ForeignKey(to='encuestas.OrganizacionResp'),
         ),
         migrations.AddField(
             model_name='encuesta',

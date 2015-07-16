@@ -5,7 +5,6 @@
 	var respuesta_si = $('#id_dueno').val();
 	var respuesta_16 = $('#id_calidadagua_set-0-calidad').val();
 
-	
 	$('#duenosi_set-group').hide();
 	$('#duenono_set-group').hide();
 	$('#contaminada_set-group').hide();
@@ -32,6 +31,15 @@
 			}else{
 				$('#duenosi_set-group').hide();
 				$('#duenono_set-group').show();
+			};
+		});
+
+	$('#id_percibeingreso_set-0-si_no').change(function(){
+			var valor_tipo = $('#id_percibeingreso_set-0-si_no').val();
+			if (valor_tipo === '1' ) {
+				$('#fuentes_set-group').show();
+			}else{
+				$('#fuentes_set-group').hide();
 			};
 		});
 	

@@ -132,6 +132,7 @@ class Encuesta(models.Model):
     mapa_finca = ImageField(upload_to='mapas_fincas', null=True, blank=True)
     dueno = models.IntegerField(choices=CHOICE_JEFE,
                     verbose_name='¿Son dueños de la propiedad/finca?')
+    org_responsable = models.ForeignKey(OrganizacionResp)
 
     year = models.IntegerField(editable=False)
 
@@ -440,7 +441,10 @@ class DistribucionTierra(models.Model):
 
 class PercibeIngreso(models.Model):
     encuesta = models.ForeignKey(Encuesta)
-    si_no = models.IntegerField(choices=CHOICE_JEFE)
+    si_no = models.IntegerField(choices=CHOICE_JEFE, verbose_name='Opciones')
+
+    class Meta:
+        verbose_name_plural = '¿La familia percibe otros ingresos diferentes a la actividad agropecuaria?'
 
 
 CHOICE_TIPO_FUENTE = ((1,'Asalariado'),
@@ -912,6 +916,7 @@ class TotalIngreso(models.Model):
     encuesta = models.OneToOneField(Encuesta)
     total = models.FloatField(editable=False)
     total_gasto = models.FloatField(editable=False)
+    total_gasto_fuera_finca = models.FloatField(editable=False)
 
     class Meta:
         verbose_name_plural = 'Totales'
@@ -922,13 +927,14 @@ class TotalIngreso(models.Model):
     def save(self, *args, **kwargs):
         self.total = self._get_total()
         self.total_gasto = self._get_total_gasto()
+        self.total_gasto_fuera_finca = self._get_total_gasto_fuera_finca()
         #self.total_ap = self._get_total() - (OtrosIngresos.objects.filter(encuesta=self.encuesta).aggregate(t=models.Sum('total'))['t'] or 0)
         #print self.total, self.total_ap
         super(TotalIngreso, self).save(*args, **kwargs)
     
     def _get_total(self):
         params = dict(encuesta = self.encuesta)
-        totales = [AlimentosFueraFinca.objects.filter(**params).aggregate(t=models.Sum('total'))['t'], \
+        totales = [
                     Procesamiento.objects.filter(**params).aggregate(t=models.Sum('total'))['t'], \
                     Ganaderia.objects.filter(**params).aggregate(t=models.Sum('total'))['t'], \
                     CultivosHuertosFamiliares.objects.filter(**params).aggregate(t=models.Sum('total'))['t'], \
@@ -946,6 +952,14 @@ class TotalIngreso(models.Model):
                 ] 
         total_gasto = sum(filter(None, totales))
         return total_gasto
+
+    def _get_total_gasto_fuera_finca(self):
+        params = dict(encuesta = self.encuesta)
+        totales = [
+                    AlimentosFueraFinca.objects.filter(**params).aggregate(t=models.Sum('total'))['t'],
+                ] 
+        total_gasto_fuera = sum(filter(None, totales))
+        return total_gasto_fuera
 
 @receiver(post_save, sender=Encuesta)
 def create_encuesta_callback(sender, **kwargs):

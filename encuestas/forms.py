@@ -32,3 +32,14 @@ class AccesoAguaForm(forms.ModelForm):
         widgets = {
             'agua': forms.CheckboxSelectMultiple(attrs={'size':'10'})
         }
+
+CHOICE_SEXO = (
+                (1, 'Mujer'),
+                (2, 'Hombre'),
+              )
+
+class ConsultarForm(forms.Form):
+    sexo = forms.ChoiceField(choices=CHOICE_SEXO)
+    organizacion = forms.ModelChoiceField(queryset=OrganizacionResp.objects.all())
+
+
