@@ -1,5 +1,17 @@
 {% extends "base.html" %}
 
 {% block contenido %}
-	<p>Esta es una prueba</p>
+<div class="page-header">
+    <h1>filtros</h1>
+    <p>
+    <form action="." method="POST">{% csrf_token %}
+		<div class="col-md-4">
+			{{form.sexo.label}}: {{form.sexo}}
+			<div class="col-md-12">{{form.organizacion.label}}: {{form.organizacion}}</div>
+		</div>
+			<input type="submit" value="Consultar" name="consulta"/>
+	</form>
+
+    </p>
+</div>
 {% endblock contenido %}

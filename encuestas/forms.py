@@ -39,7 +39,7 @@ CHOICE_SEXO = (
               )
 
 class ConsultarForm(forms.Form):
-    sexo = forms.ChoiceField(choices=CHOICE_SEXO)
-    organizacion = forms.ModelChoiceField(queryset=OrganizacionResp.objects.all())
+    sexo = forms.ChoiceField(choices=CHOICE_SEXO, required=False)
+    organizacion = forms.ModelChoiceField(queryset=OrganizacionResp.objects.all(), required=False)
 
 
