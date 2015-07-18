@@ -1,23 +1,16 @@
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
 from .forms import ConsultarForm
-
+from .models import *
 # Create your views here.
+
 def _queryset_filtrado(request):
 	params = {}
 	if request.session['sexo']:
-		params['sexo'] = request.session['sexo']
+		params['entrevistado__sexo'] = request.session['sexo']
 
 	if request.session['organizacion']:
-		params['organizacion'] = request.session['organizacion']
-
-	unvalid_keys = []
-	for key in params:
-		if not params[key]:
-			unvalid_keys.append(key)
-
-	for key in unvalid_keys:
-		del params[key]
+		params['org_responsable'] = request.session['organizacion']
 
 	return Encuesta.objects.filter(**params)
 
@@ -51,3 +44,13 @@ def IndexView(request,template="index.html"):
 
 class MapaView(TemplateView):
     template_name = "mapa.html"
+
+def principal_dashboard(request, template='dashboard.html', departamento_id=None):
+	a = _queryset_filtrado(request)
+	ahora = a.filter(entrevistado__departamento=departamento_id)
+
+
+
+
+
+	return render(request,template,locals())

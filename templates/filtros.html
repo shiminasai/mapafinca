@@ -1,0 +1,24 @@
+<div class="filtros">
+	<ol class="breadcrumb">
+	<li>Filtros Seleccionados: </li>
+	{% if request.session.sexo %}
+        <li>
+        	<a href="#">
+                {% if request.session.sexo == "1" %}
+                Mujer
+             {% else %}
+                Hombre
+         {% endif %} 
+            </a>
+        </li>	
+	{% endif %}
+
+    {% if request.session.organizacion %}
+        <li>
+        	<a href="#">
+                {{ request.session.organizacion }}
+          	</a>
+          </li>   
+    {% endif %}
+	</ol>
+</div>
