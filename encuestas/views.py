@@ -48,6 +48,16 @@ class MapaView(TemplateView):
 def principal_dashboard(request, template='dashboard.html', departamento_id=None):
 	a = _queryset_filtrado(request)
 	ahora = a.filter(entrevistado__departamento=departamento_id)
+	depart = Departamento.objects.get(id=departamento_id)
+	geolat = []
+	geolong = []
+	for obj in depart.municipio_set.all():
+		geolat.append(obj.latitud)
+		geolong.append(obj.longitud)
+	
+	latitud = geolat[-2]
+	longitud = geolong[-2]
+
 
 
 

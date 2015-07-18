@@ -1,7 +1,59 @@
 {% extends "base.html" %}
 
+{% block extra_js %}
+<script src="https://maps.googleapis.com/maps/api/js"></script>
+<script>
+  function initialize() {
+  	var styles = [
+  {
+    featureType: 'road',
+    elementType: 'geometry',
+    stylers: [
+      { color: '#000000' },
+      { weight: 0.2 }
+    ]
+  }
+];
+	var styledMap = new google.maps.StyledMapType(styles,{name: "Styled Map"});
+
+  	var mapCanvas = document.getElementById('map-canvas');
+  	var mapOptions = {
+      center: new google.maps.LatLng({{latitud}}, {{longitud}}),
+      zoom: 9,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    }
+    var map = new google.maps.Map(mapCanvas, mapOptions);
+    map.mapTypes.set('map_style', styledMap);
+    map.setMapTypeId('map_style');
+  }
+  google.maps.event.addDomListener(window, 'load', initialize);
+</script>
+{% endblock extra_js %}
+
 {% block contenido %}
+ <style>
+      #map-canvas {
+        width: 500px;
+        height: 400px;
+        background-color: #CCC;
+      }
+    </style>
 	{% include "filtros.html" %}
-	puta madre aca va todo le puto contenido
-	{{ahora}}
+	{# mapa #}
+	<div class="row">
+		<h1>Mapa</h1>
+		<div id="map-canvas"></div>
+	</div>
+	{# indicadores #}
+	<div class="row">
+		<h1>indicadores</h1>
+	</div>
+	{# fichas familia #}
+	<div class="row">
+		<h1>Familias</h1>
+	</div>
+	{# clima #}
+	<div class="row">
+		<h1>Clima</h1>
+	</div>
 {% endblock contenido %}
