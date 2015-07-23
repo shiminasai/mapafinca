@@ -147,6 +147,7 @@ class InlineAlimentosFueraFinca(admin.TabularInline):
     extra = 1
 
 class AdminEncuesta(admin.ModelAdmin):
+    form = ProductorAdminForm
     fields = (('entrevistado','fecha'),'mapa_finca', 'org_responsable','dueno',)
     def queryset(self, request):
         if request.user.is_superuser:

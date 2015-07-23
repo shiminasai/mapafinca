@@ -47,7 +47,7 @@ class MapaView(TemplateView):
 
 def principal_dashboard(request, template='dashboard.html', departamento_id=None):
 	a = _queryset_filtrado(request)
-	ahora = a.filter(entrevistado__departamento=departamento_id)
+	ahora = a.filter(entrevistado__departamento=departamento_id).distinct('entrevistado__id')
 	depart = Departamento.objects.get(id=departamento_id)
 	geolat = []
 	geolong = []
@@ -58,9 +58,9 @@ def principal_dashboard(request, template='dashboard.html', departamento_id=None
 	latitud = geolat[-2]
 	longitud = geolong[-2]
 
-
-
-
-
-
 	return render(request,template,locals())
+
+def detalle_finca(request, template='detalle_finca.html', entrevistado_id=None):
+	detalle = Encuesta.objects.filter(entrevistado_id=entrevistado_id).order_by('year')
+
+	return render(request, template, locals())

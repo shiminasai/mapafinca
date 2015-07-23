@@ -27,6 +27,7 @@ urlpatterns = [
 	url(r'', include(encuestas_urls)),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^chaining/', include('smart_selects.urls')),
+    url(r'^selectable/', include('selectable.urls')),
 ]
 
 urlpatterns += staticfiles_urlpatterns()

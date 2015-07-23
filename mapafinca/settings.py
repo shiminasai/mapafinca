@@ -16,6 +16,7 @@ INSTALLED_APPS = (
     'encuestas',
     'smart_selects',
     'multiselectfield',
+    'selectable',
 )
 
 MIDDLEWARE_CLASSES = (

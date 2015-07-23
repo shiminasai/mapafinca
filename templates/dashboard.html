@@ -49,7 +49,12 @@
 	</div>
 	{# fichas familia #}
 	<div class="row">
-		<h1>Familias</h1>
+		<h1>Miembros familiares</h1>
+    {% for obj in ahora %}
+      <ul>
+        <li>{{obj.entrevistado}} || {{obj.entrevistado.finca}} | <a class='btn' href="{% url 'detalle-finca' obj.entrevistado.id %}">Detalle</a></li>
+      </ul>
+    {% endfor %}
 	</div>
 	{# clima #}
 	<div class="row">
