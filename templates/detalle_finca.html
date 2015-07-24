@@ -1,6 +1,51 @@
 {% extends "base.html" %}
+{% load humanize %}
+{% block extra_js %}
+	<script>
+	$('#myTabs a').click(function (e) {
+	  e.preventDefault()
+	  $(this).tab('show')
+	})
+	</script>
+{% endblock extra_js %}
 
 {% block contenido %}
-	<p>Aca van los detalles por año :P</p>
-	{{detalle}}
+	{% for obj in detalle|slice:":1" %}
+		<h2>Informacion del entrevistado</h2>
+		nombre entrevistado: {{obj.entrevistado}} <br>
+		sexo: {{obj.entrevistado.get_sexo_display}} <br>
+		edad: {{obj.entrevistado.edad}} <br>
+		cedula: {{obj.entrevistado.cedula}} <br>
+		es jefe de familia: {{obj.entrevistado.get_jefe_display}} <br>
+		ocupacion : {{obj.entrevistado.ocupacion}}
+		<h2>Informacion de la finca</h2>
+		departamento: {{obj.entrevistado.departamento}} <br>
+		municipio: {{obj.entrevistado.municipio}} <br>
+		comunidad: {{obj.entrevistado.comunidad}} <br>
+		nombre de la finca: {{obj.entrevistado.finca}} <br>
+	{% endfor %}
+
+	<h1>Datos por años</h1>
+	<div>
+
+  <!-- Nav tabs -->
+  
+  <ul class="nav nav-tabs" role="tablist">
+  {% for obj in detalle %}
+    <li role="presentation" {% if forloop.counter == 1 %}class="active"{% endif %} ><a href="#home{{forloop.counter}}" aria-controls="home{{forloop.counter}}" role="tab" data-toggle="tab">{{obj.year}}</a></li>
+  {% endfor %}
+  </ul>
+
+  <!-- Tab panes -->
+  <div class="tab-content">
+  {% for obj in detalle %}
+  	<div role="tabpanel" class="tab-pane {% if forloop.counter == 1 %}active {%else %} fade{% endif %}" id="home{{forloop.counter}}">
+  	total:{{obj.totalingreso.total|intcomma}} <br>
+  	total gasto: {{obj.totalingreso.total_gasto|intcomma}} <br>
+  	total gasto fuera de la finca: {{obj.totalingreso.total_gasto_fuera_finca|intcomma}} <br>
+  	</div>
+  {% endfor %}
+  </div>
+
+</div>
 {% endblock contenido %}
