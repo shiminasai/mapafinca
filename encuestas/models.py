@@ -165,7 +165,7 @@ class DuenoNo(models.Model):
     no = models.IntegerField(choices=CHOICE_DUENO_NO)
 
     def __unicode__(self):
-        return u'%s' % (self.get_si_display())
+        return u'%s' % (self.get_no_display())
 
     class Meta:
         verbose_name_plural = '6.2_En el caso que diga NO, especifique la situación'
