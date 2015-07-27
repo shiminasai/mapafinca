@@ -64,3 +64,8 @@ def detalle_finca(request, template='detalle_finca.html', entrevistado_id=None):
 	detalle = Encuesta.objects.filter(entrevistado_id=entrevistado_id).order_by('year')
 
 	return render(request, template, locals())
+
+def indicadores(request, template='indicadores.html'):
+	detalle = Encuesta.objects.filter(entrevistado_id=entrevistado_id).order_by('year')
+
+	return render(request, template, locals())
