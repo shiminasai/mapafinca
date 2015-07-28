@@ -47,6 +47,7 @@ header
 	img
 		margin-left: -15px !important;		
 .footer
+.pie-page
 	background-color grisemioscuro
 	font-weight bold
 	font-size 0.9em
@@ -137,5 +138,118 @@ header
 			color blanco
 .breadcrumb>li+li:before
 	content: ">";
+
+/***********tablero***********/
 	
+.mapa-general
+	border 2px solid #d1d1d1
+	background-color blanco
+	padding 0px
+.btn-tgeneral
+	padding 13px
+	background-color verdetierno
+	redondeado 0px
+	border 0px
+	color blanco
+	font-weight bold
+	margin 30px auto
+	width 85%
+	sombras 5px 5px 0px -2px #88b84f
+	&:hover
+		background-color naranja
+		sombras 5px 5px 0px -2px #D46325
+		color blanco
+		redondeado 0px
+		font-weight bold
+#grafico1
+#grafico2
+#grafico3
+#grafico4
+#grafico5
+	background-color blanco
+	border 2px solid #d1d1d1
 	
+#grafico3
+#grafico4
+	margin-top 20px
+.highcharts-title
+	font-size 1em !important
+
+.fila2
+	margin-top 30px
+	margin-bottom 70px
+.tabla-productor
+	background-color blanco
+	border 2px solid #d1d1d1
+	padding 0px
+	font-size 0.9em
+	th
+		color naranja
+		text-align center
+		border-right 2px solid #d1d1d1
+		&:last-child
+			border-right 0px
+	tr
+		border-bottom 2px solid #d1d1d1
+		text-align center
+		vertical-align middle
+		td
+			border-right 2px solid #d1d1d1
+			&:last-child
+				border-right 0px
+			&:first-child
+				color #547287
+.sexo
+	color verdetierno
+	.fa-female:before
+	.fa-male:before
+		font-size 1.8em
+		margin-right 10px
+	span
+		font-weight 700			
+
+.table>tbody>tr>td
+.table>tbody>tr>th
+.table>tfoot>tr>td
+.table>tfoot>tr>th
+.table>thead>tr>td
+.table>thead>tr>th
+	vertical-align middle !important
+.btn-tabla
+	width 90%
+	background-color naranja
+	sombras 5px 5px 0px -2px #D46325
+	color blanco
+	redondeado 0px
+	font-weight bold
+	&:hover
+		color blanco
+		font-weight bold
+		background-color verdetierno
+		sombras 5px 5px 0px -2px #88b84f
+
+
+
+
+
+
+
+
+@media (min-width: 1200px)
+	.contenido-general
+		width 95%
+		margin 25px auto
+	.mapa-general
+	.tabla-productor
+		width 45%
+		margin-right 4%
+		margin-left 1%
+	#grafico1
+	#grafico2
+	#grafico3
+	#grafico4
+		width 48%
+		margin-right 2%
+	#grafico5
+		width 49%
+		margin-right 1%
