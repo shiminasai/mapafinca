@@ -42,6 +42,10 @@ def IndexView(request,template="index.html"):
 
 	return render(request, template, locals())
 
+class FirstMapaView(TemplateView):
+    template_name = "primer_mapa.html"
+
+
 class MapaView(TemplateView):
     template_name = "mapa.html"
 
@@ -49,6 +53,7 @@ def principal_dashboard(request, template='dashboard.html', departamento_id=None
 	a = _queryset_filtrado(request)
 	ahora = a.filter(entrevistado__departamento=departamento_id).distinct('entrevistado__id')
 	depart = Departamento.objects.get(id=departamento_id)
+	request.session['departamento'] = depart
 	geolat = []
 	geolong = []
 	for obj in depart.municipio_set.all():
@@ -66,6 +71,10 @@ def detalle_finca(request, template='detalle_finca.html', entrevistado_id=None):
 	return render(request, template, locals())
 
 def indicadores(request, template='indicadores.html'):
-	detalle = Encuesta.objects.filter(entrevistado_id=entrevistado_id).order_by('year')
+	a = _queryset_filtrado(request)
+	indicadores = a.filter(entrevistado__departamento=request.session['departamento']).distinct('entrevistado__id')
+	porcentaje_hombres = '80%'
+	porcentaje_mujeres = '20%'
+	
 
 	return render(request, template, locals())

@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block contenido %}
+ {% include "filtros.html" %}
+	
+	familia: {{indicadores|length}} <br>
+	hombres: {{porcentaje_hombres}} <br>
+	mujeres: {{porcentaje_mujeres}} <br>
+
+
+{% endblock contenido %}
