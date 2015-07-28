@@ -1,26 +1,45 @@
 {% extends "base.html" %}
+{% block extra_js %}
 
+	<script src="/static/js/jquery.bxslider.js"></script>
+	<!-- bxSlider CSS file -->
+	<link href="/static/css/jquery.bxslider.css" rel="stylesheet" />
+
+	<script type="text/javascript">
+		$(document).ready(function(){
+		  $('.bxslider').bxSlider({
+		  	minSlides: 2,
+		  	maxSlides: 3,
+		  	slideWidth: 200,
+  			slideMargin: 15,
+		  });
+		});
+	</script>
+
+{% endblock extra_js %}
 {% block contenido %}
-<div class="row filtro-index">
-    <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-lg-offset-3 styled-select ">
-        <div class="row">
-            <form action="." method="POST">{% csrf_token %}
-				<div class="col-xs-6 col-sm-6 col-md-4 col-lg-4">
-					{{form.sexo}}
-				</div>
-				<div class="col-xs-6 col-sm-6 col-md-4 col-lg-4">
-					{{form.organizacion}}
-				</div>
-
-				<div class="col-xs-6 col-sm-6 col-md-4 col-lg-4">
-					<input class="btn btn-filtro" type="submit" value="Consultar" name="consulta"/>
-				</div>
-
-			</form>
+<div class="row contenedor-index">
+{% include "formulario.html" %}
+	<div class="page-contenido">
+		<div class="row eliminar-mar">
+			<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-lg-offset-3 info-index">
+				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Praesentium est numquam, totam magnam exercitationem veniam veritatis ratione alias odit, neque dignissimos ad porro rerum, corporis deserunt natus ipsum dolor possimus?. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Obcaecati ducimus earum atque quaerat, sit aut modi, culpa quos repudiandae ut eligendi aliquid sed deleniti provident odit ullam dolore mollitia officia.</p>
+				<br>
+				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Est nihil optio eius vitae nesciunt reprehenderit quas eum, veniam amet ea deleniti ipsa quia accusamus fugiat aliquam fuga, sunt recusandae placeat.</p>
+				<hr>
+			</div>
 		</div>
-    </div>  
-</div>
-<div class="page-contenido">
+	</div>
+
+	<div class="col-xs-12 col-sm-12 col-md-8 col-lg-8 col-lg-offset-2 slider">
+		<ul class="bxslider">
+		  <li><img class="center-block" src=" http://placehold.it/200x100" /></li>
+		  <li><img class="center-block" src="http://placehold.it/100x100" /></li>
+		  <li><img class="center-block" src="http://placehold.it/200x100" /></li>
+		  <li><img class="center-block" src="http://placehold.it/200x100" /></li>
+		</ul>
+	</div>
+		
 
 </div>
 {% endblock contenido %}

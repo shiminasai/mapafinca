@@ -1,0 +1,19 @@
+	<div class="row filtro-index">
+	    <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-lg-offset-3 styled-select ">
+	        <div class="row">
+	            <form action="." method="POST">{% csrf_token %}
+					<div class="col-xs-6 col-sm-6 col-md-4 col-lg-4">
+						{{form.sexo}}
+					</div>
+					<div class="col-xs-6 col-sm-6 col-md-4 col-lg-4">
+						{{form.organizacion}}
+					</div>
+
+					<div class="col-xs-6 col-sm-6 col-md-4 col-lg-4">
+						<input class="btn btn-filtro center-block" type="submit" value="Consultar" name="consulta"/>
+					</div>
+
+				</form>
+			</div>
+	    </div>  
+	</div>
