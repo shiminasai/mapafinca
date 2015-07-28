@@ -20,5 +20,13 @@
           	</a>
           </li>   
     {% endif %}
+
+  {% if request.session.departamento %}
+        <li>
+          <a href="#">
+                {{ request.session.departamento }}
+            </a>
+          </li>   
+    {% endif %}
 	</ol>
 </div>
