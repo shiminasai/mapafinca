@@ -1,0 +1,74 @@
+/*variables*/
+
+verdetierno = #93c55e
+grisemioscuro = #564843
+blanco = #fff
+negro = #333
+gris = #ccc8c7
+naranja = #ed6d16
+
+redondeado()
+	-webkit-border-radius arguments
+	-moz-border-radius arguments
+	-o-border-radius arguments
+	border-radius arguments
+  
+sombras()
+	-webkit-box-shadow arguments
+	-moz-box-shadow arguments
+	-o-border-radius arguments
+	box-shadow arguments
+	
+body
+	margin 0 auto
+	font-family 'Open Sans', sans-serif
+	font-size 16px
+header
+	background-color verdetierno
+	height 62px
+	p
+		margin 20px 0px
+		padding 0px 30px
+	.eli-pad
+		padding-left 0px
+		padding-right 0px
+		p
+			font-weight bold
+			color blanco
+.img-logo 
+	img
+		margin-left: -15px !important;		
+.footer
+	background-color grisemioscuro
+	font-weight bold
+	font-size 0.9em
+.simas
+	text-align right
+	p
+		color white
+	a
+		color verdetierno
+.filtro-index
+	background-color grisemioscuro
+	padding 30px
+	
+#id_sexo
+#id_organizacion
+	background gris
+	width 100%
+	padding 5px
+	font-size 16px
+	line-height 1
+	border-radius 0
+	height 34px
+	-webkit-appearance none
+	background gris url("https://cdn3.iconfinder.com/data/icons/faticons/32/arrow-down-01-16.png") no-repeat right center
+	background-position 95% 50%
+.btn-filtro
+	background-color naranja
+	redondeado 0px
+	color blanco
+	font-weight bold
+	padding 6px 40px
+	&:hover
+		color blanco	

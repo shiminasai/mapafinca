@@ -1,17 +1,26 @@
 {% extends "base.html" %}
 
 {% block contenido %}
-<div class="page-header">
-    <h1>filtros</h1>
-    <p>
-    <form action="." method="POST">{% csrf_token %}
-		<div class="col-md-4">
-			{{form.sexo.label}}: {{form.sexo}}
-			<div class="col-md-12">{{form.organizacion.label}}: {{form.organizacion}}</div>
-		</div>
-			<input type="submit" value="Consultar" name="consulta"/>
-	</form>
+<div class="row filtro-index">
+    <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-lg-offset-3 styled-select ">
+        <div class="row">
+            <form action="." method="POST">{% csrf_token %}
+				<div class="col-xs-6 col-sm-6 col-md-4 col-lg-4">
+					{{form.sexo}}
+				</div>
+				<div class="col-xs-6 col-sm-6 col-md-4 col-lg-4">
+					{{form.organizacion}}
+				</div>
 
-    </p>
+				<div class="col-xs-6 col-sm-6 col-md-4 col-lg-4">
+					<input class="btn btn-filtro" type="submit" value="Consultar" name="consulta"/>
+				</div>
+
+			</form>
+		</div>
+    </div>  
+</div>
+<div class="page-contenido">
+
 </div>
 {% endblock contenido %}
