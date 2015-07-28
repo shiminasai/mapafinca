@@ -3,10 +3,10 @@ body {
   margin: 0 auto;
   font-family: 'Open Sans', sans-serif;
   font-size: 16px;
+  background-color: #f7f3f0;
 }
 header {
   background-color: #93c55e;
-  height: 62px;
 }
 header p {
   margin: 20px 0px;
@@ -19,6 +19,7 @@ header .eli-pad {
 header .eli-pad p {
   font-weight: bold;
   color: #fff;
+  font-size: 1em;
 }
 .img-logo img {
   margin-left: -15px !important;
@@ -27,6 +28,9 @@ header .eli-pad p {
   background-color: #564843;
   font-weight: bold;
   font-size: 0.9em;
+}
+.text-muted {
+  color: #a6a6a6;
 }
 .simas {
   text-align: right;
@@ -37,12 +41,25 @@ header .eli-pad p {
 .simas a {
   color: #93c55e;
 }
+/*****filtro index******/
 .filtro-index {
-  background-color: #564843;
-  padding: 30px;
+  background: linear-gradient(rgba(58,47,44,0.8), rgba(58,47,44,0.8)), url("/static/img/textura-01.png");
+  padding: 10px;
 }
-#id_sexo,
-#id_organizacion {
+.styled-select {
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -o-border-radius: 5px;
+  border-radius: 5px;
+  border: 2px solid #796f6b;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+#id_sexo {
+  margin-left: 10px;
+}
+#id_organizacion,
+#id_sexo {
   background: #ccc8c7;
   width: 100%;
   padding: 5px;
@@ -64,6 +81,55 @@ header .eli-pad p {
   font-weight: bold;
   padding: 6px 40px;
 }
-.btn-filtro:hover {
+.btn-filtro:hover,
+.btn-filtro:focus {
   color: #fff;
+}
+.eliminar-mar {
+  margin: 0px;
+}
+.contenedor-index {
+  background: linear-gradient(rgba(0,104,55,0.5), rgba(0,104,55,0.5)), url("/static/img/fondo.JPG");
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+.contenedor-index .filtro-index {
+  margin: 0px;
+}
+.info-index {
+  margin-top: 180px;
+  margin-bottom: 180px;
+  padding: 25px;
+  text-align: center;
+  background-color: rgba(117,197,94,0.5);
+  color: #fff;
+  font-size: 0.9em;
+}
+.info-index hr {
+  width: 50%;
+}
+.slider {
+  margin-bottom: 10px;
+}
+/*.bx-prev
+	margin-left -7%
+.bx-next
+	margin-right -6%*/
+/*********mapas************/
+.filtros {
+  background-color: #453a36;
+  padding: 15px;
+}
+.filtros .breadcrumb {
+  background-color: transparent;
+  margin-bottom: 0px;
+}
+.filtros .breadcrumb li {
+  color: #fff;
+}
+.breadcrumb>li+li:before {
+  content: ">";
 }
