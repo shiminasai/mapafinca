@@ -6,6 +6,7 @@ blanco = #fff
 negro = #333
 gris = #ccc8c7
 naranja = #ed6d16
+bordergris= 2px solid #d1d1d1
 
 redondeado()
 	-webkit-border-radius arguments
@@ -47,6 +48,7 @@ header
 	img
 		margin-left: -15px !important;		
 .footer
+.pie-page
 	background-color grisemioscuro
 	font-weight bold
 	font-size 0.9em
@@ -61,10 +63,10 @@ header
 		color verdetierno
 /*****filtro index******/
 .filtro-index
-	background linear-gradient(rgba(58, 47, 44, 0.8), rgba(58, 47, 44, 0.8)
+	background linear-gradient(rgba(58, 47, 44, 0.5), rgba(58, 47, 44, 0.5)
     ),
 
-    url('/static/img/textura-01.png')
+    url('/static/img/textura.png')
 	padding 10px
 	
 .styled-select
@@ -130,6 +132,7 @@ header
 .filtros
 	background-color #453a36
 	padding 15px
+	font-size 0.8em
 	.breadcrumb
 		background-color transparent
 		margin-bottom 0px
@@ -137,5 +140,301 @@ header
 			color blanco
 .breadcrumb>li+li:before
 	content: ">";
+
+/***********tablero***********/
 	
+.mapa-general
+	border bordergris
+	background-color blanco
+	padding 0px
+.btn-tgeneral
+	padding 13px
+	background-color verdetierno
+	redondeado 0px
+	border 0px
+	color blanco
+	font-weight bold
+	margin 30px auto
+	width 85%
+	sombras 5px 5px 0px -2px #88b84f
+	&:hover
+		background-color naranja
+		sombras 5px 5px 0px -2px #D46325
+		color blanco
+		redondeado 0px
+		font-weight bold
+#grafico1
+#grafico2
+#grafico3
+#grafico4
+#grafico5
+	background-color blanco
+	border bordergris
 	
+#grafico3
+#grafico4
+	margin-top 20px
+.highcharts-title
+	font-size 1em !important
+.fila1
+.fila2
+	margin-top 30px
+	margin-bottom 70px
+.tabla-productor
+	background-color blanco
+	border bordergris
+	padding 0px
+	font-size 0.9em
+	th
+		color naranja
+		text-align center
+		border-right bordergris
+		&:last-child
+			border-right 0px
+	tr
+		border-bottom bordergris
+		text-align center
+		vertical-align middle
+		td
+			border-right bordergris
+			&:last-child
+				border-right 0px
+			&:first-child
+				color #547287
+.sexo
+	color verdetierno
+	.fa-female:before
+	.fa-male:before
+		font-size 1.8em
+		margin-right 10px
+	span
+		font-weight 700			
+
+.tabla-productor.table>tbody>tr>td
+.tabla-productor.table>tbody>tr>th
+.tabla-productor.table>tfoot>tr>td
+.tabla-productor.table>tfoot>tr>th
+.tabla-productor.table>thead>tr>td
+.tabla-productor.table>thead>tr>th
+	vertical-align middle !important
+.btn-tabla
+	width 90%
+	background-color naranja
+	sombras 5px 5px 0px -2px #D46325
+	color blanco
+	redondeado 0px
+	font-weight bold
+	&:hover
+		color blanco
+		font-weight bold
+		background-color verdetierno
+		sombras 5px 5px 0px -2px #88b84f
+
+/************tablero de indicadores*******************/
+.ind-tablero
+	padding-top 5px
+	padding-bottom 5px
+
+.ind-familia
+.ind-org
+.ind-sexo
+	background-color #4b3f3c
+	padding-top 15px
+	padding-bottom 15px
+	color blanco
+	font-weight bold
+	vertical-align middle
+.ind-familia
+.ind-org
+	width 32.333333%
+	margin-right 1%	
+
+.numero
+	font-size 2em
+	color naranja
+	text-align right
+	
+.ind-text
+	margin-top 15px
+	font-size 0.8em
+
+.linea
+	border-right 2px solid #4E2E13
+	
+/*.contenido-indicadores
+	.highcharts-title
+		display none*/
+	
+.grafico-indicador
+	background-color blanco
+	border bordergris
+	padding-right 0
+	padding-left 0
+	margin-bottom 30px
+	
+.titulo-grafico
+	font-size 0.7em
+	color naranja
+	border-bottom bordergris
+	padding 10px
+	margin-bottom 20px
+.content-grafico
+	h5
+		text-align right
+		margin-top 0px
+		font-weight bold
+		
+	h1
+		margin-bottom 5px
+		color naranja
+		font-weight bold
+		text-align right
+		padding-right 40px
+.cuadro
+	background-color verdetierno
+	color blanco
+	font-weight bold
+	padding 5px
+	text-align center
+	margin-left 14px
+.info-grafico2
+	border-right bordergris
+	padding-left 0
+	padding-right 0
+	ul
+		padding-right 13px
+		padding-left 29px
+		li
+			list-style none
+			font-size 1em
+			padding-bottom 15px
+			padding-top 15px
+			border-bottom bordergris
+			&:last-child
+				border-bottom 0px
+		
+			h2
+			h3
+			h5
+				color naranja
+				text-align center
+			div
+				font-size 0.8em
+				font-weight bold
+				padding-top 20px
+				text-align right
+#ind-grafico3
+	width 98%
+	margin 0 auto
+.alinear
+	width 48%
+	margin-left 1%
+	margin-right 1%
+.ind-fila4
+	margin-bottom 100px
+.ind-alimento
+	padding 98px 20px
+	img
+		padding-top 50px
+
+.ind-numero
+	color verdetierno
+	text-align center
+	font-size 3em
+	font-weight bold
+
+.titulo-contenido
+	color verdetierno
+	padding-top 20px
+
+.tabla-ingreso
+	vertical-align middle
+	margin-bottom 0
+	tr
+		&:nth-child(2n)
+			background-color #ebebeb
+		&:last-child
+			font-weight bold
+		td
+			text-align center
+			&:first-child
+				text-align right
+				border-right bordergris
+				background-color blanco
+		th
+			text-align center
+
+			&:first-child
+				color naranja
+				border-right bordergris
+				background-color blanco
+				text-align right
+
+.tabla-ingreso.table>tbody>tr>td
+	border-top 0px !important
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+@media (min-width: 1200px)
+	.contenido-general
+	.contenido-indicadores
+		width 95%
+		margin 25px auto
+	.mapa-general
+	.tabla-productor
+		width 45%
+		margin-right 4%
+		margin-left 1%
+	#grafico1
+	#grafico2
+	#grafico3
+	#grafico4
+		width 48%
+		margin-right 2%
+	#grafico5
+		width 49%
+		margin-right 1%
