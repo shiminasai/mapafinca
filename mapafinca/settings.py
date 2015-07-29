@@ -15,6 +15,7 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'lugar',
     'encuestas',
+    'clima',
     'smart_selects',
     'multiselectfield',
     'selectable',
