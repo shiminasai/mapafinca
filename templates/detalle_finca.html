@@ -1,51 +1,426 @@
 {% extends "base.html" %}
 {% load humanize %}
 {% block extra_js %}
-	<script>
+<script src="http://code.highcharts.com/highcharts.js"></script>
+
+<script>
 	$('#myTabs a').click(function (e) {
 	  e.preventDefault()
 	  $(this).tab('show')
 	})
-	</script>
+/****graficos de prueba dejar mismo id*****/
+$(function () {
+    $('#ficha-grafico1').highcharts({
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Monthly Average Rainfall'
+        },
+    
+        xAxis: {
+            categories: [
+                'Jan',
+                'Feb',
+                'Mar',
+                'Apr',
+                'May'
+            ],
+            crosshair: true
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: 'Rainfall (mm)'
+            }
+        },
+        tooltip: {
+            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
+            footerFormat: '</table>',
+            shared: true,
+            useHTML: true
+        },
+        plotOptions: {
+            column: {
+                pointPadding: 0.2,
+                borderWidth: 0
+            }
+        },
+        series: [{
+            name: 'Tokyo',
+            data: [49.9, 71.5, 106.4, 129.2, 120.0]
+
+        }, {
+            name: 'London',
+            data: [48.9, 38.8, 39.3, 41.4, 47.0]
+
+        }, {
+            name: 'Berlin',
+            data: [42.4, 33.2, 34.5, 39.7, 52.6]
+
+        }]
+    });
+});
+
+$(function () {
+
+    $(document).ready(function () {
+
+        // Build the chart
+        $('#ficha-grafico2').highcharts({
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false,
+                type: 'pie'
+            },
+            title: {
+                text: 'Browser market shares January, 2015 to May, 2015'
+            },
+            tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: false
+                    },
+                    showInLegend: true
+                }
+            },
+            series: [{
+                name: "Brands",
+                colorByPoint: true,
+                data: [{
+                    name: "Microsoft Internet Explorer",
+                    y: 56.33
+                }, {
+                    name: "Chrome",
+                    y: 24.03,
+                    sliced: true,
+                    selected: true
+                }, {
+                    name: "Firefox",
+                    y: 10.38
+                }, {
+                    name: "Safari",
+                    y: 4.77
+                }, {
+                    name: "Opera",
+                    y: 0.91
+                }, {
+                    name: "Proprietary or Undetectable",
+                    y: 0.2
+                }]
+            }]
+        });
+    });
+});
+
+$(function () {
+    $('#ficha-grafico3').highcharts({
+        chart: {
+            type: 'line'
+        },
+
+        xAxis: {
+            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        },
+        yAxis: {
+            title: {
+                text: 'Temperature (°C)'
+            }
+        },
+        plotOptions: {
+            line: {
+                dataLabels: {
+                    enabled: true
+                },
+                enableMouseTracking: false
+            }
+        },
+        series: [{
+            name: 'Tokyo',
+            data: [7.0, 6.9, 9.5, 14.5, 18.4, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6]
+        }, {
+            name: 'London',
+            data: [3.9, 4.2, 5.7, 8.5, 11.9, 15.2, 17.0, 16.6, 14.2, 10.3, 6.6, 4.8]
+        }]
+    });
+});
+
+
+$(function () {
+    $('#ficha-grafico4').highcharts({
+        chart: {
+            type: 'line'
+        },
+
+        xAxis: {
+            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        },
+        yAxis: {
+            title: {
+                text: 'Temperature (°C)'
+            }
+        },
+        plotOptions: {
+            line: {
+                dataLabels: {
+                    enabled: true
+                },
+                enableMouseTracking: false
+            }
+        },
+        series: [{
+            name: 'Tokyo',
+            data: [7.0, 6.9, 9.5, 14.5, 18.4, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6]
+        }, {
+            name: 'London',
+            data: [3.9, 4.2, 5.7, 8.5, 11.9, 15.2, 17.0, 16.6, 14.2, 10.3, 6.6, 4.8]
+        }]
+    });
+});
+
+</script>
 {% endblock extra_js %}
 
 {% block contenido %}
+ <style>
+      #map-canvas {
+        width: 100%;
+        height: 450px;
+        margin: 0 auto;
+        background-color: #CCC;
+      }
+</style>
+<div class="row filtros">
+    <ol class="breadcrumb">
+        <li>SELECCIÓN DE PAÍS</li>
+        <li>SELECCIÓN DE DEPARTAMENTO</li>
+        <li>INDICADORES POR DEPARTAMENTO</li>
+        <li>DETALLE DE FINCA</li>
+
+    </ol>
+</div>
+
+<div class="contenido-detallefinca">
+	<div class="row list-anos">
+		<div class="col-xs-12 col-sm-12 col-md-2 col-lg-2 titulo-anos">
+			<h5>SELECCIONAR AÑO:</h5>
+		</div>
+		<div class="col-xs-12 col-sm-12 col-md-10 col-lg-10 botones-anos">
+			<ul class="nav nav-tabs row" role="detalle">
+			  {% for obj in detalle %}
+			 	<li class="col-xs-12 col-sm-12 col-md-2 col-lg-2  {% if forloop.counter == 1 %}active{% endif %} " role="presentation">
+			 		<a class="btn btn-anos" href="#home{{forloop.counter}}" aria-controls="home{{forloop.counter}}" role="tab" data-toggle="tab">{{obj.year}}</a>
+			 	</li>
+			  {% endfor %}
+
+			</ul>
+
+		</div>
+	</div>
+<!--informacion privada del productor y la finca >> inicio-->
+	<div class="row info-admin">
 	{% for obj in detalle|slice:":1" %}
-		<h2>Informacion del entrevistado</h2>
-		nombre entrevistado: {{obj.entrevistado}} <br>
-		sexo: {{obj.entrevistado.get_sexo_display}} <br>
-		edad: {{obj.entrevistado.edad}} <br>
-		cedula: {{obj.entrevistado.cedula}} <br>
-		es jefe de familia: {{obj.entrevistado.get_jefe_display}} <br>
-		ocupacion : {{obj.entrevistado.ocupacion}}
-		<h2>Informacion de la finca</h2>
-		departamento: {{obj.entrevistado.departamento}} <br>
-		municipio: {{obj.entrevistado.municipio}} <br>
-		comunidad: {{obj.entrevistado.comunidad}} <br>
-		nombre de la finca: {{obj.entrevistado.finca}} <br>
+		<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 mapa-finca">
+			<div id="mapa-canvas" style="height:608px;"></div>
+		</div>
+		<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 finca-datos">
+			<div class="titulo-info">
+				FICHA TECNICA
+			</div>
+			<div class="row ficha-contenido">
+			
+				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+					<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+						<h5>Fecha</h5>
+						<p class="dato-productor">
+							12/05/2015- no esta
+						</p>
+					</div>
+				</div>
+				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+					<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+						<h5>Nombre del Encuestador</h5>
+						<p class="dato-productor">
+							Carlos Rocha -no esta
+						</p>
+					</div>
+					<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+						<h5>Nombre Organización Responsable</h5>
+						<p class="dato-productor">
+							SIMAS -no esta
+						</p>
+					</div>
+				</div>
+
+				
+			</div>
+			
+		</div>
+		<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 finca-datos">
+			<div class="titulo-info">
+				INFORMACIÓN DEL ENTREVISTADO
+			</div>
+			<div class="row ficha-contenido">
+			
+				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+					<div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
+						<h5>Nombre del Productor</h5>
+						<p class="dato-productor">
+							{{obj.entrevistado}}
+						</p>
+					</div>
+					<div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+						<h5>Sexo</h5>
+						<p class="dato-productor">
+							{{obj.entrevistado.get_sexo_display}} 
+						</p>
+					</div>
+				</div>
+				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+					<div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
+						<h5>Número de Cedula</h5>
+						<p class="dato-productor">
+							{{obj.entrevistado.cedula}}
+						</p>
+					</div>
+					<div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+						<h5>Jefe de Hogar</h5>
+						<p class="dato-productor">
+							{{obj.entrevistado.get_jefe_display}}
+						</p>
+					</div>
+				</div>
+				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+					<div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
+						<h5>Ocupación</h5>
+						<p class="dato-productor">
+							{{obj.entrevistado.ocupacion}}
+						</p>
+					</div>
+					<div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+						<h5>Edad</h5>
+						<p class="dato-productor">
+							{{obj.entrevistado.edad}} Años
+						</p>
+					</div>
+				</div>
+
+				
+			</div>
+			
+		</div>
+		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 finca-datos">
+			<div class="titulo-info">
+				INFORMACIÓN DE LA FINCA
+			</div>
+			<div class="row ficha-contenido">
+			
+				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+					<div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">
+						<h5>Departamento</h5>
+						<p class="dato-productor">
+							{{obj.entrevistado.departamento}} 
+						</p>
+					</div>
+					<div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">
+						<h5>Municipio</h5>
+						<p class="dato-productor">
+							{{obj.entrevistado.municipio}}
+						</p>
+					</div>
+					<div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">
+						<h5>Comunidad</h5>
+						<p class="dato-productor">
+							{{obj.entrevistado.comunidad}}
+						</p>
+					</div>
+
+					<div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">
+						<h5>Microcuenca</h5>
+						<p class="dato-productor">
+							No-no esta
+						</p>
+					</div>
+				</div>
+
+
+				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+						<h5>Nombre de la finca</h5>
+						<p class="dato-productor">
+							{{obj.entrevistado.finca}}
+						</p>
+					</div>
+				</div>
+
+
+				
+			</div>
+			
+		</div>
 	{% endfor %}
+	</div>
+<!--informacion privada del productor y la finca >> final-->
 
-	<h1>Datos por años</h1>
-	<div>
+	<div class="row info-publica">
+		<div class="tab-content">
+		  {% for obj in detalle %}
+		  	<div role="tabpanel" class="tab-pane {% if forloop.counter == 1 %}active {%else %} fade{% endif %}" id="home{{forloop.counter}} ficha-grafico">
 
-  <!-- Nav tabs -->
-  
-  <ul class="nav nav-tabs" role="tablist">
-  {% for obj in detalle %}
-    <li role="presentation" {% if forloop.counter == 1 %}class="active"{% endif %} ><a href="#home{{forloop.counter}}" aria-controls="home{{forloop.counter}}" role="tab" data-toggle="tab">{{obj.year}}</a></li>
-  {% endfor %}
-  </ul>
 
-  <!-- Tab panes -->
-  <div class="tab-content">
-  {% for obj in detalle %}
-  	<div role="tabpanel" class="tab-pane {% if forloop.counter == 1 %}active {%else %} fade{% endif %}" id="home{{forloop.counter}}">
-  	total:{{obj.totalingreso.total|intcomma}} <br>
-  	total gasto: {{obj.totalingreso.total_gasto|intcomma}} <br>
-  	total gasto fuera de la finca: {{obj.totalingreso.total_gasto_fuera_finca|intcomma}} <br>
-  	</div>
-  {% endfor %}
-  </div>
+			<div class="row ficha-fila1">
+				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" >
+					<div class="titulo-info">
+							MIEMBROS DEL HOGAR QUE POSEEN ALGÚN NIVEL DE EDUCACIÓN
+					</div>
+					<div id="ficha-grafico1"></div>
+				</div>
+			</div>
 
+			<div class="row ficha-fila2">
+				<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 ficha-grafico alinear">
+					<div class="titulo-info">
+							INGRESO VS GASTO
+					</div>
+					<div id="ficha-grafico2" style="height:466px;"></div>
+				</div>
+
+				<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 alinear">
+					<div class="row">
+						<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ficha-grafico espacio">
+							<div class="titulo-info">
+									TOTAL DE INGRESOS
+							</div>
+							<div id="ficha-grafico3" style="height:200px;"></div>
+						</div>
+						<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ficha-grafico">
+							<div class="titulo-info">
+									TOTAL GASTOS DEL HOGAR
+							</div>
+							<div id="ficha-grafico4" style="height:200px;"></div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+
+		  	total:{{obj.totalingreso.total|intcomma}} <br>
+		  	total gasto: {{obj.totalingreso.total_gasto|intcomma}} <br>
+		  	total gasto fuera de la finca: {{obj.totalingreso.total_gasto_fuera_finca|intcomma}} <br>
+		  	</div>
+		  {% endfor %}
+		</div>
+	</div>
+
+</div>
+<div>
 </div>
 {% endblock contenido %}
