@@ -373,9 +373,7 @@ $(function () {
 	<div class="row info-publica">
 		<div class="tab-content">
 		  {% for obj in detalle %}
-		  	<div role="tabpanel" class="tab-pane {% if forloop.counter == 1 %}active {%else %} fade{% endif %}" id="home{{forloop.counter}} ficha-grafico">
-
-
+			<div role="tabpanel" class="tab-pane {% if forloop.counter == 1 %}active {%else %} fade{% endif %}" id="home{{forloop.counter}}">
 			<div class="row ficha-fila1">
 				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" >
 					<div class="titulo-info">
@@ -416,11 +414,11 @@ $(function () {
 		  	total gasto: {{obj.totalingreso.total_gasto|intcomma}} <br>
 		  	total gasto fuera de la finca: {{obj.totalingreso.total_gasto_fuera_finca|intcomma}} <br>
 		  	</div>
+		  </div>
 		  {% endfor %}
 		</div>
 	</div>
 
-</div>
 <div>
 </div>
 {% endblock contenido %}
