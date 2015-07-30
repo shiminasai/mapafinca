@@ -108,8 +108,6 @@ def principal_dashboard(request, template='dashboard.html', departamento_id=None
     procesamiento = Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('procesamiento__total'))['t']
 
 
-
-
     return render(request,template,locals())
 
 def detalle_finca(request, template='detalle_finca.html', entrevistado_id=None):
