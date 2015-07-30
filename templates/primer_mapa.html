@@ -43,9 +43,20 @@
 	.departamento:hover {fill:#009900;}
 </style>
 
- {% include "filtros.html" %}
-
+ <div class="row filtros">
+	<ol class="breadcrumb">
+	<li>Seleccione País</li>
+	</ol>
+</div>
 	<div class="mapa">
+		{% if nicaragua %}
+			<span class='badge' style="position: relative; left: 668px; top:-335px;" />{{nicaragua}}</span>
+		{% endif %}
+		{% if honduras %}
+			<span class='badge' style="position: relative; left: 605px; top:-429px;" />{{honduras}}</span>
+		{% endif %}
+		
+		
 		<svg version="1.1" id="baum" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1200px" height="600px" viewBox="0 0 600 400" xml:space="preserve">
 		
 

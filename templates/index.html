@@ -19,7 +19,12 @@
 {% endblock extra_js %}
 {% block contenido %}
 <div class="row contenedor-index">
-{% include "formulario.html" %}
+	<div class="row filtro-index">
+		<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-lg-offset-4">
+		    <a class='btn btn-default' href="#">Visite la galeria de Mapa de Fincas</a>
+			<a class='btn btn-default' href="/primer_mapa/">Consultar Mapa de Fincas</a>
+		</div>
+	</div>
 	<div class="page-contenido">
 		<div class="row eliminar-mar">
 			<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-lg-offset-3 info-index">
