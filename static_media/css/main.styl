@@ -144,10 +144,12 @@ header
 /***********tablero***********/
 	
 .mapa-general
+.mapa-finca
 	border bordergris
 	background-color blanco
 	padding 0px
 .btn-tgeneral
+
 	padding 13px
 	background-color verdetierno
 	redondeado 0px
@@ -163,6 +165,10 @@ header
 		color blanco
 		redondeado 0px
 		font-weight bold
+	&:focus
+		color blanco
+		background-color verdetierno
+		sombras 5px 5px 0px -2px #88b84f
 #grafico1
 #grafico2
 #grafico3
@@ -246,8 +252,8 @@ header
 	vertical-align middle
 .ind-familia
 .ind-org
-	width 32.333333%
-	margin-right 1%	
+	width 30%
+	margin-right 3.33%	
 
 .numero
 	font-size 2em
@@ -331,7 +337,7 @@ header
 	margin-left 1%
 	margin-right 1%
 .ind-fila4
-	margin-bottom 100px
+	margin-bottom 30px
 .ind-alimento
 	padding 98px 20px
 	img
@@ -372,20 +378,120 @@ header
 
 .tabla-ingreso.table>tbody>tr>td
 	border-top 0px !important
+.titulo-botonera
+	margin-left 1%
+	width 100%
+	color naranja
+	hr
+		border-top 3px solid #d1d1d1
+		margin-top 10px
+	h5
+		margin-bottom 0px
+		font-weight 600
+.botonera
+	background-color #e7e6e4
+	margin-bottom 150px
+	margin-left 1%
+	.row
+		padding 10px
+	a
+		background-color #9ac15a
+		color blanco
+		redondeado 0px
+		padding 10px
+		width 23%
+		margin-right 1%
+		margin-left 1%
+		margin-top 10px
+		margin-bottom 10px
+		sombras 5px 5px 0px -2px #88b84f
+		font-size 1em
+		font-weight bold
+		
+		&:hover
+			font-weight bold
+			color blanco
+			background-color naranja
+			sombras 5px 5px 0px -2px #d46325
+		
+		&:nth-child(4n+3), &:nth-child(4n+4)
+			background-color #7cb4eb
+			sombras 5px 5px 0px -2px #6ba7de
+			&:hover
+				background-color naranja
+				sombras 5px 5px 0px -2px #d46325
 
+.list-anos
+	margin-top 30px
+	border bordergris
+	background-color blanco
+	padding 10px 0
+	.botones-anos
+		padding-left 0px
+	h5
+		color naranja
+		text-align right
+		margin-top 23px
+	.nav-tabs
+		border-bottom 0px
+		li
+			margin 10px 0px
+		li.active>a
+			background-color verdetierno
+			sombras 5px 5px 0px -2px #88b84f
+			border 0px
+			redondeado 0px
+			&:focus
+			&:hover
+				color blanco
+		li a
+			background-color naranja
+			sombras 5px 5px 0px -2px #d46325
+			border 0px
+			redondeado 0
+			color blanco
+			font-weight bold
+		
+.info-admin
+	margin-top 30px
+.titulo-info
+	font-size 0.9em
+	color naranja
+	border-bottom bordergris
+	padding 10px
+	font-weight bold
+	text-align center
+.finca-datos
+	background-color blanco
+	border bordergris
+	padding 0
+	margin-bottom 20px
+.ficha-contenido
+	padding 20px 30px
+	h5
+		font-size 0.8em
+	.dato-productor
+		background-color #f7f3f0
+		padding 10px 20px
+		color #61798e
+		font-weight bold
+		font-size 0.9em
+		text-align center
 
+.info-publica
+	margin-bottom 100px
+	.tab-content
+	.ficha-grafico
+		background-color blanco
+		border bordergris
+		padding 0px
+.espacio
+	margin-bottom 20px	
 
-
-
-
-
-
-
-
-
-
-
-
+.ficha-fila1
+.ficha-fila2
+	width 98%
+	margin 0 auto
 
 
 
@@ -422,6 +528,7 @@ header
 @media (min-width: 1200px)
 	.contenido-general
 	.contenido-indicadores
+	.contenido-detallefinca
 		width 95%
 		margin 25px auto
 	.mapa-general
@@ -429,6 +536,9 @@ header
 		width 45%
 		margin-right 4%
 		margin-left 1%
+	.mapa-finca
+		width 45%
+		margin-right 5%
 	#grafico1
 	#grafico2
 	#grafico3
