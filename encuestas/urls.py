@@ -10,5 +10,4 @@ urlpatterns = [
     url(r'^indicadores/$', views.indicadores, name='indicadores'),
     url(r'^mapa_dash/$', views.obtener_mapa_dashboard, name='obtener-lista'),
 
-
 ]
