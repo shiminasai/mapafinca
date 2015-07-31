@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link type="text/css" rel="stylesheet" href="../static_media/css/lightGallery.css" />                    
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+	<script src="../static_media/js/lightGallery.js"></script>
+	<link rel="stylesheet" href="../static_media/css/galeria.css">
+	<script type="text/javascript">
+	 $(document).ready(function() {
+	    $('#lightGallery').lightGallery({
+	        showThumbByDefault:true,
+	        addClass:'showThumbByDefault'
+	    }); 
+	  });
+
+	</script>
+</head>
+<body>
+<ul id="lightGallery">
+  <li data-src="http://placehold.it/800x500">
+      <img src="http://placehold.it/200x125" />
+  </li>
+  <li data-src="http://placehold.it/800x500">
+      <img src="http://placehold.it/200x125" />
+  </li>
+
+</ul>
+</body>
+</html>

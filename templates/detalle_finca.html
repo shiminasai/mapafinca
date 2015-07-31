@@ -208,23 +208,7 @@ $(function () {
     </ol>
 </div>
 
-<div class="contenido-detallefinca">
-	<div class="row list-anos">
-		<div class="col-xs-12 col-sm-12 col-md-2 col-lg-2 titulo-anos">
-			<h5>SELECCIONAR AÑO:</h5>
-		</div>
-		<div class="col-xs-12 col-sm-12 col-md-10 col-lg-10 botones-anos">
-			<ul class="nav nav-tabs row" role="detalle">
-			  {% for obj in detalle %}
-			 	<li class="col-xs-12 col-sm-12 col-md-2 col-lg-2  {% if forloop.counter == 1 %}active{% endif %} " role="presentation">
-			 		<a class="btn btn-anos" href="#home{{forloop.counter}}" aria-controls="home{{forloop.counter}}" role="tab" data-toggle="tab">{{obj.year}}</a>
-			 	</li>
-			  {% endfor %}
 
-			</ul>
-
-		</div>
-	</div>
 <!--informacion privada del productor y la finca >> inicio-->
 	<div class="row info-admin">
 	{% for obj in detalle|slice:":1" %}
@@ -369,56 +353,71 @@ $(function () {
 	{% endfor %}
 	</div>
 <!--informacion privada del productor y la finca >> final-->
+<div class="contenido-detallefinca">
+	<div class="row list-anos">
+		<div class="col-xs-12 col-sm-12 col-md-2 col-lg-2 titulo-anos">
+			<h5>SELECCIONAR AÑO:</h5>
+		</div>
+		<div class="col-xs-12 col-sm-12 col-md-10 col-lg-10 botones-anos">
+			<ul class="nav nav-tabs row" role="detalle">
+			  {% for obj in detalle %}
+			 	<li class="col-xs-6 col-sm-6 col-md-2 col-lg-2  {% if forloop.counter == 1 %}active{% endif %} " role="presentation">
+			 		<a class="btn btn-anos" href="#home{{forloop.counter}}" aria-controls="home{{forloop.counter}}" role="tab" data-toggle="tab">{{obj.year}}</a>
+			 	</li>
+			  {% endfor %}
 
+			</ul>
+
+		</div>
+	</div>
 	<div class="row info-publica">
 		<div class="tab-content">
 		  {% for obj in detalle %}
 			<div role="tabpanel" class="tab-pane {% if forloop.counter == 1 %}active {%else %} fade{% endif %}" id="home{{forloop.counter}}">
-			<div class="row ficha-fila1">
-				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" >
-					<div class="titulo-info">
-							MIEMBROS DEL HOGAR QUE POSEEN ALGÚN NIVEL DE EDUCACIÓN
-					</div>
-					<div id="ficha-grafico1"></div>
-				</div>
-			</div>
-
-			<div class="row ficha-fila2">
-				<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 ficha-grafico alinear">
-					<div class="titulo-info">
-							INGRESO VS GASTO
-					</div>
-					<div id="ficha-grafico2" style="height:466px;"></div>
-				</div>
-
-				<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 alinear">
-					<div class="row">
-						<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ficha-grafico espacio">
-							<div class="titulo-info">
-									TOTAL DE INGRESOS
-							</div>
-							<div id="ficha-grafico3" style="height:200px;"></div>
+				<div class="row ficha-fila1">
+					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" >
+						<div class="titulo-info">
+								MIEMBROS DEL HOGAR QUE POSEEN ALGÚN NIVEL DE EDUCACIÓN
 						</div>
-						<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ficha-grafico">
-							<div class="titulo-info">
-									TOTAL GASTOS DEL HOGAR
-							</div>
-							<div id="ficha-grafico4" style="height:200px;"></div>
-						</div>
-
+						<div id="ficha-grafico1"></div>
 					</div>
 				</div>
-			</div>
 
-		  	total:{{obj.totalingreso.total|intcomma}} <br>
-		  	total gasto: {{obj.totalingreso.total_gasto|intcomma}} <br>
-		  	total gasto fuera de la finca: {{obj.totalingreso.total_gasto_fuera_finca|intcomma}} <br>
+				<div class="row ficha-fila2">
+					<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 ficha-grafico alinear">
+						<div class="titulo-info">
+								INGRESO VS GASTO
+						</div>
+						<div id="ficha-grafico2" style="height:466px;"></div>
+					</div>
+
+					<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 alinear">
+						<div class="row">
+							<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ficha-grafico espacio">
+								<div class="titulo-info">
+										TOTAL DE INGRESOS
+								</div>
+								<div id="ficha-grafico3" style="height:200px;"></div>
+							</div>
+							<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ficha-grafico">
+								<div class="titulo-info">
+										TOTAL GASTOS DEL HOGAR
+								</div>
+								<div id="ficha-grafico4" style="height:200px;"></div>
+							</div>
+
+						</div>
+					</div>
+				</div>
+
+			  	total:{{obj.totalingreso.total|intcomma}} <br>
+			  	total gasto: {{obj.totalingreso.total_gasto|intcomma}} <br>
+			  	total gasto fuera de la finca: {{obj.totalingreso.total_gasto_fuera_finca|intcomma}} <br>
 		  	</div>
-		  </div>
-		  {% endfor %}
+		  	 {% endfor %}
 		</div>
+		 
 	</div>
-
-<div>
 </div>
+
 {% endblock contenido %}

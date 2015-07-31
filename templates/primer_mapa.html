@@ -42,22 +42,35 @@
 <style type="text/css">
 	.departamento:hover {fill:#009900;}
 </style>
-
+<div class="row filtro-index">
+	<div class="col-xs-12 col-sm-12 col-md-10 col-lg-10 col-lg-offset-1">
+		<div class="row">
+			<div class='col-xs-12 col-sm-12 col-md-3 col-lg-3 numero-encuestas'>Número de encuestas por país:</div>
+			<div class='col-xs-12 col-sm-12 col-md-2 col-lg-2 numero-encuestas'>Guatemala: 20</div>
+			<div class='col-xs-12 col-sm-12 col-md-2 col-lg-2 numero-encuestas'>El salvador: 20</div>
+			<div class='col-xs-12 col-sm-12 col-md-2 col-lg-2 numero-encuestas'>Honduras: {{honduras}}</div>
+			<div class='col-xs-12 col-sm-12 col-md-2 col-lg-2 numero-encuestas'>Nicaragua: {{nicaragua}}</div>
+		
+		</div>
+		    
+	</div>
+</div>
  <div class="row filtros">
 	<ol class="breadcrumb">
 	<li>Seleccione País</li>
 	</ol>
 </div>
 	<div class="mapa">
-		{% if nicaragua %}
-			<span class='badge' style="position: relative; left: 668px; top:-335px;" />{{nicaragua}}</span>
+		<!--{% if nicaragua %}
+			<span class='badge ni' ></span>
 		{% endif %}
 		{% if honduras %}
-			<span class='badge' style="position: relative; left: 605px; top:-429px;" />{{honduras}}</span>
+			<span class='badge hd'></span>
 		{% endif %}
+			<span class='badge gt' >20</span>
+			<span class='badge sl'>20</span>-->
 		
-		
-		<svg version="1.1" id="baum" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1200px" height="600px" viewBox="0 0 600 400" xml:space="preserve">
+		<svg version="1.1" id="baum" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"  viewBox="0 0 600 400" xml:space="preserve">
 		
 
 			<a xlink:href="#" target="_top">
