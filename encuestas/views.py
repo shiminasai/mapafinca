@@ -62,6 +62,9 @@ def obtener_mapa_dashboard(request):
 class GalleryView(TemplateView):
     template_name = "galeria.html"
 
+class DetailIndicadorView(TemplateView):
+    template_name = "detalle_indicador.html"
+
 class FirstMapaView(TemplateView):
     template_name = "primer_mapa.html"
 
