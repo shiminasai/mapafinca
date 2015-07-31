@@ -59,6 +59,9 @@ def obtener_mapa_dashboard(request):
         serializado = simplejson.dumps(lista)
         return HttpResponse(serializado, content_type='application/json')
 
+class GalleryView(TemplateView):
+    template_name = "galeria.html"
+
 class FirstMapaView(TemplateView):
     template_name = "primer_mapa.html"
 

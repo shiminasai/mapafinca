@@ -9,5 +9,5 @@ urlpatterns = [
     url(r'^finca/(?P<entrevistado_id>[0-9]+)/$', views.detalle_finca, name='detalle-finca'),
     url(r'^indicadores/$', views.indicadores, name='indicadores'),
     url(r'^mapa_dash/$', views.obtener_mapa_dashboard, name='obtener-lista'),
-
+    url(r'^galeria/$', views.GalleryView.as_view(), name='galeria'),
 ]
