@@ -124,8 +124,8 @@ def detalle_finca(request, template='detalle_finca.html', entrevistado_id=None):
     return render(request, template, locals())
 
 def indicadores(request, template='indicadores.html'):
-    a = _queryset_filtrado(request)
-    indicadores = a.filter(entrevistado__departamento=request.session['departamento']).distinct('entrevistado__id')
+    #a = _queryset_filtrado(request)
+    indicadores = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento']).distinct('entrevistado__id')
     porcentaje_hombres = '80%'
     porcentaje_mujeres = '20%'
 
