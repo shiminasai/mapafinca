@@ -92,24 +92,24 @@ class Entrevistados(models.Model):
     longitud = models.FloatField(null= True, blank=True)
     pais = models.ForeignKey(Pais)
     departamento = ChainedForeignKey(
-        Departamento, 
+        Departamento,
         chained_field="pais",
-        chained_model_field="pais", 
-        show_all=False, 
+        chained_model_field="pais",
+        show_all=False,
         auto_choose=True
     )
     municipio = ChainedForeignKey(
-        Municipio, 
+        Municipio,
         chained_field="departamento",
-        chained_model_field="departamento", 
-        show_all=False, 
+        chained_model_field="departamento",
+        show_all=False,
         auto_choose=True
     )
     comunidad = ChainedForeignKey(
-        Comunidad, 
+        Comunidad,
         chained_field="municipio",
-        chained_model_field="municipio", 
-        show_all=False, 
+        chained_model_field="municipio",
+        show_all=False,
         auto_choose=True,
         null=True,
         blank=True,
@@ -129,6 +129,7 @@ class Entrevistados(models.Model):
 class Encuesta(models.Model):
     entrevistado = models.ForeignKey(Entrevistados)
     fecha = models.DateField()
+    encuestador = models.ForeignKey(Encuestadores)
     mapa_finca = ImageField(upload_to='mapas_fincas', null=True, blank=True)
     dueno = models.IntegerField(choices=CHOICE_JEFE,
                     verbose_name='¿Son dueños de la propiedad/finca?')
@@ -414,7 +415,7 @@ class OrganizacionComunitaria(models.Model):
     pertenece = models.IntegerField(choices=CHOICE_JEFE, verbose_name='19_¿Pertenece a alguna organización?')
     caso_si = models.ManyToManyField(OrgComunitarias, verbose_name='19_1 qué organización comunitaria pertenece?',
                                     blank=True)
-    cuales_beneficios = models.ManyToManyField(BeneficiosOrganizados, 
+    cuales_beneficios = models.ManyToManyField(BeneficiosOrganizados,
                                         verbose_name='19_2 ¿Cuales son los beneficios de estar organizado?',
                                         blank=True)
 
@@ -475,7 +476,7 @@ class Fuentes(models.Model):
 
     def save(self, *args, **kwargs):
         '''Save sobrecargado para calcular totales'''
-        
+
         self.total = self.cantidad * self.cantidad_veces
         super(Fuentes, self).save(*args, **kwargs)
 
@@ -533,7 +534,7 @@ class CultivosTradicionales(models.Model):
 
     def save(self, *args, **kwargs):
         '''Save sobrecargado para calcular totales'''
-        
+
         self.total = self.venta * self.precio
         super(CultivosTradicionales, self).save(*args, **kwargs)
 
@@ -569,7 +570,7 @@ class CultivosHuertosFamiliares(models.Model):
 
     def save(self, *args, **kwargs):
         '''Save sobrecargado para calcular totales'''
-        
+
         self.total = self.venta * self.precio
         super(CultivosHuertosFamiliares, self).save(*args, **kwargs)
 
@@ -600,7 +601,7 @@ class Ganaderia(models.Model):
 
     def save(self, *args, **kwargs):
         '''Save sobrecargado para calcular totales'''
-        
+
         self.total = self.cantidad_vendida * self.precio
         super(Ganaderia, self).save(*args, **kwargs)
 
@@ -631,7 +632,7 @@ class Procesamiento(models.Model):
 
     def save(self, *args, **kwargs):
         '''Save sobrecargado para calcular totales'''
-        
+
         self.total = self.cantidad_vendida * self.precio
         super(Procesamiento, self).save(*args, **kwargs)
 
@@ -640,7 +641,7 @@ class Procesamiento(models.Model):
     class Meta:
         verbose_name_plural = '24_2 Procesamiento de la producción'
 
-#25  de la lista de los  productos  indicar cuales fueron introducidos/providos por 
+#25  de la lista de los  productos  indicar cuales fueron introducidos/providos por
 #el programa medios de vida sostenible
 
 class IntroducidosTradicionales(models.Model):
@@ -683,7 +684,7 @@ class GastoHogar(models.Model):
 
     def save(self, *args, **kwargs):
         '''Save sobrecargado para calcular totales'''
-        
+
         self.total = self.cantidad * self.cantidad_veces
         super(GastoHogar, self).save(*args, **kwargs)
 
@@ -708,7 +709,7 @@ class GastoProduccion(models.Model):
 
     def save(self, *args, **kwargs):
         '''Save sobrecargado para calcular totales'''
-        
+
         self.total = self.cantidad * self.cantidad_veces
         super(GastoProduccion, self).save(*args, **kwargs)
 
@@ -735,9 +736,9 @@ class Prestamo(models.Model):
     algun_prestamo = models.IntegerField(choices=CHOICE_JEFE)
     monto = models.FloatField('28.1_¿Cuál fue el monto en C$?')
     pago = models.FloatField('28.2_¿Pago mensual en C$?')
-    recibe = models.ManyToManyField(RecibePrestamo, 
+    recibe = models.ManyToManyField(RecibePrestamo,
                                     verbose_name='28.3_¿De quien recibe el prestamo/crédito')
-    uso = models.ManyToManyField(UsoPrestamo, 
+    uso = models.ManyToManyField(UsoPrestamo,
                                 verbose_name='28.4_¿Cuál fue el uso del prestamo/crédito')
 
 
@@ -768,17 +769,17 @@ CHOICE_TRACCION = (
 
 class PracticasAgroecologicas(models.Model):
     encuesta = models.ForeignKey(Encuesta)
-    si_no = models.IntegerField(choices=CHOICE_JEFE, 
+    si_no = models.IntegerField(choices=CHOICE_JEFE,
         verbose_name='29_¿En la finca aplican técnicas de manejo agro ecologico u orgánico')
-    cinco_principales = models.ManyToManyField(Practicas, 
+    cinco_principales = models.ManyToManyField(Practicas,
                                             verbose_name='29.1_Mencione cinco principales')
-    manejo = models.IntegerField(choices=CHOICE_MANEJO, 
+    manejo = models.IntegerField(choices=CHOICE_MANEJO,
                     verbose_name='31_Sobre el manejo del suelo ¿Cómo preparan el suelo?')
-    traccion = models.IntegerField(choices=CHOICE_TRACCION, 
+    traccion = models.IntegerField(choices=CHOICE_TRACCION,
                     verbose_name='32_¿Qué tipo de tracción utilizan para la preparación del suelo?')
-    fertilidad = models.IntegerField(choices=CHOICE_JEFE, 
+    fertilidad = models.IntegerField(choices=CHOICE_JEFE,
                     verbose_name='33_¿Realizan análisis de fertilidad del suelo?')
-    control = models.IntegerField(choices=CHOICE_JEFE, 
+    control = models.IntegerField(choices=CHOICE_JEFE,
                     verbose_name='34_¿Realiza control y monitoreo de plagas y enfermedades?')
 
     class Meta:
@@ -808,22 +809,22 @@ class TipoSecado(models.Model):
 
 class SeguridadAlimentaria(models.Model):
     encuesta = models.ForeignKey(Encuesta)
-    misma_finca = models.IntegerField(choices=CHOICE_PORCENTAJE, 
+    misma_finca = models.IntegerField(choices=CHOICE_PORCENTAJE,
         verbose_name='35.1_¿Qué porcentaje alimentos que consumen en su hogar provienen de la misma finca?')
-    fuera_finca = models.IntegerField(choices=CHOICE_PORCENTAJE, 
+    fuera_finca = models.IntegerField(choices=CHOICE_PORCENTAJE,
         verbose_name='35.2_¿Qué porcentaje alimentos que consumen en su hogar provienen fuera de la finca?')
-    economico = models.IntegerField(choices=CHOICE_JEFE, 
+    economico = models.IntegerField(choices=CHOICE_JEFE,
         verbose_name='36_¿Disponen suficiente recursos económicos para manejo de finca?')
-    secado = models.IntegerField(choices=CHOICE_JEFE, 
+    secado = models.IntegerField(choices=CHOICE_JEFE,
         verbose_name='37_¿Dispone de tecnología para el secado y almacenamiento de cosecha?')
     tipo_secado = models.ForeignKey(TipoSecado, verbose_name='Si es si cuál?')
-    plan_cosecha = models.IntegerField(choices=CHOICE_JEFE, 
+    plan_cosecha = models.IntegerField(choices=CHOICE_JEFE,
         verbose_name='38_¿Cuentan con un plan de cosecha?')
-    ayuda = models.IntegerField(choices=CHOICE_JEFE, 
+    ayuda = models.IntegerField(choices=CHOICE_JEFE,
         verbose_name='39_¿Cuentan con ayuda de alimentos en momentos de escasez?')
-    suficiente_alimento = models.IntegerField(choices=CHOICE_JEFE, 
+    suficiente_alimento = models.IntegerField(choices=CHOICE_JEFE,
         verbose_name='40_¿Le ha preocupado que en su hogar no hubiera suficiente alimentos?')
-    consumo_diario = models.IntegerField(choices=CHOICE_JEFE, 
+    consumo_diario = models.IntegerField(choices=CHOICE_JEFE,
         verbose_name='41_¿Considera que su familia cuenta con la cantidad necesaria de alimentos que necesitan para el consumo diario del hogar?')
 
     class Meta:
@@ -873,9 +874,9 @@ class TrataAgua(models.Model):
 
 class OtrasSeguridad(models.Model):
     encuesta = models.ForeignKey(Encuesta)
-    adquiere_agua = models.ForeignKey(AdquiereAgua, 
+    adquiere_agua = models.ForeignKey(AdquiereAgua,
                     verbose_name='42_En momentos de sequía como adquiere el agua de consumo')
-    tratamiento = models.IntegerField(choices=CHOICE_JEFE, 
+    tratamiento = models.IntegerField(choices=CHOICE_JEFE,
                     verbose_name='42_1 Le da algún tipo de tratamiento:')
     tipo_tratamiento = models.ForeignKey(TrataAgua)
 
@@ -901,7 +902,7 @@ class AlimentosFueraFinca(models.Model):
 
     def save(self, *args, **kwargs):
         '''Save sobrecargado para calcular totales'''
-        
+
         self.total = self.cantidad * self.precio
         super(AlimentosFueraFinca, self).save(*args, **kwargs)
 
@@ -931,7 +932,7 @@ class TotalIngreso(models.Model):
         #self.total_ap = self._get_total() - (OtrosIngresos.objects.filter(encuesta=self.encuesta).aggregate(t=models.Sum('total'))['t'] or 0)
         #print self.total, self.total_ap
         super(TotalIngreso, self).save(*args, **kwargs)
-    
+
     def _get_total(self):
         params = dict(encuesta = self.encuesta)
         totales = [
@@ -940,7 +941,7 @@ class TotalIngreso(models.Model):
                     CultivosHuertosFamiliares.objects.filter(**params).aggregate(t=models.Sum('total'))['t'], \
                     CultivosTradicionales.objects.filter(**params).aggregate(t=models.Sum('total'))['t'], \
                     Fuentes.objects.filter(**params).aggregate(t=models.Sum('total'))['t'], \
-                ] 
+                ]
         total = sum(filter(None, totales))
         return total
 
@@ -949,7 +950,7 @@ class TotalIngreso(models.Model):
         totales = [
                     GastoProduccion.objects.filter(**params).aggregate(t=models.Sum('total'))['t'], \
                     GastoHogar.objects.filter(**params).aggregate(t=models.Sum('total'))['t'], \
-                ] 
+                ]
         total_gasto = sum(filter(None, totales))
         return total_gasto
 
@@ -957,7 +958,7 @@ class TotalIngreso(models.Model):
         params = dict(encuesta = self.encuesta)
         totales = [
                     AlimentosFueraFinca.objects.filter(**params).aggregate(t=models.Sum('total'))['t'],
-                ] 
+                ]
         total_gasto_fuera = sum(filter(None, totales))
         return total_gasto_fuera
 

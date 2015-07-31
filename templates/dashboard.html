@@ -192,21 +192,21 @@ $(function () {
         },
         series: [{
             name: 'c. tradicionales',
-            data: [{{tradicional}}, ]
+            data: [{% if tradicional == None %}0 {%else%}{{tradicional}},{% endif %}]
         }, {
             name: 'c. huertos',
-            data: [{{huertos}}, ]
+            data: [{% if tradicional == None %}0 {%else%}{{huertos}},{% endif %}]
         }, {
             name: 'o. fuentes',
-            data: [{{fuente}}, ]
+            data: [{% if tradicional == None %}0 {%else%}{{fuente}},{% endif %}]
         },
         {
             name: 'ganado',
-            data: [{{ganado}}, ]
+            data: [{% if tradicional == None %}0 {%else%}{{ganado}},{% endif %}]
         },
         {
             name: 'procesamiento',
-            data: [{{procesamiento}}, ]
+            data: [{% if tradicional == None %}0 {%else%}{{procesamiento}}{% endif %},]
         },
         ]
     });
@@ -393,7 +393,7 @@ $(function () {
     <div class="row fila2">
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 table-responsive tabla-productor">
             <table class="table table-hover">
-            
+
                 <thead>
                     <tr>
                         <th>NOMBRE DE FINCA</th>
