@@ -101,26 +101,19 @@ def principal_dashboard(request, template='dashboard.html', departamento_id=None
     gasto_fuera_finca = Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('totalingreso__total_gasto_fuera_finca'))['t']
 
     # grafico de ingresos
-    try:
-        tradicional = Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('cultivostradicionales__total'))['t']
-    except:
-        tradicional = 0
-    try:
-        huertos = Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('cultivoshuertosfamiliares__total'))['t']
-    except:
-        huertos = 0
-    try:
-        fuente = Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('fuentes__total'))['t']
-    except:
-        fuente = 0
-    try:
-        ganado = Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('ganaderia__total'))['t']
-    except:
-        ganado = 0
-    try:
-        procesamiento = Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('procesamiento__total'))['t']
-    except:
-        procesamiento = 0
+    tradicional = Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('cultivostradicionales__total'))['t']
+
+    huertos = Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('cultivoshuertosfamiliares__total'))['t']
+
+    fuente = Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('fuentes__total'))['t']
+
+    ganado = Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('ganaderia__total'))['t']
+
+    procesamiento = Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('procesamiento__total'))['t']
+
+    #grafico de kcalorias aun esta en proceso
+
+    # grafico sobre
 
 
     return render(request,template,locals())
@@ -131,8 +124,8 @@ def detalle_finca(request, template='detalle_finca.html', entrevistado_id=None):
     return render(request, template, locals())
 
 def indicadores(request, template='indicadores.html'):
-    a = _queryset_filtrado(request)
-    indicadores = a.filter(entrevistado__departamento=request.session['departamento']).distinct('entrevistado__id')
+    #a = _queryset_filtrado(request)
+    indicadores = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento']).distinct('entrevistado__id')
     porcentaje_hombres = '80%'
     porcentaje_mujeres = '20%'
 
