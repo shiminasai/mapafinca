@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 from lugar.models import *
+from smart_selects.db_fields import ChainedForeignKey
 
 # Create your models here.
 
@@ -21,9 +22,29 @@ CHOICES_MESES = (
 
 class Precipitacion(models.Model):
     pais = models.ForeignKey(Pais)
-    departameto = models.ForeignKey(Departamento)
-    municipio = models.ForeignKey(Municipio)
-    comunidad = models.ForeignKey(Comunidad)
+    departamento = ChainedForeignKey(
+        Departamento,
+        chained_field="pais",
+        chained_model_field="pais",
+        show_all=False,
+        auto_choose=True
+    )
+    municipio = ChainedForeignKey(
+        Municipio,
+        chained_field="departamento",
+        chained_model_field="departamento",
+        show_all=False,
+        auto_choose=True
+    )
+    comunidad = ChainedForeignKey(
+        Comunidad,
+        chained_field="municipio",
+        chained_model_field="municipio",
+        show_all=False,
+        auto_choose=True,
+        null=True,
+        blank=True,
+    )
     mes = models.IntegerField(choices=CHOICES_MESES)
     year = models.IntegerField('Año')
     precipitacion = models.FloatField()
@@ -37,18 +58,38 @@ class Precipitacion(models.Model):
         super(Precipitacion, self).save(*args, **kwargs)
 
     def __unicode__(self):
-        return u'%s-%s-%s' % (str(self.pais),str(self.departameto),str(self.municipio))
+        return u'%s' % (str(self.precipitacion))
 
-    class Media:
-        verbose_name='Precipitación'
+    class Meta:
+        verbose_name = 'Precipitación'
         verbose_name_plural = 'Precipitación'
 
 
 class Temperatura(models.Model):
     pais = models.ForeignKey(Pais)
-    departameto = models.ForeignKey(Departamento)
-    municipio = models.ForeignKey(Municipio)
-    comunidad = models.ForeignKey(Comunidad)
+    departamento = ChainedForeignKey(
+        Departamento,
+        chained_field="pais",
+        chained_model_field="pais",
+        show_all=False,
+        auto_choose=True
+    )
+    municipio = ChainedForeignKey(
+        Municipio,
+        chained_field="departamento",
+        chained_model_field="departamento",
+        show_all=False,
+        auto_choose=True
+    )
+    comunidad = ChainedForeignKey(
+        Comunidad,
+        chained_field="municipio",
+        chained_model_field="municipio",
+        show_all=False,
+        auto_choose=True,
+        null=True,
+        blank=True,
+    )
     mes = models.IntegerField(choices=CHOICES_MESES)
     year = models.IntegerField('Año')
     temperatura = models.FloatField()
@@ -62,15 +103,15 @@ class Temperatura(models.Model):
         super(Temperatura, self).save(*args, **kwargs)
 
     def __unicode__(self):
-        return u'%s-%s-%s' % (str(self.pais),str(self.departameto),str(self.municipio))
+        return u'%s-%s-%s' % (str(self.pais),str(self.departamento),str(self.municipio))
 
-    class Media:
+    class Meta:
         verbose_name='Temperatura'
         verbose_name_plural = 'Temperatura'
 
 class DiasEfectivoLLuvia(models.Model):
     pais = models.ForeignKey(Pais)
-    departameto = models.ForeignKey(Departamento)
+    departamento = models.ForeignKey(Departamento)
     municipio = models.ForeignKey(Municipio)
     comunidad = models.ForeignKey(Comunidad)
     mes = models.IntegerField(choices=CHOICES_MESES)
@@ -78,8 +119,8 @@ class DiasEfectivoLLuvia(models.Model):
     dias_lluvia = models.FloatField()
 
     def __unicode__(self):
-        return u'%s-%s-%s' % (str(self.pais),str(self.departameto),str(self.municipio))
+        return u'%s-%s-%s' % (str(self.pais),str(self.departamento),str(self.municipio))
 
-    class Media:
+    class Meta:
         verbose_name='Dias Efectivo de LLuvia'
         verbose_name_plural = 'Dias Efectivo de LLuvia'
