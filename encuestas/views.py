@@ -5,7 +5,8 @@ from django.views.generic import TemplateView
 from .forms import ConsultarForm
 from .models import *
 import json as simplejson
-from django.db.models import Sum
+from django.db.models import Sum, Avg
+from clima.models import *
 # Create your views here.
 
 def _queryset_filtrado(request):
@@ -119,7 +120,22 @@ def principal_dashboard(request, template='dashboard.html', departamento_id=None
 
     #grafico de kcalorias aun esta en proceso
 
-    # grafico sobre
+    # grafico sobre algo mas
+    
+    #grafico sobre clima
+    lista_precipitacion = []
+    lista_temperatura = []
+    for mes in CHOICES_MESES:
+        precipitacion = Precipitacion.objects.filter(departamento=departamento_id,mes=mes[0]).aggregate(p=Avg('precipitacion'))['p']
+        temperatura = Temperatura.objects.filter(departamento=departamento_id,mes=mes[0]).aggregate(p=Avg('temperatura'))['p']
+        if precipitacion == None:
+            precipitacion = 0
+        lista_precipitacion.append(precipitacion)
+        if temperatura == None:
+            temperatura = 0
+        lista_temperatura.append(temperatura)
+    
+
 
 
     return render(request,template,locals())

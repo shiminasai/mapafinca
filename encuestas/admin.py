@@ -98,6 +98,10 @@ class InlineCultivosHuertosFamiliares(admin.TabularInline):
     model = CultivosHuertosFamiliares
     extra = 1
 
+class InlineCultivosFrutasFinca(admin.TabularInline):
+    model = CultivosFrutasFinca
+    extra = 1
+
 class InlineGanaderia(admin.TabularInline):
     model = Ganaderia
     extra = 1
@@ -166,7 +170,7 @@ class AdminEncuesta(admin.ModelAdmin):
                 InlineEvidencia,InlineTratamientoAgua,InlineUsosAgua,
                 InlineOrganizacionComunitaria,InlineOrganizacionFinca,
                 InlineDistribucionTierra,InlinePercibeIngreso,InlineFuentes,
-                InlineCultivosTradicionales,InlineCultivosHuertosFamiliares,
+                InlineCultivosTradicionales,InlineCultivosHuertosFamiliares,InlineCultivosFrutasFinca,
                 InlineGanaderia,InlineProcesamiento,InlineIntroducidosTradicionales,
                 InlineIntroducidosHuertos,InlineGastoHogar,InlineGastoProduccion,
                 InlinePrestamo,InlinePracticasAgroecologicas,InlineSeguridadAlimentaria,

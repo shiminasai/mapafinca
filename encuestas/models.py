@@ -577,8 +577,43 @@ class CultivosHuertosFamiliares(models.Model):
         models.signals.post_save.send(sender=Encuesta, instance=self.encuesta)
 
     class Meta:
-        verbose_name_plural = '23_Cultivos de huertos familiares en la finca'
+        verbose_name_plural = '23_1 Cultivos de huertos familiares en la finca'
 
+#cultivos de frutas familiares
+
+class CultivosFrutas(models.Model):
+    codigo = models.CharField(max_length=4)
+    nombre = models.CharField(max_length=250)
+    unidad_medida = models.IntegerField(choices=CHOICE_MEDIDA)
+
+    def __unicode__(self):
+        return u'%s-%s' % (self.codigo, self.nombre)
+
+
+class CultivosFrutasFinca(models.Model):
+    encuesta = models.ForeignKey(Encuesta)
+    cultivo = models.ForeignKey(CultivosFrutas)
+    cantidad_cosechada = models.FloatField()
+    consumo_familia = models.FloatField('Consumo de la familia')
+    consumo_animal = models.FloatField()
+    procesamiento = models.FloatField()
+    venta = models.FloatField()
+    precio = models.FloatField('Precio de venta en C$')
+    costo = models.FloatField('Costo por Mz en C$')
+    mercado = models.ForeignKey(TipoMercado)
+
+    total = models.FloatField(editable=False)
+
+    def save(self, *args, **kwargs):
+        '''Save sobrecargado para calcular totales'''
+
+        self.total = self.venta * self.precio
+        super(CultivosFrutasFinca, self).save(*args, **kwargs)
+
+        models.signals.post_save.send(sender=Encuesta, instance=self.encuesta)
+
+    class Meta:
+        verbose_name_plural = '23_2 Frutas en la finca'
 #24 ganaderia mayor y menor otros en la finca
 
 class Animales(models.Model):
