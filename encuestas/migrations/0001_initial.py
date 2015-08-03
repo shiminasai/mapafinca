@@ -110,6 +110,33 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
+            name='CultivosFrutas',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('codigo', models.CharField(max_length=4)),
+                ('nombre', models.CharField(max_length=250)),
+                ('unidad_medida', models.IntegerField(choices=[(1, b'Quintal'), (2, b'Libras'), (3, b'Docena'), (4, b'Cien'), (5, b'Cabeza')])),
+            ],
+        ),
+        migrations.CreateModel(
+            name='CultivosFrutasFinca',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('cantidad_cosechada', models.FloatField()),
+                ('consumo_familia', models.FloatField(verbose_name=b'Consumo de la familia')),
+                ('consumo_animal', models.FloatField()),
+                ('procesamiento', models.FloatField()),
+                ('venta', models.FloatField()),
+                ('precio', models.FloatField(verbose_name=b'Precio de venta en C$')),
+                ('costo', models.FloatField(verbose_name=b'Costo por Mz en C$')),
+                ('total', models.FloatField(editable=False)),
+                ('cultivo', models.ForeignKey(to='encuestas.CultivosFrutas')),
+            ],
+            options={
+                'verbose_name_plural': '23_2 Frutas en la finca',
+            },
+        ),
+        migrations.CreateModel(
             name='CultivosHuertos',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -133,7 +160,7 @@ class Migration(migrations.Migration):
                 ('cultivo', models.ForeignKey(to='encuestas.CultivosHuertos')),
             ],
             options={
-                'verbose_name_plural': '23_Cultivos de huertos familiares en la finca',
+                'verbose_name_plural': '23_1 Cultivos de huertos familiares en la finca',
             },
         ),
         migrations.CreateModel(
@@ -763,6 +790,11 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='encuesta',
+            name='encuestador',
+            field=models.ForeignKey(to='encuestas.Encuestadores'),
+        ),
+        migrations.AddField(
+            model_name='encuesta',
             name='entrevistado',
             field=models.ForeignKey(to='encuestas.Entrevistados'),
         ),
@@ -818,6 +850,16 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='cultivoshuertosfamiliares',
+            name='mercado',
+            field=models.ForeignKey(to='encuestas.TipoMercado'),
+        ),
+        migrations.AddField(
+            model_name='cultivosfrutasfinca',
+            name='encuesta',
+            field=models.ForeignKey(to='encuestas.Encuesta'),
+        ),
+        migrations.AddField(
+            model_name='cultivosfrutasfinca',
             name='mercado',
             field=models.ForeignKey(to='encuestas.TipoMercado'),
         ),
