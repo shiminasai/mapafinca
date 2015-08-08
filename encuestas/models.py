@@ -131,8 +131,8 @@ class Entrevistados(models.Model):
         return self.nombre
 
     class Meta:
-        verbose_name = 'Entrevistado'
-        verbose_name_plural = 'Entrevistados'
+        verbose_name = 'Base de datos Productor'
+        verbose_name_plural = 'Base de datos Productores'
 
 
 class Encuesta(models.Model):
@@ -142,9 +142,9 @@ class Encuesta(models.Model):
     mapa_finca = ImageField(upload_to='mapas_fincas', null=True, blank=True)
     dueno = models.IntegerField(choices=CHOICE_JEFE,
                     verbose_name='¿Son dueños de la propiedad/finca?')
-    org_responsable = models.ForeignKey(OrganizacionResp)
+    org_responsable = models.ForeignKey(OrganizacionResp, verbose_name='Nombre de la organización responsable')
 
-    year = models.IntegerField(editable=False)
+    year = models.IntegerField(editable=False, verbose_name='Año')
 
     user = models.ForeignKey(User)
 
@@ -213,7 +213,6 @@ class Escolaridad(models.Model):
     pri_incompleta = models.IntegerField('Primaria incompleta')
     pri_completa = models.IntegerField('Primaria completa')
     secu_incompleta = models.IntegerField('Secundaria incompleta')
-    secu_completa = models.IntegerField('Secundaria completa')
     bachiller = models.IntegerField('Bachiller')
     uni_tecnico = models.IntegerField('Universitario o técnico')
     total = models.IntegerField('total')

@@ -5,4 +5,5 @@ django-smart-selects==1.1.1
 django-wpadmin==1.7.4
 Pillow==2.9.0
 psycopg2==2.6.1
-sorl-thumbnail==12.2
+sorl-thumbnail==12.3
+wheel==0.24.0

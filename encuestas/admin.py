@@ -192,7 +192,7 @@ class AdminEncuesta(admin.ModelAdmin):
                 InlinePrestamo,InlinePracticasAgroecologicas,InlineSeguridadAlimentaria,
                 InlineRespuestaNo41,InlineOtrasSeguridad,InlineAlimentosFueraFinca,]
 
-    list_display = ('entrevistado','dueno',)
+    list_display = ('entrevistado','dueno','year')
     search_fields = ('entrevistado__nombre',)
 
     class Media:
@@ -202,6 +202,16 @@ class AdminEncuesta(admin.ModelAdmin):
         js = ("js/code_admin.js",)
 
 class EntrevistadoAdmin(admin.ModelAdmin):
+    def queryset(self, request):
+        if request.user.is_superuser:
+            return Noticias.objects.all()
+        return Noticias.objects.filter(user=request.user)
+
+    def save_model(self, request, obj, form, change):
+      obj.user = request.user
+      obj.save()
+
+    exclude = ('user',)
     list_display = ('nombre', 'sexo', 'jefe', 'pais', 'departamento')
     list_filter = ('sexo','pais','departamento')
     search_fields = ('nombre',)

@@ -19,6 +19,7 @@ INSTALLED_APPS = (
     'smart_selects',
     'multiselectfield',
     'selectable',
+    'sorl.thumbnail',
 )
 
 MIDDLEWARE_CLASSES = (

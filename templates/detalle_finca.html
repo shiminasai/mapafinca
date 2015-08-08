@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load humanize %}
+{% load thumbnail %}
 {% block extra_js %}
 <script src="http://code.highcharts.com/highcharts.js"></script>
 
@@ -10,57 +11,50 @@
 	})
 /****graficos de prueba dejar mismo id*****/
 $(function () {
+    // Create the chart
     $('#ficha-grafico1').highcharts({
         chart: {
             type: 'column'
         },
         title: {
-            text: 'Monthly Average Rainfall'
+            text: 'Miembreos que poseen educación'
         },
-
         xAxis: {
-            categories: [
-                'Jan',
-                'Feb',
-                'Mar',
-                'Apr',
-                'May'
-            ],
-            crosshair: true
+            type: 'category'
         },
         yAxis: {
-            min: 0,
             title: {
-                text: 'Rainfall (mm)'
+                text: 'porcentaje'
+            }
+        },
+        legend: {
+            enabled: false
+        },
+        plotOptions: {
+            series: {
+                borderWidth: 0,
+                dataLabels: {
+                    enabled: true,
+                    format: '{point.y:.1f}'
+                }
             }
         },
         tooltip: {
-            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
-            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-                '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
-            footerFormat: '</table>',
-            shared: true,
-            useHTML: true
-        },
-        plotOptions: {
-            column: {
-                pointPadding: 0.2,
-                borderWidth: 0
-            }
+            headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+            pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}</b><br/>'
         },
         series: [{
-            name: 'Tokyo',
-            data: [49.9, 71.5, 106.4, 129.2, 120.0]
-
-        }, {
-            name: 'London',
-            data: [48.9, 38.8, 39.3, 41.4, 47.0]
-
-        }, {
-            name: 'Berlin',
-            data: [42.4, 33.2, 34.5, 39.7, 52.6]
-
-        }]
+            name: "porcentaje",
+            colorByPoint: true,
+            data: [
+            {% for value in grafo %}
+            {
+                name: "{{value.0}}",
+                y: {{value.1}},
+            },
+            {% endfor %}
+            ]
+        }],
     });
 });
 
@@ -223,9 +217,11 @@ $(function () {
 
 				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 					<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-						<h5>Fecha</h5>
+						<h5>Años entrevistados</h5>
 						<p class="dato-productor">
-							{{obj.fecha|date:"m/d/Y"}}
+                        {% for obj in detalle %}
+							{{obj.year}}{% if not forloop.last %},{% endif %}
+                        {% endfor %}
 						</p>
 					</div>
 				</div>
@@ -323,14 +319,24 @@ $(function () {
 					<div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">
 						<h5>Comunidad</h5>
 						<p class="dato-productor">
-							{{obj.entrevistado.comunidad}}
+                         {% if  obj.entrevistado.comunidad %}
+                             {{obj.entrevistado.comunidad}}
+                         {% else %}
+                             Este dato no fue recolectado
+                         {% endif %}
+
 						</p>
 					</div>
 
 					<div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">
 						<h5>Microcuenca</h5>
 						<p class="dato-productor">
-							No-no esta
+                        {% if  obj.entrevistado.microcuenca %}
+                             {{obj.entrevistado.microcuenca}}
+                         {% else %}
+                             Este dato no fue recolectado
+                         {% endif %}
+
 						</p>
 					</div>
 				</div>
@@ -377,12 +383,18 @@ $(function () {
 				<div class="row ficha-fila1">
 					<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 img-mapafinca alinear">
 						<div class="titulo-info">
-								MAPA DE FINCA AÑO X
+								MAPA DE FINCA AÑO {{obj.year}}
 						</div>
 						<a data-toggle="modal" href='#modal-id'>
-							<img src="/static/img/text2.png" alt="">
+                        {% if obj.mapa_finca %}
+                            {% thumbnail obj.mapa_finca "800x500" as im %}
+                                <img src="/media/{{im}}" alt="">
+                            {% endthumbnail %}
+                        {% else %}
+                            <img src="http://placehold.it/800x500">
+                        {% endif %}
 						</a>
-						
+
 					</div>
 					<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 ficha-grafico alinear" >
 						<div class="titulo-info">
@@ -422,7 +434,7 @@ $(function () {
 			  	total:{{obj.totalingreso.total|intcomma}} <br>
 			  	total gasto: {{obj.totalingreso.total_gasto|intcomma}} <br>
 			  	total gasto fuera de la finca: {{obj.totalingreso.total_gasto_fuera_finca|intcomma}} <br>
-			  	
+
 			  	<div class="modal fade" id="modal-id">
 			  		<div class="modal-dialog modal-lg">
 			  			<div class="modal-content">
@@ -435,7 +447,7 @@ $(function () {
 			  				</div>
 			  				<div class="modal-footer">
 			  					<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-			  					
+
 			  				</div>
 			  			</div>
 			  		</div>
@@ -443,7 +455,7 @@ $(function () {
 		  	</div>
 		  	 {% endfor %}
 		</div>
-		 
+
 	</div>
 </div>
 
