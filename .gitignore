@@ -62,3 +62,5 @@ local_settings.py
 *.db
 *.sql
 /media/
+
+*.styl
