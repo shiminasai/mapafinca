@@ -30,33 +30,40 @@ class InlineTipoEnergia(admin.TabularInline):
     form = TipoEnergiaForm
     model = TipoEnergia
     extra = 1
+    max_num = 1
 
 class InlineEnergiaSolarCocinar(admin.TabularInline):
     form = EnergiaSolarCocinarForm
     model = EnergiaSolarCocinar
     extra = 1
+    max_num = 1
 
 class InlineTipoCocinas(admin.TabularInline):
     form = TipoCocinasForm
     model = TipoCocinas
     extra = 1
+    max_num = 1
 
 class InlineAccesoAgua(admin.TabularInline):
     form = AccesoAguaForm
     model = AccesoAgua
     extra = 1
+    max_num = 1
 
 class InlineDisponibilidadAgua(admin.TabularInline):
     model = DisponibilidadAgua
     extra = 1
+    max_num = 1
 
 class InlineCalidadAgua(admin.TabularInline):
     model = CalidadAgua
     extra = 1
+    max_num = 1
 
 class InlineContaminada(admin.TabularInline):
     model = Contaminada
     extra = 1
+    max_num = 1
 
 class InlineEvidencia(admin.TabularInline):
     model = Evidencia
@@ -69,14 +76,17 @@ class InlineTratamientoAgua(admin.TabularInline):
 class InlineUsosAgua(admin.TabularInline):
     model = UsosAgua
     extra = 1
+    max_num = 1
 
 class InlineOrganizacionComunitaria(admin.TabularInline):
     model = OrganizacionComunitaria
     extra = 1
+    max_num = 1
 
 class InlineOrganizacionFinca(admin.TabularInline):
     model = OrganizacionFinca
     extra = 1
+    max_num = 1
 
 class InlineDistribucionTierra(admin.TabularInline):
     model = DistribucionTierra
@@ -85,6 +95,7 @@ class InlineDistribucionTierra(admin.TabularInline):
 class InlinePercibeIngreso(admin.TabularInline):
     model = PercibeIngreso
     extra = 1
+    max_num = 1
 
 class InlineFuentes(admin.TabularInline):
     model = Fuentes
@@ -129,22 +140,27 @@ class InlineGastoProduccion(admin.TabularInline):
 class InlinePrestamo(admin.TabularInline):
     model = Prestamo
     extra = 1
+    max_num = 1
 
 class InlinePracticasAgroecologicas(admin.TabularInline):
     model = PracticasAgroecologicas
     extra = 1
+    max_num = 1
 
 class InlineSeguridadAlimentaria(admin.TabularInline):
     model = SeguridadAlimentaria
     extra = 1
+    max_num = 1
 
 class InlineRespuestaNo41(admin.TabularInline):
     model = RespuestaNo41
     extra = 1
+    max_num = 1
 
 class InlineOtrasSeguridad(admin.TabularInline):
     model = OtrasSeguridad
     extra = 1
+    max_num = 1
 
 class InlineAlimentosFueraFinca(admin.TabularInline):
     model = AlimentosFueraFinca
@@ -152,7 +168,7 @@ class InlineAlimentosFueraFinca(admin.TabularInline):
 
 class AdminEncuesta(admin.ModelAdmin):
     form = ProductorAdminForm
-    fields = (('entrevistado','fecha'),'mapa_finca', 'org_responsable','dueno',)
+    fields = (('entrevistado','fecha','encuestador'),'mapa_finca', 'org_responsable','dueno',)
     def queryset(self, request):
         if request.user.is_superuser:
             return Encuesta.objects.all()

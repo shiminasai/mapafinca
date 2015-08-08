@@ -2,8 +2,8 @@
 
 	$(document).ready(function(){
 
-	var respuesta_si = $('#id_dueno').val();
-	var respuesta_16 = $('#id_calidadagua_set-0-calidad').val();
+	//var respuesta_si = $('#id_dueno').val();
+	//var respuesta_16 = $('#id_calidadagua_set-0-calidad').val();
 
 	$('#duenosi_set-group').hide();
 	$('#duenono_set-group').hide();
@@ -42,6 +42,6 @@
 				$('#fuentes_set-group').hide();
 			};
 		});
-	
+
 	});
 })(jQuery || django.jQuery)

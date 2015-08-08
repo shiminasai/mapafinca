@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.db import models
-from lugar.models import Pais, Departamento, Municipio, Comunidad
+from lugar.models import Pais, Departamento, Municipio, Comunidad, Microcuenca
 from multiselectfield import MultiSelectField
 from sorl.thumbnail import ImageField
 from smart_selects.db_fields import ChainedForeignKey
@@ -109,6 +109,15 @@ class Entrevistados(models.Model):
         Comunidad,
         chained_field="municipio",
         chained_model_field="municipio",
+        show_all=False,
+        auto_choose=True,
+        null=True,
+        blank=True,
+    )
+    microcuenca = ChainedForeignKey(
+        Microcuenca,
+        chained_field="comunidad",
+        chained_model_field="comunidad",
         show_all=False,
         auto_choose=True,
         null=True,
@@ -445,7 +454,7 @@ class PercibeIngreso(models.Model):
     si_no = models.IntegerField(choices=CHOICE_JEFE, verbose_name='Opciones')
 
     class Meta:
-        verbose_name_plural = '¿La familia percibe otros ingresos diferentes a la actividad agropecuaria?'
+        verbose_name_plural = '21_¿La familia percibe otros ingresos diferentes a la actividad agropecuaria?'
 
 
 CHOICE_TIPO_FUENTE = ((1,'Asalariado'),
@@ -483,7 +492,7 @@ class Fuentes(models.Model):
         models.signals.post_save.send(sender=Encuesta, instance=self.encuesta)
 
     class Meta:
-        verbose_name_plural = '21_ingresos diferentes a la actividad agropecuaria'
+        verbose_name_plural = '21.1_ingresos diferentes a la actividad agropecuaria'
 
 
 CHOICE_MEDIDA = (
@@ -681,8 +690,8 @@ class Procesamiento(models.Model):
 
 class IntroducidosTradicionales(models.Model):
     encuesta = models.ForeignKey(Encuesta)
-    cultivo = models.ForeignKey(Cultivos)
-    si_no = models.IntegerField(choices=CHOICE_JEFE)
+    cultivo = models.ForeignKey(Cultivos, verbose_name='Cultivos tradicionales')
+    si_no = models.IntegerField(choices=CHOICE_JEFE, verbose_name='si/no')
     anio = models.IntegerField('Año', null=True, blank=True)
 
     class Meta:
@@ -691,8 +700,8 @@ class IntroducidosTradicionales(models.Model):
 
 class IntroducidosHuertos(models.Model):
     encuesta = models.ForeignKey(Encuesta)
-    cultivo = models.ForeignKey(Cultivos)
-    si_no = models.IntegerField(choices=CHOICE_JEFE)
+    cultivo = models.ForeignKey(Cultivos, verbose_name='Cultivos en huertos familiares')
+    si_no = models.IntegerField(choices=CHOICE_JEFE, verbose_name='si/no')
     anio = models.IntegerField('Año', null=True, blank=True)
 
     class Meta:
@@ -769,12 +778,12 @@ class UsoPrestamo(models.Model):
 class Prestamo(models.Model):
     encuesta = models.ForeignKey(Encuesta)
     algun_prestamo = models.IntegerField(choices=CHOICE_JEFE)
-    monto = models.FloatField('28.1_¿Cuál fue el monto en C$?')
-    pago = models.FloatField('28.2_¿Pago mensual en C$?')
+    monto = models.FloatField('28.1_¿Cuál fue el monto en C$?', null=True, blank=True)
+    pago = models.FloatField('28.2_¿Pago mensual en C$?', null=True, blank=True)
     recibe = models.ManyToManyField(RecibePrestamo,
-                                    verbose_name='28.3_¿De quien recibe el prestamo/crédito')
+                                    verbose_name='28.3_¿De quien recibe el prestamo/crédito', blank=True)
     uso = models.ManyToManyField(UsoPrestamo,
-                                verbose_name='28.4_¿Cuál fue el uso del prestamo/crédito')
+                                verbose_name='28.4_¿Cuál fue el uso del prestamo/crédito', blank=True)
 
 
     class Meta:
@@ -807,15 +816,15 @@ class PracticasAgroecologicas(models.Model):
     si_no = models.IntegerField(choices=CHOICE_JEFE,
         verbose_name='29_¿En la finca aplican técnicas de manejo agro ecologico u orgánico')
     cinco_principales = models.ManyToManyField(Practicas,
-                                            verbose_name='29.1_Mencione cinco principales')
+                                            verbose_name='29.1_Mencione cinco principales',blank=True)
     manejo = models.IntegerField(choices=CHOICE_MANEJO,
-                    verbose_name='31_Sobre el manejo del suelo ¿Cómo preparan el suelo?')
+                    verbose_name='31_Sobre el manejo del suelo ¿Cómo preparan el suelo?', null=True, blank=True)
     traccion = models.IntegerField(choices=CHOICE_TRACCION,
-                    verbose_name='32_¿Qué tipo de tracción utilizan para la preparación del suelo?')
+                    verbose_name='32_¿Qué tipo de tracción utilizan para la preparación del suelo?', null=True, blank=True)
     fertilidad = models.IntegerField(choices=CHOICE_JEFE,
-                    verbose_name='33_¿Realizan análisis de fertilidad del suelo?')
+                    verbose_name='33_¿Realizan análisis de fertilidad del suelo?', null=True, blank=True)
     control = models.IntegerField(choices=CHOICE_JEFE,
-                    verbose_name='34_¿Realiza control y monitoreo de plagas y enfermedades?')
+                    verbose_name='34_¿Realiza control y monitoreo de plagas y enfermedades?', null=True, blank=True)
 
     class Meta:
         verbose_name_plural = 'Prácticas agroecológicas'

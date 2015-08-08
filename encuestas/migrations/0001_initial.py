@@ -11,8 +11,8 @@ from django.conf import settings
 class Migration(migrations.Migration):
 
     dependencies = [
+        ('lugar', '0002_microcuenca'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('lugar', '0001_initial'),
     ]
 
     operations = [
@@ -293,6 +293,7 @@ class Migration(migrations.Migration):
                 ('finca', models.CharField(max_length=250, verbose_name=b'Nombre de la finca')),
                 ('comunidad', smart_selects.db_fields.ChainedForeignKey(chained_model_field=b'municipio', chained_field=b'municipio', blank=True, auto_choose=True, to='lugar.Comunidad', null=True)),
                 ('departamento', smart_selects.db_fields.ChainedForeignKey(chained_model_field=b'pais', chained_field=b'pais', auto_choose=True, to='lugar.Departamento')),
+                ('microcuenca', smart_selects.db_fields.ChainedForeignKey(chained_model_field=b'comunidad', chained_field=b'comunidad', blank=True, auto_choose=True, to='lugar.Microcuenca', null=True)),
                 ('municipio', smart_selects.db_fields.ChainedForeignKey(chained_model_field=b'departamento', chained_field=b'departamento', auto_choose=True, to='lugar.Municipio')),
                 ('pais', models.ForeignKey(to='lugar.Pais')),
                 ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
@@ -355,7 +356,7 @@ class Migration(migrations.Migration):
                 ('encuesta', models.ForeignKey(to='encuestas.Encuesta')),
             ],
             options={
-                'verbose_name_plural': '21_ingresos diferentes a la actividad agropecuaria',
+                'verbose_name_plural': '21.1_ingresos diferentes a la actividad agropecuaria',
             },
         ),
         migrations.CreateModel(
@@ -405,9 +406,9 @@ class Migration(migrations.Migration):
             name='IntroducidosHuertos',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('si_no', models.IntegerField(choices=[(1, b'Si'), (2, b'No')])),
+                ('si_no', models.IntegerField(verbose_name=b'si/no', choices=[(1, b'Si'), (2, b'No')])),
                 ('anio', models.IntegerField(null=True, verbose_name=b'A\xc3\xb1o', blank=True)),
-                ('cultivo', models.ForeignKey(to='encuestas.Cultivos')),
+                ('cultivo', models.ForeignKey(verbose_name=b'Cultivos en huertos familiares', to='encuestas.Cultivos')),
                 ('encuesta', models.ForeignKey(to='encuestas.Encuesta')),
             ],
             options={
@@ -418,9 +419,9 @@ class Migration(migrations.Migration):
             name='IntroducidosTradicionales',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('si_no', models.IntegerField(choices=[(1, b'Si'), (2, b'No')])),
+                ('si_no', models.IntegerField(verbose_name=b'si/no', choices=[(1, b'Si'), (2, b'No')])),
                 ('anio', models.IntegerField(null=True, verbose_name=b'A\xc3\xb1o', blank=True)),
-                ('cultivo', models.ForeignKey(to='encuestas.Cultivos')),
+                ('cultivo', models.ForeignKey(verbose_name=b'Cultivos tradicionales', to='encuestas.Cultivos')),
                 ('encuesta', models.ForeignKey(to='encuestas.Encuesta')),
             ],
             options={
@@ -491,7 +492,7 @@ class Migration(migrations.Migration):
                 ('encuesta', models.ForeignKey(to='encuestas.Encuesta')),
             ],
             options={
-                'verbose_name_plural': '\xbfLa familia percibe otros ingresos diferentes a la actividad agropecuaria?',
+                'verbose_name_plural': '21_\xbfLa familia percibe otros ingresos diferentes a la actividad agropecuaria?',
             },
         ),
         migrations.CreateModel(
@@ -506,11 +507,11 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('si_no', models.IntegerField(verbose_name=b'29_\xc2\xbfEn la finca aplican t\xc3\xa9cnicas de manejo agro ecologico u org\xc3\xa1nico', choices=[(1, b'Si'), (2, b'No')])),
-                ('manejo', models.IntegerField(verbose_name=b'31_Sobre el manejo del suelo \xc2\xbfC\xc3\xb3mo preparan el suelo?', choices=[(1, b'Tala y quema'), (2, b'Trabaja en crudo'), (3, b'Arado'), (4, b'Uso de cobertura')])),
-                ('traccion', models.IntegerField(verbose_name=b'32_\xc2\xbfQu\xc3\xa9 tipo de tracci\xc3\xb3n utilizan para la preparaci\xc3\xb3n del suelo?', choices=[(1, b'Animal'), (2, b'Humana'), (3, b'Tractor'), (4, b'Ninguna')])),
-                ('fertilidad', models.IntegerField(verbose_name=b'33_\xc2\xbfRealizan an\xc3\xa1lisis de fertilidad del suelo?', choices=[(1, b'Si'), (2, b'No')])),
-                ('control', models.IntegerField(verbose_name=b'34_\xc2\xbfRealiza control y monitoreo de plagas y enfermedades?', choices=[(1, b'Si'), (2, b'No')])),
-                ('cinco_principales', models.ManyToManyField(to='encuestas.Practicas', verbose_name=b'29.1_Mencione cinco principales')),
+                ('manejo', models.IntegerField(blank=True, null=True, verbose_name=b'31_Sobre el manejo del suelo \xc2\xbfC\xc3\xb3mo preparan el suelo?', choices=[(1, b'Tala y quema'), (2, b'Trabaja en crudo'), (3, b'Arado'), (4, b'Uso de cobertura')])),
+                ('traccion', models.IntegerField(blank=True, null=True, verbose_name=b'32_\xc2\xbfQu\xc3\xa9 tipo de tracci\xc3\xb3n utilizan para la preparaci\xc3\xb3n del suelo?', choices=[(1, b'Animal'), (2, b'Humana'), (3, b'Tractor'), (4, b'Ninguna')])),
+                ('fertilidad', models.IntegerField(blank=True, null=True, verbose_name=b'33_\xc2\xbfRealizan an\xc3\xa1lisis de fertilidad del suelo?', choices=[(1, b'Si'), (2, b'No')])),
+                ('control', models.IntegerField(blank=True, null=True, verbose_name=b'34_\xc2\xbfRealiza control y monitoreo de plagas y enfermedades?', choices=[(1, b'Si'), (2, b'No')])),
+                ('cinco_principales', models.ManyToManyField(to='encuestas.Practicas', verbose_name=b'29.1_Mencione cinco principales', blank=True)),
                 ('encuesta', models.ForeignKey(to='encuestas.Encuesta')),
             ],
             options={
@@ -522,8 +523,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('algun_prestamo', models.IntegerField(choices=[(1, b'Si'), (2, b'No')])),
-                ('monto', models.FloatField(verbose_name=b'28.1_\xc2\xbfCu\xc3\xa1l fue el monto en C$?')),
-                ('pago', models.FloatField(verbose_name=b'28.2_\xc2\xbfPago mensual en C$?')),
+                ('monto', models.FloatField(null=True, verbose_name=b'28.1_\xc2\xbfCu\xc3\xa1l fue el monto en C$?', blank=True)),
+                ('pago', models.FloatField(null=True, verbose_name=b'28.2_\xc2\xbfPago mensual en C$?', blank=True)),
                 ('encuesta', models.ForeignKey(to='encuestas.Encuesta')),
             ],
             options={
@@ -741,12 +742,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='prestamo',
             name='recibe',
-            field=models.ManyToManyField(to='encuestas.RecibePrestamo', verbose_name=b'28.3_\xc2\xbfDe quien recibe el prestamo/cr\xc3\xa9dito'),
+            field=models.ManyToManyField(to='encuestas.RecibePrestamo', verbose_name=b'28.3_\xc2\xbfDe quien recibe el prestamo/cr\xc3\xa9dito', blank=True),
         ),
         migrations.AddField(
             model_name='prestamo',
             name='uso',
-            field=models.ManyToManyField(to='encuestas.UsoPrestamo', verbose_name=b'28.4_\xc2\xbfCu\xc3\xa1l fue el uso del prestamo/cr\xc3\xa9dito'),
+            field=models.ManyToManyField(to='encuestas.UsoPrestamo', verbose_name=b'28.4_\xc2\xbfCu\xc3\xa1l fue el uso del prestamo/cr\xc3\xa9dito', blank=True),
         ),
         migrations.AddField(
             model_name='otrasseguridad',
