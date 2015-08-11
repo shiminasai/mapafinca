@@ -125,7 +125,7 @@ def principal_dashboard(request, template='dashboard.html', departamento_id=None
 
     #grafico de kcalorias aun esta en proceso
 
-    # grafico sobre algo mas
+    #grafico sobre algo mas
 
     #grafico sobre clima
     lista_precipitacion = []
@@ -184,8 +184,9 @@ def detalle_finca(request, template='detalle_finca.html', entrevistado_id=None):
                 pass
             variable = round(saca_porcentajes(suma,objeto['num_total']))
             grafo.append([e[1],variable])
-           
-        gran_dicc[year[1]] = (grafo)
+        gasto_total = detalle.filter(year=year[0]).aggregate(t=Sum('totalingreso__total_gasto'))['t']   
+        gasto_total_fuera = detalle.filter(year=year[0]).aggregate(t=Sum('totalingreso__total_gasto_fuera_finca'))['t']
+        gran_dicc[year[1]] = (grafo, gasto_total, gasto_total_fuera)
 
     return render(request, template, locals())
 

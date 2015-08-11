@@ -75,7 +75,7 @@ $(function () {
             name: "porcentaje",
             colorByPoint: true,
             data: [
-            {% for value in v %}
+            {% for value in v.0 %}
             {
                 name: "{{value.0}}",
                 y: {{value.1}},
@@ -84,16 +84,11 @@ $(function () {
             ]
         }],
     });
-
-	{% endfor %}
-}); //fin funcion anonima
-
-$(function () {
-
-    $(document).ready(function () {
-
-        // Build the chart
-        $('#ficha-grafico2').highcharts({
+	
+	//fin del grafico de educacion
+	//
+	//Inicio del grafico de ingreso
+	$('#ficha-grafico2-{{k}}').highcharts({
             chart: {
                 plotBackgroundColor: null,
                 plotBorderWidth: null,
@@ -101,7 +96,7 @@ $(function () {
                 type: 'pie'
             },
             title: {
-                text: 'Browser market shares January, 2015 to May, 2015'
+                text: 'Ingreso vs gastos ({{k}})'
             },
             tooltip: {
                 pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
@@ -117,31 +112,30 @@ $(function () {
                 }
             },
             series: [{
-                name: "Brands",
+                name: "C$",
                 colorByPoint: true,
                 data: [{
-                    name: "Microsoft Internet Explorer",
+                    name: "Ingreso",
                     y: 56.33
                 }, {
-                    name: "Chrome",
+                    name: "Gasto",
                     y: 24.03,
                     sliced: true,
                     selected: true
-                }, {
-                    name: "Firefox",
-                    y: 10.38
-                }, {
-                    name: "Safari",
-                    y: 4.77
-                }, {
-                    name: "Opera",
-                    y: 0.91
-                }, {
-                    name: "Proprietary or Undetectable",
-                    y: 0.2
                 }]
             }]
         });
+
+
+	{% endfor %}
+}); //fin funcion anonima
+
+$(function () {
+
+    $(document).ready(function () {
+
+        // Build the chart
+        
     });
 });
 
@@ -438,7 +432,7 @@ $(function () {
 						<div class="titulo-info">
 								INGRESO VS GASTO
 						</div>
-						<div id="ficha-grafico2" style="height:466px;"></div>
+						<div id="ficha-grafico2-{{obj.year}}" style="height:466px;"></div>
 					</div>
 
 					<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 alinear">
