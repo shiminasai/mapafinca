@@ -20,6 +20,7 @@ INSTALLED_APPS = (
     'multiselectfield',
     'selectable',
     'sorl.thumbnail',
+    'endless_pagination',
 )
 
 MIDDLEWARE_CLASSES = (

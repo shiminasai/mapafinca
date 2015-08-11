@@ -63,6 +63,11 @@ def obtener_mapa_dashboard(request):
 class GalleryView(TemplateView):
     template_name = "galeria.html"
 
+    def get_context_data(self, **kwargs):
+        context = super(GalleryView, self).get_context_data(**kwargs)
+        context['object_list'] = Encuesta.objects.all()
+        return context
+
 class DetailIndicadorView(TemplateView):
     template_name = "detalle_indicador.html"
 
@@ -72,9 +77,9 @@ class FirstMapaView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(FirstMapaView, self).get_context_data(**kwargs)
         context['nicaragua'] = Encuesta.objects.filter(entrevistado__pais_id=1).count()
-        context['elsalvado'] = 2#Encuesta.objects.filter(entrevistado__pais_id=2).count()
-        context['honduras'] = 3#Encuesta.objects.filter(entrevistado__pais_id=3).count()
-        context['guatemala'] = 4#Encuesta.objects.filter(entrevistado__pais_id=4).count()
+        context['elsalvado'] = 0#Encuesta.objects.filter(entrevistado__pais_id=2).count()
+        context['honduras'] = 0#Encuesta.objects.filter(entrevistado__pais_id=3).count()
+        context['guatemala'] = 0#Encuesta.objects.filter(entrevistado__pais_id=4).count()
         return context
 
 
@@ -140,33 +145,50 @@ def principal_dashboard(request, template='dashboard.html', departamento_id=None
 def detalle_finca(request, template='detalle_finca.html', entrevistado_id=None):
     detalle = Encuesta.objects.filter(entrevistado_id=entrevistado_id).order_by('year')
 
-    tabla_educacion = []
-    grafo = []
-    suma = 0
-    for e in CHOICE_ESCOLARIDAD:
-        objeto = detalle.filter(escolaridad__sexo = e[0]).aggregate(num_total = Sum('escolaridad__total'),
-                no_leer = Sum('escolaridad__no_leer'),
-                p_incompleta = Sum('escolaridad__pri_incompleta'),
-                p_completa = Sum('escolaridad__pri_completa'),
-                s_incompleta = Sum('escolaridad__secu_incompleta'),
-                bachiller = Sum('escolaridad__bachiller'),
-                universitario = Sum('escolaridad__uni_tecnico'))
-        try:
-            suma = int(objeto['p_completa'] or 0) + int(objeto['s_incompleta'] or 0) + int(objeto['bachiller'] or 0) + int(objeto['universitario'] or 0)
-        except:
-            pass
-        variable = round(saca_porcentajes(suma,objeto['num_total']))
-        grafo.append([e[1],variable])
-        fila = [e[1], objeto['num_total'],
-                saca_porcentajes(objeto['no_leer'], objeto['num_total'], False),
-                saca_porcentajes(objeto['p_incompleta'], objeto['num_total'], False),
-                saca_porcentajes(objeto['p_completa'], objeto['num_total'], False),
-                saca_porcentajes(objeto['s_incompleta'], objeto['num_total'], False),
-                saca_porcentajes(objeto['bachiller'], objeto['num_total'], False),
-                saca_porcentajes(objeto['universitario'], objeto['num_total'], False)]
-        tabla_educacion.append(fila)
+    #años que tiene ese productor
+    years = []
+    for en in Encuesta.objects.filter(entrevistado_id=entrevistado_id).order_by('year').values_list('year', flat=True):
+        years.append((en,en))
+    list(set(years))
+
+    #para el mapa
+    latitud = 0
+    longitud = 0
+    for obj in detalle:
+        if obj.entrevistado.latitud:
+            latitud = obj.entrevistado.latitud
+        else:
+            latitud = obj.entrevistado.municipio.latitud
+        if obj.entrevistado.longitud:
+            longitud = obj.entrevistado.longitud
+        else:
+            longitud = obj.entrevistado.municipio.longitud
+    #fin del mapa
+    #los años del detalle del productor
+    gran_dicc = {}
+    for year in years:
+        tabla_educacion = []
+        grafo = []
+        suma = 0
+        for e in CHOICE_ESCOLARIDAD:
+            objeto = detalle.filter(year=year[0],escolaridad__sexo = e[0]).aggregate(num_total = Sum('escolaridad__total'),
+                    no_leer = Sum('escolaridad__no_leer'),
+                    p_incompleta = Sum('escolaridad__pri_incompleta'),
+                    p_completa = Sum('escolaridad__pri_completa'),
+                    s_incompleta = Sum('escolaridad__secu_incompleta'),
+                    bachiller = Sum('escolaridad__bachiller'),
+                    universitario = Sum('escolaridad__uni_tecnico'))
+            try:
+                suma = int(objeto['p_completa'] or 0) + int(objeto['s_incompleta'] or 0) + int(objeto['bachiller'] or 0) + int(objeto['universitario'] or 0)
+            except:
+                pass
+            variable = round(saca_porcentajes(suma,objeto['num_total']))
+            grafo.append([e[1],variable])
+           
+        gran_dicc[year[1]] = (grafo)
 
     return render(request, template, locals())
+
 
 def indicadores(request, template='indicadores.html'):
     #a = _queryset_filtrado(request)

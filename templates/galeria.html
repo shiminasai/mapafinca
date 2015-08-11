@@ -1,4 +1,6 @@
 {% extends "base.html" %}
+{% load thumbnail %}
+{% load endless %}
 {% block extra_js %}
 	<link type="text/css" rel="stylesheet" href="/static/css/lightGallery.css" />                    
 	<script src="/static/js/lightGallery.js"></script>
@@ -21,79 +23,26 @@ $(document).ready(function() {
 {% endblock extra_js %}
 {% block contenido %}
 <div class="row contenido-galeria">
-
+	{% paginate object_list %}
 	<div id="lightGallery">
-
-	  <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2 item" data-src="/static/img/text2.png"
-	  data-sub-html="<div class='custom-html'><a class='ver-detalle' href='/'>ver detalle</a></div>">
-	      <img class="center-block" src="/static/img/text.png" />
-	  </div>
-
-	  <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2 item" data-src="/static/img/text2.png">
-	      <img class="center-block" src="/static/img/text.png" />
-	  </div>
-
-	  <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2 item" data-src="/static/img/text2.png">
-	      <img class="center-block" src="/static/img/text.png" />
-	  </div>
-
-	  <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2 item" data-src="/static/img/text2.png">
-	      <img class="center-block" src="/static/img/text.png" />
-	  </div>
-
-	  <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2 item" data-src="/static/img/text2.png">
-	      <img class="center-block" src="/static/img/text.png" />
-	  </div>
-
-	  <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2 item" data-src="/static/img/text2.png">
-	      <img class="center-block" src="/static/img/text.png" />
-	  </div>
-
-	  <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2 item" data-src="/static/img/text2.png">
-	      <img class="center-block" src="/static/img/text.png" />
-	  </div>
-
-	  <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2 item" data-src="/static/img/text2.png">
-	      <img class="center-block" src="/static/img/text.png" />
-	  </div>
-	  <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2 item" data-src="/static/img/text2.png">
-	      <img class="center-block" src="/static/img/text.png" />
-	  </div>
-	  <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2 item" data-src="/static/img/text2.png">
-	      <img class="center-block" src="/static/img/text.png" />
-	  </div>
-	  <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2 item" data-src="/static/img/text2.png">
-	      <img class="center-block" src="/static/img/text.png" />
-	  </div>
-	  <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2 item" data-src="/static/img/text2.png">
-	      <img class="center-block" src="/static/img/text.png" />
-	  </div>
-
-	  <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2 item" data-src="/static/img/text2.png">
-	      <img class="center-block" src="/static/img/text.png" />
-	  </div>
-	  <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2 item" data-src="/static/img/text2.png">
-	      <img class="center-block" src="/static/img/text.png" />
-	  </div>
+ 	{% for obj in object_list %}
+		<div class="col-xs-6 col-sm-4 col-md-3 col-lg-2 item" 
+			{% thumbnail obj.mapa_finca "800x500" as im %}
+                data-src="/media/{{im}}"
+            {% endthumbnail %}
+	  		data-sub-html="<div class='custom-html'><a class='ver-detalle' href='/finca/{{obj.entrevistado.id}}'>ver detalle</a></div>">
+	  		{% thumbnail obj.mapa_finca "200x125" as im %}
+                <img class="center-block" src="/media/{{im}}" />
+            {% endthumbnail %}
+	      
+	  	</div>
+	{% endfor %}
+	  
 	</div>
 
 	<nav class="col-xs-12 col-sm-12 col-md-12 col-lg-12" >
 	  <ul class="pagination">
-	    <li>
-	      <a href="#" aria-label="Previous">
-	        <span aria-hidden="true">&laquo;</span>
-	      </a>
-	    </li>
-	    <li><a href="#">1</a></li>
-	    <li><a href="#">2</a></li>
-	    <li><a href="#">3</a></li>
-	    <li><a href="#">4</a></li>
-	    <li><a href="#">5</a></li>
-	    <li>
-	      <a href="#" aria-label="Next">
-	        <span aria-hidden="true">&raquo;</span>
-	      </a>
-	    </li>
+	   <li>{% show_pages %}</li>
 	  </ul>
 	</nav>
 </div>

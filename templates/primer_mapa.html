@@ -46,8 +46,8 @@
 	<div class="col-xs-12 col-sm-12 col-md-10 col-lg-10 col-lg-offset-1">
 		<div class="row">
 			<div class='col-xs-12 col-sm-12 col-md-3 col-lg-3 numero-encuestas'>Número de encuestas por país:</div>
-			<div class='col-xs-6 col-sm-3 col-md-2 col-lg-2 numero-encuestas'>Guatemala: 20</div>
-			<div class='col-xs-6 col-sm-3 col-md-2 col-lg-2 numero-encuestas'>El salvador: 20</div>
+			<div class='col-xs-6 col-sm-3 col-md-2 col-lg-2 numero-encuestas'>Guatemala: {{guatemala}}</div>
+			<div class='col-xs-6 col-sm-3 col-md-2 col-lg-2 numero-encuestas'>El salvador: {{elsalvado}}</div>
 			<div class='col-xs-6 col-sm-3 col-md-2 col-lg-2 numero-encuestas'>Honduras: {{honduras}}</div>
 			<div class='col-xs-6 col-sm-3 col-md-2 col-lg-2 numero-encuestas'>Nicaragua: {{nicaragua}}</div>
 		
@@ -71,7 +71,7 @@
 			<span class='badge gt' >{{guatemala}}</span>
 		{% endif %}
 		{% if salvador %}
-			<span class='badge sl'>{{salvador}}</span>
+			<span class='badge sl'>{{elsalvado}}</span>
 		{% endif %}
 		
 		<svg version="1.1" id="baum" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"  viewBox="0 0 600 400" xml:space="preserve">
