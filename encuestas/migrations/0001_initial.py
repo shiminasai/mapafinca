@@ -240,7 +240,7 @@ class Migration(migrations.Migration):
                 ('fecha', models.DateField()),
                 ('mapa_finca', sorl.thumbnail.fields.ImageField(null=True, upload_to=b'mapas_fincas', blank=True)),
                 ('dueno', models.IntegerField(verbose_name=b'\xc2\xbfSon due\xc3\xb1os de la propiedad/finca?', choices=[(1, b'Si'), (2, b'No')])),
-                ('year', models.IntegerField(editable=False)),
+                ('year', models.IntegerField(verbose_name=b'A\xc3\xb1o', editable=False)),
             ],
             options={
                 'verbose_name_plural': 'ENCUESTAS',
@@ -299,8 +299,8 @@ class Migration(migrations.Migration):
                 ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
             ],
             options={
-                'verbose_name': 'Entrevistado',
-                'verbose_name_plural': 'Entrevistados',
+                'verbose_name': 'Base de datos Productor',
+                'verbose_name_plural': 'Base de datos Productores',
             },
         ),
         migrations.CreateModel(
@@ -312,7 +312,6 @@ class Migration(migrations.Migration):
                 ('pri_incompleta', models.IntegerField(verbose_name=b'Primaria incompleta')),
                 ('pri_completa', models.IntegerField(verbose_name=b'Primaria completa')),
                 ('secu_incompleta', models.IntegerField(verbose_name=b'Secundaria incompleta')),
-                ('secu_completa', models.IntegerField(verbose_name=b'Secundaria completa')),
                 ('bachiller', models.IntegerField(verbose_name=b'Bachiller')),
                 ('uni_tecnico', models.IntegerField(verbose_name=b'Universitario o t\xc3\xa9cnico')),
                 ('total', models.IntegerField(verbose_name=b'total')),
@@ -802,7 +801,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='encuesta',
             name='org_responsable',
-            field=models.ForeignKey(to='encuestas.OrganizacionResp'),
+            field=models.ForeignKey(verbose_name=b'Nombre de la organizaci\xc3\xb3n responsable', to='encuestas.OrganizacionResp'),
         ),
         migrations.AddField(
             model_name='encuesta',
