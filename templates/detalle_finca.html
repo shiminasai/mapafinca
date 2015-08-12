@@ -9,11 +9,11 @@
 <script type="text/javascript" src="/static/js/markerclusterer.js"></script>
 <script type="text/javascript" src="/static/js/infobox.js"></script>
 <script type="text/javascript">
-            
+
     function initialize() {
   			var myLatlng = new google.maps.LatLng({{latitud}},{{longitud}});
   			var mapOptions = {
-    		zoom: 10,
+    		zoom: 12,
     		center: myLatlng
   		}
   		var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
@@ -39,7 +39,7 @@
 $(function () {
     // Create the chart
     {% for k,v in gran_dicc.items %}
-    	
+
     $('#ficha-grafico1-{{k}}').highcharts({
         chart: {
             type: 'column'
@@ -84,7 +84,7 @@ $(function () {
             ]
         }],
     });
-	
+
 	//fin del grafico de educacion
 	//
 	//Inicio del grafico de ingreso
@@ -135,7 +135,7 @@ $(function () {
     $(document).ready(function () {
 
         // Build the chart
-        
+
     });
 });
 
