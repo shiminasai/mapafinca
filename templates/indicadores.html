@@ -580,7 +580,7 @@ $(function () {
 			<div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 ind-org">
 				<div class="row">
 					<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 numero">
-						9
+						{{organizaciones}}
 					</div>
 					<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 ind-text">
 						ORGANIZACIONES
@@ -592,7 +592,7 @@ $(function () {
 			<div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 ind-familia">
 				<div class="row">
 					<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 numero">
-						{{indicadores|length}}
+						{{familias}}
 					</div>
 					<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 ind-text">
 						FAMILIAS
@@ -605,7 +605,7 @@ $(function () {
 					<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 ind-sexo linea">
 						<div class="row">
 							<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 numero">
-								{{porcentaje_hombres}}
+								{{porcentaje_hombres}}%
 							</div>
 							<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 ind-text">
 								Hombres
@@ -615,7 +615,7 @@ $(function () {
 					<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 ind-sexo">
 						<div class="row">
 							<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 numero">
-								{{porcentaje_mujeres}}
+								{{porcentaje_mujeres}}%
 							</div>
 							<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 ind-text">
 								Mujeres
@@ -800,6 +800,31 @@ $(function () {
 				</table>
 			</div>
 
+            <div class="table-responsive grafico-indicador">
+                <table class="table tabla-ingreso">
+                    <thead>
+                        <tr>
+                            <th>INGRESOS</th>
+                            {% for k,v in ingreso_dicc.items %}
+                                <th>{{k}}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for k,v in ingreso_dicc.items %}
+                            {% for k1,v1 in v.items %}
+                                <tr>
+                                    <td>{{k1}}</td>
+                                    <td>{{v1}}</td>
+                                    <td>{{v1}}</td>
+                                    <td>{{v1}}</td>
+                                </tr>
+                            {% endfor %} 
+                        {% endfor %}  
+                    </tbody>
+                </table>
+            </div>
+
 			<div class="table-responsive grafico-indicador">
 				<table class="table tabla-ingreso">
 					<thead>
@@ -872,26 +897,13 @@ $(function () {
 			<div id="ind-grafico8" style="height: 550px;"></div>
 		</div>
 	</div>
+    {{ingreso_dicc}}
 	<div class="titulo-botonera">
 		<h5>OTROS INDICADORES</h5>
 		<hr>
 	</div>
-	<div class="botonera row">
-		<div class="col-md-12 col-lg-12 ">
-		    <div class="row">
+	{% include "menu_indicadores.html" %}
 
-		        <a class="btn col-xs-12 col-ms-6 col-md-4 col-lg-3" href="">Miembros del hogar</a>
-
-		        <a class="btn col-xs-12 col-ms-6 col-md-4 col-lg-3" href="/propiedad/">Tenencia de la propiedad</a>
-		        <a class="btn col-xs-12 col-ms-6 col-md-4 col-lg-3" href="">Producción</a>
-		        <a class="btn col-xs-12 col-ms-6 col-md-4 col-lg-3" href="">practicas</a>
-		        <a class="btn col-xs-12 col-ms-6 col-md-4 col-lg-3" href="/educacion/">Nivel educativo</a>
-		        <a class="btn col-xs-12 col-ms-6 col-md-4 col-lg-3" href="">Uso de tierra</a>
-		        <a class="btn col-xs-12 col-ms-6 col-md-4 col-lg-3" href="">Riesgo</a>
-		        <a class="btn col-xs-12 col-ms-6 col-md-4 col-lg-3" href="">Comercialización</a>
-		    </div>
-		</div>
-	</div>
 </div>
 
 

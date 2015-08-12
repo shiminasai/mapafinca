@@ -7,6 +7,7 @@ from .models import *
 import json as simplejson
 from django.db.models import Sum, Avg
 from clima.models import *
+from collections import OrderedDict
 # Create your views here.
 
 def _queryset_filtrado(request):
@@ -199,10 +200,35 @@ def detalle_finca(request, template='detalle_finca.html', entrevistado_id=None):
 
 def indicadores(request, template='indicadores.html'):
     #a = _queryset_filtrado(request)
-    indicadores = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento']).distinct('entrevistado__id')
-    porcentaje_hombres = '80%'
-    porcentaje_mujeres = '20%'
+    #indicadores = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento']).distinct('entrevistado__id')
+    total_entrevistados = Entrevistados.objects.count()
+    total_hombres = Entrevistados.objects.filter(sexo=2).count()
+    total_mujeres = Entrevistados.objects.filter(sexo=1).count()
+    porcentaje_hombres = total_hombres / total_entrevistados * 100
+    porcentaje_mujeres = total_mujeres / total_entrevistados * 100
 
+    organizaciones = OrganizacionResp.objects.count()
+    familias = Entrevistados.objects.count()
+
+    #años que tiene ese productor
+    years = []
+    for en in Encuesta.objects.order_by('year').values_list('year', flat=True):
+        years.append((en,en))
+    list(set(years))
+
+    #Ingresos por años
+    ingreso_dicc = OrderedDict()
+    for year in years:
+        p = Procesamiento.objects.filter(encuesta__year=year[0]).aggregate(t=Sum('total'))['t']
+        g = Ganaderia.objects.filter(encuesta__year=year[0]).aggregate(t=Sum('total'))['t']
+        ch = CultivosHuertosFamiliares.objects.filter(encuesta__year=year[0]).aggregate(t=Sum('total'))['t']
+        ct = CultivosTradicionales.objects.filter(encuesta__year=year[0]).aggregate(t=Sum('total'))['t']
+        f = Fuentes.objects.filter(encuesta__year=year[0]).aggregate(t=Sum('total'))['t']
+        cf = CultivosFrutasFinca.objects.filter(encuesta__year=year[0]).aggregate(t=Sum('total'))['t']
+
+        ingreso_dicc[year[1]] = (p,g,ch,ct,f,cf)
+
+    print ingreso_dicc
 
     return render(request, template, locals())
 

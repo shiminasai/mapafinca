@@ -983,6 +983,7 @@ class TotalIngreso(models.Model):
                     CultivosHuertosFamiliares.objects.filter(**params).aggregate(t=models.Sum('total'))['t'], \
                     CultivosTradicionales.objects.filter(**params).aggregate(t=models.Sum('total'))['t'], \
                     Fuentes.objects.filter(**params).aggregate(t=models.Sum('total'))['t'], \
+                    CultivosFrutasFinca.objects.filter(**params).aggregate(t=models.Sum('total'))['t'], \
                 ]
         total = sum(filter(None, totales))
         return total
