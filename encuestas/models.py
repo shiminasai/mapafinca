@@ -699,7 +699,7 @@ class IntroducidosTradicionales(models.Model):
 
 class IntroducidosHuertos(models.Model):
     encuesta = models.ForeignKey(Encuesta)
-    cultivo = models.ForeignKey(Cultivos, verbose_name='Cultivos en huertos familiares')
+    cultivo = models.ForeignKey(CultivosHuertos, verbose_name='Cultivos en huertos familiares')
     si_no = models.IntegerField(choices=CHOICE_JEFE, verbose_name='si/no')
     anio = models.IntegerField('Año', null=True, blank=True)
 
