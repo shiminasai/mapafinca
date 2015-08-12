@@ -195,18 +195,18 @@ $(function () {
             data: [{% if tradicional == None %}0 {%else%}{{tradicional}},{% endif %}]
         }, {
             name: 'c. huertos',
-            data: [{% if tradicional == None %}0 {%else%}{{huertos}},{% endif %}]
+            data: [{% if huertos == None %}0 {%else%}{{huertos}},{% endif %}]
         }, {
             name: 'o. fuentes',
-            data: [{% if tradicional == None %}0 {%else%}{{fuente}},{% endif %}]
+            data: [{% if fuente == None %}0 {%else%}{{fuente}},{% endif %}]
         },
         {
             name: 'ganado',
-            data: [{% if tradicional == None %}0 {%else%}{{ganado}},{% endif %}]
+            data: [{% if ganado == None %}0 {%else%}{{ganado}},{% endif %}]
         },
         {
             name: 'procesamiento',
-            data: [{% if tradicional == None %}0 {%else%}{{procesamiento}}{% endif %},]
+            data: [{% if ganado == None %}0 {%else%}{{ganado}}{% endif %},]
         },
         ]
     });
