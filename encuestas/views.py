@@ -184,9 +184,15 @@ def detalle_finca(request, template='detalle_finca.html', entrevistado_id=None):
                 pass
             variable = round(saca_porcentajes(suma,objeto['num_total']))
             grafo.append([e[1],variable])
+
+        #calculo ingreso vs gasto    
         gasto_total = detalle.filter(year=year[0]).aggregate(t=Sum('totalingreso__total_gasto'))['t']   
         gasto_total_fuera = detalle.filter(year=year[0]).aggregate(t=Sum('totalingreso__total_gasto_fuera_finca'))['t']
-        gran_dicc[year[1]] = (grafo, gasto_total, gasto_total_fuera)
+        
+        ingreso_total = detalle.filter(year=year[0]).aggregate(t=Sum('totalingreso__total'))['t']
+        total_gastos = gasto_total + gasto_total_fuera
+
+        gran_dicc[year[1]] = (grafo, ingreso_total, total_gastos)
 
     return render(request, template, locals())
 

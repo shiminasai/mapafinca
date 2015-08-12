@@ -972,8 +972,7 @@ class TotalIngreso(models.Model):
         self.total = self._get_total()
         self.total_gasto = self._get_total_gasto()
         self.total_gasto_fuera_finca = self._get_total_gasto_fuera_finca()
-        #self.total_ap = self._get_total() - (OtrosIngresos.objects.filter(encuesta=self.encuesta).aggregate(t=models.Sum('total'))['t'] or 0)
-        #print self.total, self.total_ap
+        
         super(TotalIngreso, self).save(*args, **kwargs)
 
     def _get_total(self):
