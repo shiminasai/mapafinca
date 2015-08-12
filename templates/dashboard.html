@@ -121,49 +121,41 @@
 
 /*******graficos de prueba***********/
 $(function () {
-
-    $(document).ready(function () {
-
-        // Build the chart
-        $('#grafico1').highcharts({
-            chart: {
-                plotBackgroundColor: null,
-                plotBorderWidth: null,
-                plotShadow: false,
-                type: 'pie'
-            },
+    $('#grafico1').highcharts({
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'PATRÓN DE GASTOS'
+        },
+        xAxis: {
+            categories: ['gasto en {{request.session.departamento}}',]
+        },
+        yAxis: {
+            min: 0,
             title: {
-                text: 'PATRÓN DE GASTOS'
-            },
-            tooltip: {
-                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-            },
-            plotOptions: {
-                pie: {
-                    allowPointSelect: true,
-                    cursor: 'pointer',
-                    dataLabels: {
-                        enabled: false
-                    },
-                    showInLegend: true
-                }
-            },
-            series: [{
-                name: "Brands",
-                colorByPoint: true,
-                data: [{
-                    name: "gastos de la finca",
-                    y: {{gasto_finca}}
-                }, {
-                    name: "Gastos fuera de la finca",
-                    y: {{gasto_fuera_finca}},
-                    sliced: true,
-                    selected: true
-                }]
-            }]
-        });
+                text: 'C$'
+            }
+        },
+        tooltip: {
+            pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.percentage:.1f}%)<br/>',
+            shared: true
+        },
+        plotOptions: {
+            column: {
+                stacking: 'C$'
+            }
+        },
+        series: [{
+            name: 'Gastos de la finca',
+            data: [{% if gasto_finca == None %}0 {%else%}{{gasto_finca}},{% endif %}]
+        }, {
+            name: 'Gastos fuera de la finca',
+            data: [{% if gasto_fuera_finca == None %}0 {%else%}{{gasto_fuera_finca}},{% endif %}]
+        }]
     });
 });
+
 $(function () {
     $('#grafico2').highcharts({
         chart: {
