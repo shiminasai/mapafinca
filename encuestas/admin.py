@@ -32,6 +32,12 @@ class InlineTipoEnergia(admin.TabularInline):
     extra = 1
     max_num = 1
 
+class InlinePanelSolar(admin.TabularInline):
+    #form = TipoEnergiaForm
+    model = PanelSolar
+    extra = 1
+    max_num = 1
+
 class InlineEnergiaSolarCocinar(admin.TabularInline):
     form = EnergiaSolarCocinarForm
     model = EnergiaSolarCocinar
@@ -109,9 +115,19 @@ class InlineCultivosHuertosFamiliares(admin.TabularInline):
     model = CultivosHuertosFamiliares
     extra = 1
 
+class InlineCostoHuerto(admin.TabularInline):
+    model = CostoHuerto
+    extra = 1
+    max_num = 1
+
 class InlineCultivosFrutasFinca(admin.TabularInline):
     model = CultivosFrutasFinca
     extra = 1
+
+class InlineCostoFrutas(admin.TabularInline):
+    model = CostoFrutas
+    extra = 1
+    max_num = 1
 
 class InlineGanaderia(admin.TabularInline):
     model = Ganaderia
@@ -180,13 +196,14 @@ class AdminEncuesta(admin.ModelAdmin):
 
     exclude = ('user',)
     inlines = [InlineDuenoSi,InlineDuenoNo,InlineSexoMiembros,
-                InlineDetalleMiembros,InlineEscolaridad,InlineTipoEnergia,
+                InlineDetalleMiembros,InlineEscolaridad,InlineTipoEnergia,InlinePanelSolar,
                 InlineEnergiaSolarCocinar,InlineTipoCocinas,InlineAccesoAgua,
                 InlineDisponibilidadAgua,InlineCalidadAgua,InlineContaminada,
                 InlineEvidencia,InlineTratamientoAgua,InlineUsosAgua,
                 InlineOrganizacionComunitaria,InlineOrganizacionFinca,
                 InlineDistribucionTierra,InlinePercibeIngreso,InlineFuentes,
-                InlineCultivosTradicionales,InlineCultivosHuertosFamiliares,InlineCultivosFrutasFinca,
+                InlineCultivosTradicionales,InlineCultivosHuertosFamiliares,
+                InlineCostoHuerto,InlineCultivosFrutasFinca,InlineCostoFrutas,
                 InlineGanaderia,InlineProcesamiento,InlineIntroducidosTradicionales,
                 InlineIntroducidosHuertos,InlineGastoHogar,InlineGastoProduccion,
                 InlinePrestamo,InlinePracticasAgroecologicas,InlineSeguridadAlimentaria,

@@ -571,7 +571,7 @@ class CultivosHuertosFamiliares(models.Model):
     procesamiento = models.FloatField()
     venta = models.FloatField()
     precio = models.FloatField('Precio de venta en C$')
-    costo = models.FloatField('Costo por Mz en C$')
+    #costo = models.FloatField('Costo por Mz en C$')
     mercado = models.ForeignKey(TipoMercado)
 
     total = models.FloatField(editable=False)
@@ -586,6 +586,15 @@ class CultivosHuertosFamiliares(models.Model):
 
     class Meta:
         verbose_name_plural = '23_1 Cultivos de huertos familiares en la finca'
+
+class CostoHuerto(models.Model):
+    encuesta = models.ForeignKey(Encuesta)
+    total_mz = models.FloatField('Área Total en Mz')
+    costo = models.FloatField('Costo total en C$')
+
+    class Meta:
+        verbose_name_plural = 'Total Mz y costo para huerto familiar'
+
 
 #cultivos de frutas familiares
 
@@ -607,7 +616,7 @@ class CultivosFrutasFinca(models.Model):
     procesamiento = models.FloatField()
     venta = models.FloatField()
     precio = models.FloatField('Precio de venta en C$')
-    costo = models.FloatField('Costo por Mz en C$')
+    #costo = models.FloatField('Costo por Mz en C$')
     mercado = models.ForeignKey(TipoMercado)
 
     total = models.FloatField(editable=False)
@@ -622,6 +631,14 @@ class CultivosFrutasFinca(models.Model):
 
     class Meta:
         verbose_name_plural = '23_2 Frutas en la finca'
+
+class CostoFrutas(models.Model):
+    encuesta = models.ForeignKey(Encuesta)
+    total_mz = models.FloatField('Área Total en Mz')
+    costo = models.FloatField('Costo total en C$')
+
+    class Meta:
+        verbose_name_plural = 'Total Mz y costo para huerto familiar'
 #24 ganaderia mayor y menor otros en la finca
 
 class Animales(models.Model):
@@ -635,12 +652,12 @@ class Ganaderia(models.Model):
     encuesta = models.ForeignKey(Encuesta)
     animal = models.ForeignKey(Animales)
     cantidad = models.IntegerField('Cantidad de animales')
-    si_no = models.IntegerField(choices=CHOICE_JEFE)
-    cantidad_vendida = models.IntegerField('Cantidad vendida este año')
-    precio = models.FloatField('Precio de venta en C$')
-    mercado = models.ForeignKey(TipoMercado)
+    si_no = models.IntegerField(choices=CHOICE_JEFE, verbose_name='Comercializa SI/NO')
+    cantidad_vendida = models.IntegerField('Cantidad vendida este año', null=True, blank=True)
+    precio = models.FloatField('Precio de venta en C$', null=True, blank=True)
+    mercado = models.ForeignKey(TipoMercado, null=True, blank=True)
 
-    total = models.FloatField(editable=False)
+    total = models.FloatField(editable=False, null=True, blank=True)
 
     def save(self, *args, **kwargs):
         '''Save sobrecargado para calcular totales'''
@@ -666,7 +683,7 @@ class ProductoProcesado(models.Model):
 class Procesamiento(models.Model):
     encuesta = models.ForeignKey(Encuesta)
     producto = models.ForeignKey(ProductoProcesado)
-    cantidad = models.IntegerField('Cantidad')
+    cantidad = models.IntegerField('Cantidad consumida en el hogar')
     cantidad_vendida = models.IntegerField('Cantidad vendida este año')
     precio = models.FloatField('Precio de venta en C$')
     mercado = models.ForeignKey(TipoMercado)
@@ -690,7 +707,8 @@ class Procesamiento(models.Model):
 class IntroducidosTradicionales(models.Model):
     encuesta = models.ForeignKey(Encuesta)
     cultivo = models.ForeignKey(Cultivos, verbose_name='Cultivos tradicionales')
-    si_no = models.IntegerField(choices=CHOICE_JEFE, verbose_name='si/no')
+    si_no = models.IntegerField(choices=CHOICE_JEFE, 
+        verbose_name='El dedicarse a cultivar ese cultivo es porque el progama lo ha promovido')
     anio = models.IntegerField('Año', null=True, blank=True)
 
     class Meta:
@@ -699,8 +717,10 @@ class IntroducidosTradicionales(models.Model):
 
 class IntroducidosHuertos(models.Model):
     encuesta = models.ForeignKey(Encuesta)
-    cultivo = models.ForeignKey(CultivosHuertos, verbose_name='Cultivos en huertos familiares')
-    si_no = models.IntegerField(choices=CHOICE_JEFE, verbose_name='si/no')
+    cultivo = models.ForeignKey(CultivosHuertos, 
+        verbose_name='Cultivos en huertos familiares')
+    si_no = models.IntegerField(choices=CHOICE_JEFE, 
+        verbose_name='El dedicarse a cultivar ese cultivo es porque el progama lo ha promovido')
     anio = models.IntegerField('Año', null=True, blank=True)
 
     class Meta:
@@ -853,44 +873,53 @@ class TipoSecado(models.Model):
 class SeguridadAlimentaria(models.Model):
     encuesta = models.ForeignKey(Encuesta)
     misma_finca = models.IntegerField(choices=CHOICE_PORCENTAJE,
-        verbose_name='35.1_¿Qué porcentaje alimentos que consumen en su hogar provienen de la misma finca?')
+        verbose_name='35.1_¿Qué porcentaje alimentos que consumen en su hogar provienen de la misma finca?',
+        null=True, blank=True)
     fuera_finca = models.IntegerField(choices=CHOICE_PORCENTAJE,
-        verbose_name='35.2_¿Qué porcentaje alimentos que consumen en su hogar provienen fuera de la finca?')
+        verbose_name='35.2_¿Qué porcentaje alimentos que consumen en su hogar provienen fuera de la finca?',
+        null=True, blank=True)
     economico = models.IntegerField(choices=CHOICE_JEFE,
-        verbose_name='36_¿Disponen suficiente recursos económicos para manejo de finca?')
+        verbose_name='36_¿Disponen suficiente recursos económicos para manejo de finca?',
+        null=True, blank=True)
     secado = models.IntegerField(choices=CHOICE_JEFE,
-        verbose_name='37_¿Dispone de tecnología para el secado y almacenamiento de cosecha?')
-    tipo_secado = models.ForeignKey(TipoSecado, verbose_name='Si es si cuál?')
+        verbose_name='37_¿Dispone de tecnología para el secado y almacenamiento de cosecha?',
+        null=True, blank=True)
+    tipo_secado = models.ForeignKey(TipoSecado, verbose_name='Si es si cuál?',
+        null=True, blank=True)
     plan_cosecha = models.IntegerField(choices=CHOICE_JEFE,
-        verbose_name='38_¿Cuentan con un plan de cosecha?')
+        verbose_name='38_¿Cuentan con un plan de cosecha?',
+        null=True, blank=True)
     ayuda = models.IntegerField(choices=CHOICE_JEFE,
-        verbose_name='39_¿Cuentan con ayuda de alimentos en momentos de escasez?')
+        verbose_name='39_¿Cuentan con ayuda de alimentos en momentos de escasez?',
+        null=True, blank=True)
     suficiente_alimento = models.IntegerField(choices=CHOICE_JEFE,
-        verbose_name='40_¿Le ha preocupado que en su hogar no hubiera suficiente alimentos?')
+        verbose_name='40_¿Le ha preocupado que en su hogar no hubiera suficiente alimentos?',
+        null=True, blank=True)
     consumo_diario = models.IntegerField(choices=CHOICE_JEFE,
-        verbose_name='41_¿Considera que su familia cuenta con la cantidad necesaria de alimentos que necesitan para el consumo diario del hogar?')
+        verbose_name='41_¿Considera que su familia cuenta con la cantidad necesaria de alimentos que necesitan para el consumo diario del hogar?',
+        null=True, blank=True)
 
     class Meta:
         verbose_name_plural = 'VI. Seguridad alimentaria'
 
 CHOICE_FENOMENOS = (
-            (1,'Sequía'),
-            (2,'Inundación'),
-            (3,'Deslizamiento'),
-            (4,'Viento'),
+            ('A','Sequía'),
+            ('B','Inundación'),
+            ('C','Deslizamiento'),
+            ('D','Viento'),
         )
 CHOICE_AGRICOLA = (
-            (1,'Falta de semilla'),
-            (2,'Mala calidad de la semilla'),
+            ('A','Falta de semilla'),
+            ('B','Mala calidad de la semilla'),
         )
 CHOICE_MERCADO = (
-            (1,'Bajo precio'),
-            (2,'Falta de venta'),
-            (3,'Mala calidad del producto'),
+            ('A','Bajo precio'),
+            ('B','Falta de venta'),
+            ('C','Mala calidad del producto'),
         )
 CHOICE_INVERSION = (
-            (1,'Falta de crédito'),
-            (2,'Alto interés'),
+            ('A','Falta de crédito'),
+            ('B','Alto interés'),
         )
 
 class RespuestaNo41(models.Model):
