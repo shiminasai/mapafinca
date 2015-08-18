@@ -110,8 +110,8 @@ def principal_dashboard(request, template='dashboard.html', departamento_id=None
     longitud = geolong[-2]
 
     # grafico de patron de gastos
-    gasto_finca = Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('totalingreso__total_gasto'))['t']
-    gasto_fuera_finca = Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('totalingreso__total_gasto_fuera_finca'))['t']
+    gasto_finca = Encuesta.objects.filter(entrevistado__departamento=departamento_id,gastohogar__tipo=5).aggregate(t=Sum('gastohogar__total'))['t']
+    gasto_fuera_finca = Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('gastoproduccion__total'))['t']
 
     # grafico de ingresos
     tradicional = Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('cultivostradicionales__total'))['t']
