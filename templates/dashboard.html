@@ -176,44 +176,76 @@ $(function () {
     });
 });
 
-/*******graficos de prueba**********
+
 $(function () {
-    $('#grafico1').highcharts({
+    $('#grafico2').highcharts({
         chart: {
             type: 'column'
         },
         title: {
-            text: 'PATRÓN DE GASTOS'
+            text: 'INGRESOS'
         },
         xAxis: {
-            categories: ['gasto en {{request.session.departamento}}',]
+            categories: ['gasto en {{request.session.departamento}}']
         },
         yAxis: {
             min: 0,
             title: {
-                text: 'C$'
+                text: ''
+            },
+            stackLabels: {
+                enabled: true,
+                style: {
+                    fontWeight: 'bold',
+                    color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+                }
             }
         },
-        tooltip: {
-            pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.percentage:.1f}%)<br/>',
-            shared: true
+        legend: {
+            align: 'center',
+            verticalAlign: 'bottom',
+            backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || 'white',
+            borderColor: '#CCC',
+            borderWidth: 1,
+            shadow: false
         },
+       tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
         plotOptions: {
             column: {
-                stacking: 'C$'
+                stacking: 'normal',
+                dataLabels: {
+                    enabled: true,
+                    color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
+                    style: {
+                        textShadow: '0 0 3px black'
+                    }
+                }
             }
         },
         series: [{
-            name: 'Alimentarios',
-            data: [{% if gasto_finca == None %}0 {%else%}{{gasto_finca}},{% endif %}]
+            name: 'c. tradicionales',
+            data: [{% if tradicional == None %}0 {%else%}{{tradicional}},{% endif %}]
         }, {
-            name: 'No alimentarios',
-            data: [{% if gasto_fuera_finca == None %}0 {%else%}{{gasto_fuera_finca}},{% endif %}]
-        }]
+            name: 'c. huertos',
+            data: [{% if huertos == None %}0 {%else%}{{huertos}},{% endif %}]
+        }, {
+            name: 'o. fuentes',
+            data: [{% if fuente == None %}0 {%else%}{{fuente}},{% endif %}]
+        },
+        {
+            name: 'ganado',
+            data: [{% if ganado == None %}0 {%else%}{{ganado}},{% endif %}]
+        },
+        {
+            name: 'procesamiento',
+            data: [{% if ganado == None %}0 {%else%}{{ganado}}{% endif %},]
+        },]
     });
 });
-*/
-$(function () {
+
+/*$(function () {
     $('#grafico2').highcharts({
         chart: {
             type: 'column'
@@ -260,7 +292,7 @@ $(function () {
         ]
     });
 });
-
+*/
 $(function () {
     $('#grafico3').highcharts({
         chart: {
