@@ -245,54 +245,7 @@ $(function () {
     });
 });
 
-/*$(function () {
-    $('#grafico2').highcharts({
-        chart: {
-            type: 'column'
-        },
-        title: {
-            text: 'INGRESOS'
-        },
-        xAxis: {
-            categories: ['Ingreso {{request.session.departamento}}',]
-        },
-        yAxis: {
-            min: 0,
-            title: {
-                text: 'Total ingresos'
-            }
-        },
-        tooltip: {
-            pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.percentage:.1f}%)<br/>',
-            shared: true
-        },
-        plotOptions: {
-            column: {
-                stacking: 'C$'
-            }
-        },
-        series: [{
-            name: 'c. tradicionales',
-            data: [{% if tradicional == None %}0 {%else%}{{tradicional}},{% endif %}]
-        }, {
-            name: 'c. huertos',
-            data: [{% if huertos == None %}0 {%else%}{{huertos}},{% endif %}]
-        }, {
-            name: 'o. fuentes',
-            data: [{% if fuente == None %}0 {%else%}{{fuente}},{% endif %}]
-        },
-        {
-            name: 'ganado',
-            data: [{% if ganado == None %}0 {%else%}{{ganado}},{% endif %}]
-        },
-        {
-            name: 'procesamiento',
-            data: [{% if ganado == None %}0 {%else%}{{ganado}}{% endif %},]
-        },
-        ]
-    });
-});
-*/
+
 $(function () {
     $('#grafico3').highcharts({
         chart: {
@@ -366,15 +319,15 @@ $(function () {
             type: 'column'
         },
         title: {
-            text: 'Gastos alimentarios'
+            text: 'GASTOS ALIMENTARIOS'
         },
         xAxis: {
-            categories: ['Apples', 'Oranges', 'Pears', 'Grapes', 'Bananas']
+            categories: ['gasto alimentarios {{request.session.departamento}}']
         },
         yAxis: {
             min: 0,
             title: {
-                text: 'Total fruit consumption'
+                text: ''
             },
             stackLabels: {
                 enabled: true,
@@ -385,23 +338,16 @@ $(function () {
             }
         },
         legend: {
-            align: 'right',
-            x: -30,
-            verticalAlign: 'top',
-            y: 25,
-            floating: true,
+            align: 'center',
+            verticalAlign: 'bottom',
             backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || 'white',
             borderColor: '#CCC',
             borderWidth: 1,
             shadow: false
         },
-        tooltip: {
-            formatter: function () {
-                return '<b>' + this.x + '</b><br/>' +
-                    this.series.name + ': ' + this.y + '<br/>' +
-                    'Total: ' + this.point.stackTotal;
-            }
-        },
+       tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
         plotOptions: {
             column: {
                 stacking: 'normal',
@@ -414,18 +360,17 @@ $(function () {
                 }
             }
         },
-        series: [{
-            name: 'John',
-            data: [5, 3, 4, 7, 2]
-        }, {
-            name: 'Jane',
-            data: [2, 2, 3, 2, 1]
-        }, {
-            name: 'Joe',
-            data: [3, 4, 4, 2, 5]
-        }]
+        series: [
+        {% for k,v in gastos_alimentarios.items %}
+          {
+            name: '{{k}}',
+            data: [{{v}}]
+        }, 
+        {% endfor %}
+        ]
     });
 });
+
 </script>
 {% endblock extra_js %}
 

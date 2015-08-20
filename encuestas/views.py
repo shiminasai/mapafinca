@@ -126,8 +126,14 @@ def principal_dashboard(request, template='dashboard.html', departamento_id=None
 
     #grafico de kcalorias aun esta en proceso
 
-    #grafico sobre algo mas
-
+    #grafico sobre gastos alimentarios
+    gastos_alimentarios = {}
+    for obj in ProductosFueraFinca.objects.all():
+        cada_uno = Encuesta.objects.filter(entrevistado__departamento=departamento_id, alimentosfuerafinca__producto=obj).aggregate(t=Avg('alimentosfuerafinca__total'))['t']
+        if cada_uno == None:
+            cada_uno = 0
+        gastos_alimentarios[obj] = cada_uno
+    print gastos_alimentarios
     #grafico sobre clima
     lista_precipitacion = []
     lista_temperatura = []
@@ -227,8 +233,6 @@ def indicadores(request, template='indicadores.html'):
         cf = CultivosFrutasFinca.objects.filter(encuesta__year=year[0]).aggregate(t=Sum('total'))['t']
 
         ingreso_dicc[year[1]] = (p,g,ch,ct,f,cf)
-
-    print ingreso_dicc
 
     return render(request, template, locals())
 

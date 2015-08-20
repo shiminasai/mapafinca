@@ -811,16 +811,16 @@ $(function () {
                         </tr>
                     </thead>
                     <tbody>
-                        {% for k,v in ingreso_dicc.items %}
-                            {% for k1,v1 in v.items %}
-                                <tr>
-                                    <td>{{k1}}</td>
-                                    <td>{{v1}}</td>
-                                    <td>{{v1}}</td>
-                                    <td>{{v1}}</td>
-                                </tr>
-                            {% endfor %} 
-                        {% endfor %}  
+                    {% for k,v in ingreso_dicc.items %}
+                    <tr>
+                        <td>algo</td>
+                        {% for obj in v %}
+                            
+                                <td>{{obj}}</td>
+                            
+                        {% endfor %}
+                    </tr>       
+                    {% endfor %}   
                     </tbody>
                 </table>
             </div>
