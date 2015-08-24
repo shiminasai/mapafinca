@@ -4,6 +4,7 @@
 
 {% block extra_js %}
 <script src="http://code.highcharts.com/highcharts.js"></script>
+<script src="http://code.highcharts.com/modules/drilldown.js"></script>
 <script type="text/javascript">
 $(function () {
     $('#ind-grafico3').highcharts({
@@ -151,61 +152,72 @@ $(function () {
     });
 });
 $(function () {
-
-    $(document).ready(function () {
-
-        // Build the chart
-        $('#ind-grafico4').highcharts({
-            chart: {
-                plotBackgroundColor: null,
-                plotBorderWidth: null,
-                plotShadow: false,
-                type: 'pie'
-            },
-            title: {
-                text: 'Browser market shares January, 2015 to May, 2015'
-            },
-            tooltip: {
-                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-            },
-            plotOptions: {
-                pie: {
-                    allowPointSelect: true,
-                    cursor: 'pointer',
-                    dataLabels: {
-                        enabled: false
-                    },
-                    showInLegend: true
+    // Create the chart
+    $('#ind-grafico4').highcharts({
+        chart: {
+            type: 'pie'
+        },
+        title: {
+            text: 'Ingreso vs Gastos en los distintos años'
+        },
+        subtitle: {
+            text: 'Click en cada año, para saber por año.'
+        },
+        plotOptions: {
+            series: {
+                dataLabels: {
+                    enabled: true,
+                    format: '{point.name}: {point.y:.1f}%'
                 }
+            }
+        },
+
+        tooltip: {
+            headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+            pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}C$</b> of total<br/>'
+        },
+        series: [{
+            name: "Brands",
+            colorByPoint: true,
+            data: [{% for k, v in ingreso_dicc.items %}
+                        {
+                name: "{{k}}",
+                y: {{v}},
+                drilldown: "{{k}}"
             },
+                 {% endfor %}
+             ]
+        }],
+        drilldown: {
             series: [{
-                name: "Brands",
-                colorByPoint: true,
-                data: [{
-                    name: "Microsoft Internet Explorer",
-                    y: 56.33
-                }, {
-                    name: "Chrome",
-                    y: 24.03,
-                    sliced: true,
-                    selected: true
-                }, {
-                    name: "Firefox",
-                    y: 10.38
-                }, {
-                    name: "Safari",
-                    y: 4.77
-                }, {
-                    name: "Opera",
-                    y: 0.91
-                }, {
-                    name: "Proprietary or Undetectable",
-                    y: 0.2
-                }]
-            }]
-        });
+                name: "2015",
+                id: "2015",
+                data: [
+                    ["v11.0", 24.13],
+                    ["v8.0", 17.2],
+                    
+                ]
+            }, {
+                name: "2016",
+                id: "2016",
+                data: [
+                    ["v40.0", 5],
+                    ["v41.0", 4.32],
+                    
+                ]
+            }, {
+                name: "2017",
+                id: "2017",
+                data: [
+                    ["v40.0", 5],
+                    ["v41.0", 4.32],
+                   
+                ]
+            } ]
+        }
     });
 });
+
 $(function () {
     $('#ind-grafico5').highcharts({
         chart: {
@@ -803,12 +815,9 @@ $(function () {
 			<div id="ind-grafico8" style="height: 550px;"></div>
 		</div>
 	</div>
-    {% for k,v in dicc2.items %}
-        {{k}} ---> <br>
-        {% for obj,obj1 in v.items %}
-            {{obj}} ---> {{obj1|default:"0"}} <br>
-        {% endfor %}
-    {% endfor %}
+   {% for k, v in ingreso_dicc.items %}
+        {{k}} --> {{v}} <br>
+   {% endfor %}
 	<div class="titulo-botonera">
 		<h5>OTROS INDICADORES</h5>
 		<hr>

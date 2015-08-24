@@ -249,7 +249,18 @@ def indicadores(request, template='indicadores.html'):
             valor = GastoHogar.objects.filter(encuesta__year=year[0], tipo=obj[0]).aggregate(t=Sum('total'))['t']
             dicc2[obj[1]][year[1]] = valor
 
-    print dicc2
+    #Ingresos vs gastos por años
+    ingreso_dicc = OrderedDict()
+    for year in years:
+        ingreso_total = Encuesta.objects.filter(year=year[0]).aggregate(t=Sum('totalingreso__total'))['t']
+        total_poll = Encuesta.objects.filter(year=year[0]).count()
+        try:
+            porcentaje = saca_porcentajes(ingreso_total,total_poll,False)
+        except:
+            porcentaje = 0
+        ingreso_dicc[year[1]] = porcentaje
+
+    print ingreso_dicc
     return render(request, template, locals())
 
 #FUNCIONES UTILITARIAS
