@@ -7,7 +7,7 @@ $(function () {
         chart: {
             type: 'column'
         },
-    
+
         xAxis: {
             categories: [
                 'Jan',
@@ -625,7 +625,7 @@ $(function () {
 				</div>
 			</div>
 		</div>
-	</div>  
+	</div>
 </div>
 
 <div class="row filtros">
@@ -641,7 +641,7 @@ $(function () {
 <div class="contenido-indicadores">
 	<!--fila 1-->
 	<div class="row ind-fila1">
-		
+
 			<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
 				<div class="grafico-indicador" >
 					<div class="titulo-grafico">
@@ -731,7 +731,7 @@ $(function () {
 		<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 grafico-indicador ind-alimento">
 			<div class="ind-numero">
 			350
-			</div>	
+			</div>
 			<div class="titulo-contenido text-center">
 				NÚMERO DE FAMILIAS DEL PROGRAMA MEDIOS DE VIDA QUE DESTINAN PARTE DE
 				SUS PRODUCTOS GENERADOS DE LA ACTIVIDAD AGROPECUARIA PARA EL AUTOCONSUMO DEL HOGAR
@@ -815,12 +815,12 @@ $(function () {
                     <tr>
                         <td>algo</td>
                         {% for obj in v %}
-                            
+
                                 <td>{{obj}}</td>
-                            
+
                         {% endfor %}
-                    </tr>       
-                    {% endfor %}   
+                    </tr>
+                    {% endfor %}
                     </tbody>
                 </table>
             </div>
@@ -893,11 +893,18 @@ $(function () {
 		<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 grafico-indicador" >
 			<div class="titulo-grafico text-center">
 				CONDICIONES AMBIENTALES
-			</div>	
+			</div>
 			<div id="ind-grafico8" style="height: 550px;"></div>
 		</div>
 	</div>
-    {{ingreso_dicc}}
+    {{ingreso_dicc}} <br> <br>
+
+    {% for k,v in dicc1.items %}
+        {{k}} ---> <br>
+        {% for obj,obj1 in v.items %}
+            {{obj}} ---> {{obj1|default:"0"}} <br>
+        {% endfor %}
+    {% endfor %}
 	<div class="titulo-botonera">
 		<h5>OTROS INDICADORES</h5>
 		<hr>

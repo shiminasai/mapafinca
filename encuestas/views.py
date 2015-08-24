@@ -192,10 +192,10 @@ def detalle_finca(request, template='detalle_finca.html', entrevistado_id=None):
             variable = round(saca_porcentajes(suma,objeto['num_total']))
             grafo.append([e[1],variable])
 
-        #calculo ingreso vs gasto    
-        gasto_total = detalle.filter(year=year[0]).aggregate(t=Sum('totalingreso__total_gasto'))['t']   
+        #calculo ingreso vs gasto
+        gasto_total = detalle.filter(year=year[0]).aggregate(t=Sum('totalingreso__total_gasto'))['t']
         gasto_total_fuera = detalle.filter(year=year[0]).aggregate(t=Sum('totalingreso__total_gasto_fuera_finca'))['t']
-        
+
         ingreso_total = detalle.filter(year=year[0]).aggregate(t=Sum('totalingreso__total'))['t']
         total_gastos = gasto_total + gasto_total_fuera
 
@@ -210,11 +210,14 @@ def indicadores(request, template='indicadores.html'):
     total_entrevistados = Entrevistados.objects.count()
     total_hombres = Entrevistados.objects.filter(sexo=2).count()
     total_mujeres = Entrevistados.objects.filter(sexo=1).count()
+
     porcentaje_hombres = total_hombres / total_entrevistados * 100
     porcentaje_mujeres = total_mujeres / total_entrevistados * 100
 
     organizaciones = OrganizacionResp.objects.count()
     familias = Entrevistados.objects.count()
+
+    print porcentaje_mujeres
 
     #años que tiene ese productor
     years = []
@@ -233,6 +236,24 @@ def indicadores(request, template='indicadores.html'):
         cf = CultivosFrutasFinca.objects.filter(encuesta__year=year[0]).aggregate(t=Sum('total'))['t']
 
         ingreso_dicc[year[1]] = (p,g,ch,ct,f,cf)
+
+    model_dict = {
+    'Procesamiento': Procesamiento,
+    'Ganaderia': Ganaderia,
+    'Cultivos huertos familiares': CultivosHuertosFamiliares,
+    'Cultivos tradicionales': CultivosTradicionales,
+    'Fuentes': Fuentes,
+    'Cultivos frutas finca': CultivosFrutasFinca,
+
+    }
+
+
+    dicc1 = OrderedDict()
+    for name,value in model_dict.items():
+        dicc1[name] = OrderedDict()
+        for year in years:
+            valor = value.objects.filter(encuesta__year=year[0]).aggregate(t=Sum('total'))['t']
+            dicc1[name][year[1]] = valor
 
     return render(request, template, locals())
 

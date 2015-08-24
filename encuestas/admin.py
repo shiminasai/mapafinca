@@ -209,8 +209,13 @@ class AdminEncuesta(admin.ModelAdmin):
                 InlinePrestamo,InlinePracticasAgroecologicas,InlineSeguridadAlimentaria,
                 InlineRespuestaNo41,InlineOtrasSeguridad,InlineAlimentosFueraFinca,]
 
-    list_display = ('entrevistado','dueno','year')
+    list_display = ('entrevistado','dueno','get_departamento','year')
     search_fields = ('entrevistado__nombre',)
+
+    def get_departamento(self, obj):
+        return obj.entrevistado.departamento
+    get_departamento.short_description = 'Departamento'
+    get_departamento.admin_order_field = 'entrevistado__departamento'
 
     class Media:
         css = {
