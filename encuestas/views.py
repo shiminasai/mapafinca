@@ -217,26 +217,13 @@ def indicadores(request, template='indicadores.html'):
     organizaciones = OrganizacionResp.objects.count()
     familias = Entrevistados.objects.count()
 
-    print porcentaje_mujeres
-
     #años que tiene ese productor
     years = []
     for en in Encuesta.objects.order_by('year').values_list('year', flat=True):
         years.append((en,en))
     list(set(years))
 
-    #Ingresos por años
-    ingreso_dicc = OrderedDict()
-    for year in years:
-        p = Procesamiento.objects.filter(encuesta__year=year[0]).aggregate(t=Sum('total'))['t']
-        g = Ganaderia.objects.filter(encuesta__year=year[0]).aggregate(t=Sum('total'))['t']
-        ch = CultivosHuertosFamiliares.objects.filter(encuesta__year=year[0]).aggregate(t=Sum('total'))['t']
-        ct = CultivosTradicionales.objects.filter(encuesta__year=year[0]).aggregate(t=Sum('total'))['t']
-        f = Fuentes.objects.filter(encuesta__year=year[0]).aggregate(t=Sum('total'))['t']
-        cf = CultivosFrutasFinca.objects.filter(encuesta__year=year[0]).aggregate(t=Sum('total'))['t']
-
-        ingreso_dicc[year[1]] = (p,g,ch,ct,f,cf)
-
+    #-------- Ingresos por años ----------
     model_dict = {
     'Procesamiento': Procesamiento,
     'Ganaderia': Ganaderia,
@@ -247,7 +234,6 @@ def indicadores(request, template='indicadores.html'):
 
     }
 
-
     dicc1 = OrderedDict()
     for name,value in model_dict.items():
         dicc1[name] = OrderedDict()
@@ -255,6 +241,15 @@ def indicadores(request, template='indicadores.html'):
             valor = value.objects.filter(encuesta__year=year[0]).aggregate(t=Sum('total'))['t']
             dicc1[name][year[1]] = valor
 
+    #------------ Gasto del hogar ------
+    dicc2 = OrderedDict()
+    for obj in CHOICE_TIPO_GASTOS:
+        dicc2[obj[1]] = OrderedDict()
+        for year in years:
+            valor = GastoHogar.objects.filter(encuesta__year=year[0], tipo=obj[0]).aggregate(t=Sum('total'))['t']
+            dicc2[obj[1]][year[1]] = valor
+
+    print dicc2
     return render(request, template, locals())
 
 #FUNCIONES UTILITARIAS

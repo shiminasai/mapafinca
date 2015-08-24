@@ -1,4 +1,7 @@
 {% extends "base.html" %}
+
+{% load humanize %}
+
 {% block extra_js %}
 <script src="http://code.highcharts.com/highcharts.js"></script>
 <script type="text/javascript">
@@ -742,81 +745,24 @@ $(function () {
 
 	<div class="row ind-fila4">
 		<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6  alinear">
-			<div class="table-responsive grafico-indicador">
-				<table class="table tabla-ingreso">
-					<thead>
-						<tr>
-							<th>INGRESOS</th>
-							<th>Año 0</th>
-							<th>Año 1</th>
-							<th>Año 2</th>
-							<th>Año 3</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td>Productos Tradicionales</td>
-							<td>4000</td>
-							<td>4000</td>
-							<td>4000</td>
-							<td>4000</td>
-						</tr>
-						<tr>
-							<td>Huerto Familiares</td>
-							<td>6512</td>
-							<td>6512</td>
-							<td>6512</td>
-							<td>6512</td>
-						</tr>
-						<tr>
-							<td>Ganaderia Mayor y Menor</td>
-							<td>6512</td>
-							<td>6512</td>
-							<td>6512</td>
-							<td>6512</td>
-						</tr>
-						<tr>
-							<td>Asalariados</td>
-							<td>6512</td>
-							<td>6512</td>
-							<td>6512</td>
-							<td>6512</td>
-						</tr>
-						<tr>
-							<td>Remesas</td>
-							<td>6512</td>
-							<td>6512</td>
-							<td>6512</td>
-							<td>6512</td>
-						</tr>
-						<tr>
-							<td>Ingesos totales</td>
-							<td>100000</td>
-							<td>100000</td>
-							<td>100000</td>
-							<td>100000</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-
+		
             <div class="table-responsive grafico-indicador">
                 <table class="table tabla-ingreso">
                     <thead>
                         <tr>
                             <th>INGRESOS</th>
-                            {% for k,v in ingreso_dicc.items %}
-                                <th>{{k}}</th>
+                            {% for obj in years %}
+                                <th>{{obj.0}}</th>
                             {% endfor %}
                         </tr>
                     </thead>
                     <tbody>
-                    {% for k,v in ingreso_dicc.items %}
+                    {% for k,v in dicc1.items %}
                     <tr>
-                        <td>algo</td>
-                        {% for obj in v %}
+                        <td>{{k}}</td>
+                        {% for key, value in v.items %}
 
-                                <td>{{obj}}</td>
+                                <td>{{value|default:"0"|intcomma}}</td>
 
                         {% endfor %}
                     </tr>
@@ -830,62 +776,22 @@ $(function () {
 					<thead>
 						<tr>
 							<th>GASTOS DEL HOGAR</th>
-							<th>Año 0</th>
-							<th>Año 1</th>
-							<th>Año 2</th>
-							<th>Año 3</th>
+							{% for obj in years %}
+                                <th>{{obj.0}}</th>
+                            {% endfor %}
 						</tr>
 					</thead>
 					<tbody>
-						<tr>
-							<td>Salud</td>
-							<td>4000</td>
-							<td>4000</td>
-							<td>4000</td>
-							<td>4000</td>
-						</tr>
-						<tr>
-							<td>Educación</td>
-							<td>6512</td>
-							<td>6512</td>
-							<td>6512</td>
-							<td>6512</td>
-						</tr>
-						<tr>
-							<td>Alquiler de vivienda</td>
-							<td>6512</td>
-							<td>6512</td>
-							<td>6512</td>
-							<td>6512</td>
-						</tr>
-						<tr>
-							<td>Ropa</td>
-							<td>6512</td>
-							<td>6512</td>
-							<td>6512</td>
-							<td>6512</td>
-						</tr>
-						<tr>
-							<td>Diversion</td>
-							<td>6512</td>
-							<td>6512</td>
-							<td>6512</td>
-							<td>6512</td>
-						</tr>
-						<tr>
-							<td>Alimentación</td>
-							<td>6512</td>
-							<td>6512</td>
-							<td>6512</td>
-							<td>6512</td>
-						</tr>
-						<tr>
-							<td>Gastos totales</td>
-							<td>100000</td>
-							<td>100000</td>
-							<td>100000</td>
-							<td>100000</td>
-						</tr>
+						{% for k,v in dicc2.items %}
+                    <tr>
+                        <td>{{k}}</td>
+                        {% for key, value in v.items %}
+
+                                <td>{{value|default:"0"|intcomma}}</td>
+
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
 					</tbody>
 				</table>
 			</div>
@@ -897,9 +803,7 @@ $(function () {
 			<div id="ind-grafico8" style="height: 550px;"></div>
 		</div>
 	</div>
-    {{ingreso_dicc}} <br> <br>
-
-    {% for k,v in dicc1.items %}
+    {% for k,v in dicc2.items %}
         {{k}} ---> <br>
         {% for obj,obj1 in v.items %}
             {{obj}} ---> {{obj1|default:"0"}} <br>
