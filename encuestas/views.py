@@ -263,6 +263,34 @@ def indicadores(request, template='indicadores.html'):
     print ingreso_dicc
     return render(request, template, locals())
 
+#FUNCIONES PARA LAS DEMAS SALIDAS DEL SISTEMA
+
+def sexo_duenos(request, template="sexo_duenos.html"):
+    si_dueno = Encuesta.objects.filter(dueno=1).count()
+    no_dueno = Encuesta.objects.filter(dueno=2).count()
+
+    a_nombre = {}
+    for obj in CHOICE_DUENO_SI:
+        conteos = Encuesta.objects.filter(duenosi__si=obj[0]).count()
+        a_nombre[obj[1]] = conteos
+
+    situacion = {}
+    for obj in CHOICE_DUENO_NO:
+        conteos = Encuesta.objects.filter(duenono__no=obj[0]).count()
+        situacion[obj[1]] = conteos
+
+    sexo_jefe_hogar = {}
+    for obj in CHOICE_SEXO:
+        conteos = Encuesta.objects.filter(sexomiembros__sexo=obj[0]).count()
+        sexo_jefe_hogar[obj[1]] = conteos
+
+
+    return render(request, template, locals())
+
+def miembros_hogar(request, template="miembros_hogar.html"):
+
+    return render(request, template, locals())
+
 #FUNCIONES UTILITARIAS
 def saca_porcentajes(dato, total, formato=True):
     if dato != None:

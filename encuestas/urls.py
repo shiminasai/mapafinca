@@ -11,4 +11,6 @@ urlpatterns = [
     url(r'^mapa_dash/$', views.obtener_mapa_dashboard, name='obtener-lista'),
     url(r'^galeria/$', views.GalleryView.as_view(), name='galeria'),
     url(r'^detalle_indicador/$', views.DetailIndicadorView.as_view(), name='galeria'),
+    #otros indicadores
+    url(r'^jefe_sexo/$', views.sexo_duenos, name='jefe-sexo'),
 ]
