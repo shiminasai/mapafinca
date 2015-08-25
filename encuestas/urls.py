@@ -13,4 +13,5 @@ urlpatterns = [
     url(r'^detalle_indicador/$', views.DetailIndicadorView.as_view(), name='galeria'),
     #otros indicadores
     url(r'^jefe_sexo/$', views.sexo_duenos, name='jefe-sexo'),
+    url(r'^escolaridad/$', views.escolaridad, name='escolaridad'),
 ]

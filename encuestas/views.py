@@ -287,8 +287,38 @@ def sexo_duenos(request, template="sexo_duenos.html"):
 
     return render(request, template, locals())
 
-def miembros_hogar(request, template="miembros_hogar.html"):
+def escolaridad(request, template="escolaridad.html"):
+    #filtro = _queryset_filtrado(request)
 
+    tabla_educacion = []
+    grafo = []
+    suma = 0
+    for e in CHOICE_ESCOLARIDAD:
+        objeto = Encuesta.objects.filter(escolaridad__sexo = e[0]).aggregate(num_total = Sum('escolaridad__total'),
+                no_leer = Sum('escolaridad__no_leer'),
+                p_incompleta = Sum('escolaridad__pri_incompleta'),
+                p_completa = Sum('escolaridad__pri_completa'),
+                s_incompleta = Sum('escolaridad__secu_incompleta'),
+                bachiller = Sum('escolaridad__bachiller'),
+                universitario = Sum('escolaridad__uni_tecnico'),
+                
+                )
+        try:
+            suma = int(objeto['p_completa'] or 0) + int(objeto['s_incompleta'] or 0) + int(objeto['bachiller'] or 0) + int(objeto['universitario'] or 0)
+        except:
+            pass
+        variable = round(saca_porcentajes(suma,objeto['num_total']))
+        grafo.append([e[1],variable])
+        fila = [e[1], objeto['num_total'],
+                saca_porcentajes(objeto['no_leer'], objeto['num_total'], False),
+                saca_porcentajes(objeto['p_incompleta'], objeto['num_total'], False),
+                saca_porcentajes(objeto['p_completa'], objeto['num_total'], False),
+                saca_porcentajes(objeto['s_incompleta'], objeto['num_total'], False),
+                saca_porcentajes(objeto['bachiller'], objeto['num_total'], False),
+                saca_porcentajes(objeto['universitario'], objeto['num_total'], False),
+                ]
+        tabla_educacion.append(fila)
+    
     return render(request, template, locals())
 
 #FUNCIONES UTILITARIAS
