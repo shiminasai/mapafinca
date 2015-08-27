@@ -260,7 +260,6 @@ def indicadores(request, template='indicadores.html'):
             porcentaje = 0
         ingreso_dicc[year[1]] = porcentaje
 
-    print ingreso_dicc
     return render(request, template, locals())
 
 #FUNCIONES PARA LAS DEMAS SALIDAS DEL SISTEMA
@@ -318,6 +317,11 @@ def escolaridad(request, template="escolaridad.html"):
                 saca_porcentajes(objeto['universitario'], objeto['num_total'], False),
                 ]
         tabla_educacion.append(fila)
+    
+    return render(request, template, locals())
+
+def energia(request, template="energia.html"):
+
     
     return render(request, template, locals())
 
