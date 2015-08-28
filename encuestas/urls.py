@@ -15,5 +15,6 @@ urlpatterns = [
     url(r'^jefe_sexo/$', views.sexo_duenos, name='jefe-sexo'),
     url(r'^escolaridad/$', views.escolaridad, name='escolaridad'),
     url(r'^energia/$', views.energia, name='energia'),
+    url(r'^agua/$', views.agua, name='agua'),
     
 ]

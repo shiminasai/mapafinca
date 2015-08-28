@@ -133,7 +133,7 @@ def principal_dashboard(request, template='dashboard.html', departamento_id=None
         if cada_uno == None:
             cada_uno = 0
         gastos_alimentarios[obj] = cada_uno
-    print gastos_alimentarios
+    
     #grafico sobre clima
     lista_precipitacion = []
     lista_temperatura = []
@@ -322,7 +322,62 @@ def escolaridad(request, template="escolaridad.html"):
 
 def energia(request, template="energia.html"):
 
-    
+    grafo_tipo_energia = {}
+    for obj in Energia.objects.all():
+        valor = Encuesta.objects.filter(tipoenergia__tipo=obj).count()
+        grafo_tipo_energia[obj] =  valor
+
+    grafo_panel_solar = {}
+    for obj in CHOICE_PANEL_SOLAR:
+        valor = Encuesta.objects.filter(panelsolar__panel=obj[0]).count()
+        grafo_panel_solar[obj[1]] =  valor
+
+    grafo_fuente_energia = {}
+    for obj in FuenteEnergia.objects.all():
+        valor = Encuesta.objects.filter(energiasolarcocinar__fuente=obj).count()
+        grafo_fuente_energia[obj] =  valor
+
+    grafo_tipo_cocina = {}
+    for obj in Cocinas.objects.all():
+        valor = Encuesta.objects.filter(tipococinas__cocina=obj).count()
+        grafo_tipo_cocina[obj] =  valor
+
+
+    return render(request, template, locals())
+
+def agua(request, template="agua.html"):
+
+    grafo_agua_consumo = {}
+    for obj in AguaConsumo.objects.all():
+        valor = Encuesta.objects.filter(accesoagua__agua=obj).count()
+        grafo_agua_consumo[obj] =  valor
+
+    grafo_agua_disponibilidad = {}
+    for obj in CHOICE_DISPONIBILIDAD:
+        valor = Encuesta.objects.filter(disponibilidadagua__disponibilidad=obj[0]).count()
+        grafo_agua_disponibilidad[obj[1]] =  valor
+
+    grafo_agua_calidad = {}
+    for obj in CHOICE_CALIDAD_AGUA:
+        valor = Encuesta.objects.filter(calidadagua__calidad=obj[0]).count()
+        grafo_agua_calidad[obj[1]] =  valor
+
+    grafo_agua_contaminada = {}
+    for obj in TipoContamindaAgua.objects.all():
+        valor = Encuesta.objects.filter(contaminada__contaminada=obj).count()
+        grafo_agua_contaminada[obj] =  valor
+
+    grafo_agua_tratamiento = {}
+    for obj in CHOICE_TRATAMIENTO:
+        valor = Encuesta.objects.filter(tratamientoagua__tratamiento=obj[0]).count()
+        grafo_agua_tratamiento[obj[1]] =  valor
+
+    grafo_agua_usos = {}
+    for obj in CHOICE_OTRO_USO:
+        valor = Encuesta.objects.filter(usosagua__uso=obj[0]).count()
+        grafo_agua_usos[obj[1]] =  valor
+
+
     return render(request, template, locals())
 
 #FUNCIONES UTILITARIAS

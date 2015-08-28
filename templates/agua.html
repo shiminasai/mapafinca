@@ -11,7 +11,7 @@
             type: 'column'
         },
         title: {
-            text: '¿Qué tipo de energía utiliza para alumbrar la vivienda?'
+            text: 'Indique la forma que accede al agua para consumo humano'
         },
         subtitle: {
             text: ''
@@ -47,7 +47,7 @@
             name: "",
             colorByPoint: true,
             data: [
-            {% for k,v in grafo_tipo_energia.items %}
+            {% for k,v in grafo_agua_consumo.items %}
             	{
                 	name: "{{k}}",
                 	y: {{v}},
@@ -63,7 +63,7 @@
             type: 'column'
         },
         title: {
-            text: 'En el caso que tenga panel solar, cuál es el fin'
+            text: 'Mencione la disponibilidad del agua para consumo humano (en verano)'
         },
         subtitle: {
             text: ''
@@ -99,7 +99,7 @@
             name: "",
             colorByPoint: true,
             data: [
-            {% for k,v in grafo_panel_solar.items %}
+            {% for k,v in grafo_agua_disponibilidad.items %}
             	{
                 	name: "{{k}}",
                 	y: {{v}},
@@ -115,7 +115,7 @@
             type: 'column'
         },
         title: {
-            text: 'Mencione el tipo de fuente de energía utiliza para cocinar'
+            text: 'Según Usted, cómo es la calidad del agua que consume'
         },
         subtitle: {
             text: ''
@@ -151,7 +151,7 @@
             name: "",
             colorByPoint: true,
             data: [
-            {% for k,v in grafo_fuente_energia.items %}
+            {% for k,v in grafo_agua_calidad.items %}
             	{
                 	name: "{{k}}",
                 	y: {{v}},
@@ -167,7 +167,7 @@
             type: 'column'
         },
         title: {
-            text: 'Mencione el tipo de cocina que utiliza para cocinar'
+            text: 'En caso de que esté contaminada, señala posibles causas'
         },
         subtitle: {
             text: ''
@@ -203,11 +203,116 @@
             name: "",
             colorByPoint: true,
             data: [
-            {% for k,v in grafo_tipo_cocina.items %}
+            {% for k,v in grafo_agua_contaminada.items %}
             	{
                 	name: "{{k}}",
                 	y: {{v}},
             	},
+            {% endfor %}
+            ]
+        }],
+    });
+
+	// Create the chart
+    $('#container4').highcharts({
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Realiza algún tratamiento al agua de consumo'
+        },
+        subtitle: {
+            text: ''
+        },
+        xAxis: {
+            type: 'category'
+        },
+        yAxis: {
+            title: {
+                text: 'Frecuencias'
+            }
+
+        },
+        legend: {
+            enabled: false
+        },
+        plotOptions: {
+            series: {
+                borderWidth: 0,
+                dataLabels: {
+                    enabled: true,
+                    format: '{point.y:.1f}'
+                }
+            }
+        },
+
+        tooltip: {
+            headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+            pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}</b> of total<br/>'
+        },
+
+        series: [{
+            name: "",
+            colorByPoint: true,
+            data: [
+            {% for k,v in grafo_agua_tratamiento.items %}
+            	{
+                	name: "{{k}}",
+                	y: {{v}},
+            	},
+            {% endfor %}
+            ]
+        }],
+    });
+
+    
+    // Create the chart
+    $('#container5').highcharts({
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Indique qué otros usos le dan al agua en la finca'
+        },
+        subtitle: {
+            text: ''
+        },
+        xAxis: {
+            type: 'category'
+        },
+        yAxis: {
+            title: {
+                text: 'Frecuencias'
+            }
+
+        },
+        legend: {
+            enabled: false
+        },
+        plotOptions: {
+            series: {
+                borderWidth: 0,
+                dataLabels: {
+                    enabled: true,
+                    format: '{point.y:.1f}'
+                }
+            }
+        },
+
+        tooltip: {
+            headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+            pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}</b> of total<br/>'
+        },
+
+        series: [{
+            name: "",
+            colorByPoint: true,
+            data: [
+            {% for k,v in grafo_agua_usos.items %}
+                {
+                    name: "{{k}}",
+                    y: {{v}},
+                },
             {% endfor %}
             ]
         }],
@@ -227,6 +332,11 @@
 <div class="row">
   <div class="col-md-6"><div id="container2" style="height: 400px;"></div></div>
   <div class="col-md-6"><div id="container3" style="height: 400px;"></div></div>
+</div>
+<br><br>
+<div class="row">
+  <div class="col-md-6"><div id="container4" style="height: 400px;"></div></div>
+  <div class="col-md-6"><div id="container5" style="height: 400px;"></div></div>
 </div>
 <br><br>
 {% include "menu_indicadores.html" %}
