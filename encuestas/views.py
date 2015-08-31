@@ -430,6 +430,89 @@ def prestamos(request, template="prestamo.html"):
 
     return render(request, template, locals())
 
+def practicas(request, template="practicas.html"):
+
+    grafo_practicas_sino = {}
+    for obj in CHOICE_JEFE:
+        valor = Encuesta.objects.filter(practicasagroecologicas__si_no=obj[0]).count()
+        grafo_practicas_sino[obj[1]] =  valor
+
+    grafo_manejo = {}
+    for obj in CHOICE_MANEJO:
+        valor = Encuesta.objects.filter(practicasagroecologicas__manejo=obj[0]).count()
+        grafo_manejo[obj[1]] =  valor
+
+    grafo_traccion = {}
+    for obj in CHOICE_TRACCION:
+        valor = Encuesta.objects.filter(practicasagroecologicas__traccion=obj[0]).count()
+        grafo_traccion[obj[1]] =  valor
+
+    grafo_fertilidad = {}
+    for obj in CHOICE_JEFE:
+        valor = Encuesta.objects.filter(practicasagroecologicas__fertilidad=obj[0]).count()
+        grafo_fertilidad[obj[1]] =  valor
+
+    grafo_control = {}
+    for obj in CHOICE_JEFE:
+        valor = Encuesta.objects.filter(practicasagroecologicas__control=obj[0]).count()
+        grafo_control[obj[1]] =  valor
+
+    return render(request, template, locals())
+
+def seguridad(request, template="seguridad.html"):
+
+    grafo_practicas_sino = {}
+    for obj in CHOICE_JEFE:
+        valor = Encuesta.objects.filter(seguridadalimentaria__misma_finca=obj[0]).count()
+        grafo_practicas_sino[obj[1]] =  valor
+
+    grafo_manejo = {}
+    for obj in CHOICE_MANEJO:
+        valor = Encuesta.objects.filter(seguridadalimentaria__fuera_finca=obj[0]).count()
+        grafo_manejo[obj[1]] =  valor
+
+    grafo_traccion = {}
+    for obj in CHOICE_TRACCION:
+        valor = Encuesta.objects.filter(seguridadalimentaria__economico=obj[0]).count()
+        grafo_traccion[obj[1]] =  valor
+
+    grafo_fertilidad = {}
+    for obj in CHOICE_JEFE:
+        valor = Encuesta.objects.filter(seguridadalimentaria__secado=obj[0]).count()
+        grafo_fertilidad[obj[1]] =  valor
+
+    grafo_control = {}
+    for obj in CHOICE_JEFE:
+        valor = Encuesta.objects.filter(seguridadalimentaria__control=obj[0]).count()
+        grafo_control[obj[1]] =  valor
+
+    grafo_uso_prestamo = {}
+    for obj in TipoSecado.objects.all():
+        valor = Encuesta.objects.filter(seguridadalimentaria__tipo_secado=obj).count()
+        grafo_uso_prestamo[obj] =  valor
+
+    grafo_control = {}
+    for obj in CHOICE_JEFE:
+        valor = Encuesta.objects.filter(seguridadalimentaria__plan_cosecha=obj[0]).count()
+        grafo_control[obj[1]] =  valor
+
+    grafo_control = {}
+    for obj in CHOICE_JEFE:
+        valor = Encuesta.objects.filter(seguridadalimentaria__ayuda=obj[0]).count()
+        grafo_control[obj[1]] =  valor
+
+    grafo_control = {}
+    for obj in CHOICE_JEFE:
+        valor = Encuesta.objects.filter(seguridadalimentaria__suficiente_alimento=obj[0]).count()
+        grafo_control[obj[1]] =  valor
+
+    grafo_control = {}
+    for obj in CHOICE_JEFE:
+        valor = Encuesta.objects.filter(seguridadalimentaria__consumo_diario=obj[0]).count()
+        grafo_control[obj[1]] =  valor
+
+    return render(request, template, locals())
+
 #FUNCIONES UTILITARIAS
 def saca_porcentajes(dato, total, formato=True):
     if dato != None:
