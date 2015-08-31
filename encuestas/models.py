@@ -707,7 +707,7 @@ class Procesamiento(models.Model):
 class IntroducidosTradicionales(models.Model):
     encuesta = models.ForeignKey(Encuesta)
     cultivo = models.ForeignKey(Cultivos, verbose_name='Cultivos tradicionales')
-    si_no = models.IntegerField(choices=CHOICE_JEFE, 
+    si_no = models.IntegerField(choices=CHOICE_JEFE,
         verbose_name='El dedicarse a cultivar ese cultivo es porque el progama lo ha promovido')
     anio = models.IntegerField('Año', null=True, blank=True)
 
@@ -717,9 +717,9 @@ class IntroducidosTradicionales(models.Model):
 
 class IntroducidosHuertos(models.Model):
     encuesta = models.ForeignKey(Encuesta)
-    cultivo = models.ForeignKey(CultivosHuertos, 
+    cultivo = models.ForeignKey(CultivosHuertos,
         verbose_name='Cultivos en huertos familiares')
-    si_no = models.IntegerField(choices=CHOICE_JEFE, 
+    si_no = models.IntegerField(choices=CHOICE_JEFE,
         verbose_name='El dedicarse a cultivar ese cultivo es porque el progama lo ha promovido')
     anio = models.IntegerField('Año', null=True, blank=True)
 
@@ -796,7 +796,8 @@ class UsoPrestamo(models.Model):
 
 class Prestamo(models.Model):
     encuesta = models.ForeignKey(Encuesta)
-    algun_prestamo = models.IntegerField(choices=CHOICE_JEFE)
+    algun_prestamo = models.IntegerField(choices=CHOICE_JEFE,
+                     verbose_name='En el último año ha recibido algún tipo de prestamo/crédito')
     monto = models.FloatField('28.1_¿Cuál fue el monto en C$?', null=True, blank=True)
     pago = models.FloatField('28.2_¿Pago mensual en C$?', null=True, blank=True)
     recibe = models.ManyToManyField(RecibePrestamo,
@@ -1001,7 +1002,7 @@ class TotalIngreso(models.Model):
         self.total = self._get_total()
         self.total_gasto = self._get_total_gasto()
         self.total_gasto_fuera_finca = self._get_total_gasto_fuera_finca()
-        
+
         super(TotalIngreso, self).save(*args, **kwargs)
 
     def _get_total(self):
