@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block extra_js %}
+<script src="http://code.highcharts.com/highcharts.js"></script>
+<script src="http://code.highcharts.com/exporting.js"></script>
+<script type="text/javascript">
+    $(function () {
+    // Create the chart
+    $('#container').highcharts({
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Distribución de la tierra en la finca'
+        },
+        subtitle: {
+            text: ''
+        },
+        xAxis: {
+            type: 'category'
+        },
+        yAxis: {
+            title: {
+                text: 'Frecuencias'
+            }
+
+        },
+        legend: {
+            enabled: false
+        },
+        plotOptions: {
+            series: {
+                borderWidth: 0,
+                dataLabels: {
+                    enabled: true,
+                    format: '{point.y:.1f}'
+                }
+            }
+        },
+
+        tooltip: {
+            headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+            pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}</b> of total<br/>'
+        },
+
+        series: [{
+            name: "",
+            colorByPoint: true,
+            data: [
+            {% for k,v in grafo_distribucion_tierra.items %}
+                {
+                    name: "{{k}}",
+                    y: {{v}},
+                },
+            {% endfor %}
+            ]
+        }],
+    });
+
+});
+</script>
+{% endblock extra_js %}
+
+{% block contenido %}
+<br>
+<div class="row">
+    <div class="col-md-6"><div id="promedio" style="height: 400px;"></div>Promedio en Mz: {{promedio_mz}}</div>
+    <div class="col-md-6"><div id="container" style="height: 400px;"></div></div>
+</div>
+<br><br>
+
+{% include "menu_indicadores.html" %}
+{% endblock contenido %}

@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+
+{% block extra_js %}
+<script src="http://code.highcharts.com/highcharts.js"></script>
+<script src="http://code.highcharts.com/exporting.js"></script>
+<script type="text/javascript">
+    $(function () {
+    // Create the chart
+    $('#container').highcharts({
+        chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false,
+            type: 'pie'
+        },
+        title: {
+            text: 'En el último año ha recibido algún tipo de prestamo/crédito'
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: true,
+                    format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                    style: {
+                        color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                    }
+                }
+            }
+        },
+        series: [{
+            name: "",
+            colorByPoint: true,
+            data: [{% for k,v in grafo_prestamo_sino.items %}
+                {
+                    name: "{{k}}",
+                    y: {{v}}
+                },
+            {% endfor %}
+             ]
+        }]
+    });
+
+    //columna
+    $('#container1').highcharts({
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: '¿De quien recibe el prestamo/crédito'
+        },
+        subtitle: {
+            text: ''
+        },
+        xAxis: {
+            type: 'category'
+        },
+        yAxis: {
+            title: {
+                text: 'Frecuencias'
+            }
+
+        },
+        legend: {
+            enabled: false
+        },
+        plotOptions: {
+            series: {
+                borderWidth: 0,
+                dataLabels: {
+                    enabled: true,
+                    format: '{point.y:.1f}'
+                }
+            }
+        },
+
+        tooltip: {
+            headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+            pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}</b> of total<br/>'
+        },
+
+        series: [{
+            name: "",
+            colorByPoint: true,
+            data: [
+            {% for k,v in grafo_recibe_prestamo.items %}
+                {
+                    name: "{{k}}",
+                    y: {{v}},
+                },
+            {% endfor %}
+            ]
+        }],
+    });
+
+        //columna
+    $('#container2').highcharts({
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: '¿Cuál fue el uso del prestamo/crédito'
+        },
+        subtitle: {
+            text: ''
+        },
+        xAxis: {
+            type: 'category'
+        },
+        yAxis: {
+            title: {
+                text: 'Frecuencias'
+            }
+
+        },
+        legend: {
+            enabled: false
+        },
+        plotOptions: {
+            series: {
+                borderWidth: 0,
+                dataLabels: {
+                    enabled: true,
+                    format: '{point.y:.1f}'
+                }
+            }
+        },
+
+        tooltip: {
+            headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+            pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}</b> of total<br/>'
+        },
+
+        series: [{
+            name: "",
+            colorByPoint: true,
+            data: [
+            {% for k,v in grafo_uso_prestamo.items %}
+                {
+                    name: "{{k}}",
+                    y: {{v}},
+                },
+            {% endfor %}
+            ]
+        }],
+    });
+
+});
+</script>
+{% endblock extra_js %}
+
+{% block contenido %}
+<br>
+<div class="row">
+    <div class="col-md-6"><div id="container" style="height: 400px;"></div></div>
+    <div class="col-md-6"><div id="container1" style="height: 400px;"></div></div>
+</div>
+<br><br>
+<div class="row">
+  <div class="col-md-6"><div id="container2" style="height: 400px;"></div></div>
+  <div class="col-md-6"><div id="container3" style="height: 400px;"></div></div>
+</div>
+<br><br>
+{% include "menu_indicadores.html" %}
+{% endblock contenido %}

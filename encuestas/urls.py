@@ -16,5 +16,8 @@ urlpatterns = [
     url(r'^escolaridad/$', views.escolaridad, name='escolaridad'),
     url(r'^energia/$', views.energia, name='energia'),
     url(r'^agua/$', views.agua, name='agua'),
-    
+    url(r'^organizaciones/$', views.organizaciones, name='organizaciones'),
+    url(r'^tierra/$', views.tierra, name='tierra'),
+    url(r'^prestamos/$', views.prestamos, name='prestamos'),
+
 ]

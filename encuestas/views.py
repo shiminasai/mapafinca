@@ -133,7 +133,7 @@ def principal_dashboard(request, template='dashboard.html', departamento_id=None
         if cada_uno == None:
             cada_uno = 0
         gastos_alimentarios[obj] = cada_uno
-    
+
     #grafico sobre clima
     lista_precipitacion = []
     lista_temperatura = []
@@ -300,7 +300,7 @@ def escolaridad(request, template="escolaridad.html"):
                 s_incompleta = Sum('escolaridad__secu_incompleta'),
                 bachiller = Sum('escolaridad__bachiller'),
                 universitario = Sum('escolaridad__uni_tecnico'),
-                
+
                 )
         try:
             suma = int(objeto['p_completa'] or 0) + int(objeto['s_incompleta'] or 0) + int(objeto['bachiller'] or 0) + int(objeto['universitario'] or 0)
@@ -317,7 +317,7 @@ def escolaridad(request, template="escolaridad.html"):
                 saca_porcentajes(objeto['universitario'], objeto['num_total'], False),
                 ]
         tabla_educacion.append(fila)
-    
+
     return render(request, template, locals())
 
 def energia(request, template="energia.html"):
@@ -377,6 +377,56 @@ def agua(request, template="agua.html"):
         valor = Encuesta.objects.filter(usosagua__uso=obj[0]).count()
         grafo_agua_usos[obj[1]] =  valor
 
+
+    return render(request, template, locals())
+
+def organizaciones(request, template="organizaciones.html"):
+
+    grafo_pertenece = {}
+    for obj in CHOICE_JEFE:
+        valor = Encuesta.objects.filter(organizacioncomunitaria__pertenece=obj[0]).count()
+        grafo_pertenece[obj[1]] =  valor
+
+    grafo_org_comunitarias = {}
+    for obj in OrgComunitarias.objects.all():
+        valor = Encuesta.objects.filter(organizacioncomunitaria__caso_si=obj).count()
+        grafo_org_comunitarias[obj] =  valor
+
+    grafo_beneficios = {}
+    for obj in BeneficiosOrganizados.objects.all():
+        valor = Encuesta.objects.filter(organizacioncomunitaria__cuales_beneficios=obj).count()
+        grafo_beneficios[obj] =  valor
+
+    return render(request, template, locals())
+
+def tierra(request, template="tierra.html"):
+
+    #promedio de manzanas por todas las personas
+    promedio_mz = Encuesta.objects.aggregate(p=Avg('organizacionfinca__area_finca'))['p']
+
+    grafo_distribucion_tierra = {}
+    for obj in CHOICE_TIERRA:
+        valor = Encuesta.objects.filter(distribuciontierra__tierra=obj[0]).count()
+        grafo_distribucion_tierra[obj[1]] =  valor
+
+    return render(request, template, locals())
+
+def prestamos(request, template="prestamo.html"):
+
+    grafo_prestamo_sino = {}
+    for obj in CHOICE_JEFE:
+        valor = Encuesta.objects.filter(prestamo__algun_prestamo=obj[0]).count()
+        grafo_prestamo_sino[obj[1]] =  valor
+
+    grafo_recibe_prestamo = {}
+    for obj in RecibePrestamo.objects.all():
+        valor = Encuesta.objects.filter(prestamo__recibe=obj).count()
+        grafo_recibe_prestamo[obj] =  valor
+
+    grafo_uso_prestamo = {}
+    for obj in UsoPrestamo.objects.all():
+        valor = Encuesta.objects.filter(prestamo__uso=obj).count()
+        grafo_uso_prestamo[obj] =  valor
 
     return render(request, template, locals())
 
