@@ -985,6 +985,73 @@ class AlimentosFueraFinca(models.Model):
     class Meta:
         verbose_name_plural = '43_Indique los alimentos que compra fuera de la finca'
 
+CHOICER_INGRESO = (
+            (1,'Cultivo tradicionales '),
+            (2,'Cultivos en huertos familiares '),
+            (3,'Frutales en finca'),
+            (4,'Ganadería mayor y menor'),
+            (5,'Productos procesados'),
+            (6,'Otras fuentes'),
+    )
+
+class Genero(models.Model):
+    encuesta = models.ForeignKey(Encuesta)
+    tipo = models.IntegerField(choices=CHOICER_INGRESO)
+    porcentaje = models.FloatField()
+
+    class Meta:
+        verbose_name_plural = '43_¿Qué porcentaje de ingreso es aportado por la mujer (compañera del jefe del hogar)'
+
+class Genero1(models.Model):
+    encuesta = models.ForeignKey(Encuesta)
+    tipo = models.IntegerField(choices=CHOICE_JEFE,
+        verbose_name='44 ¿Tiene crédito a nombre de la mujer (compañera del jefe del hogar)?')
+    monto = models.FloatField()
+
+    class Meta:
+        verbose_name_plural = '44_¿Tiene crédito a nombre de la mujer (compañera del jefe del hogar)?'
+
+
+CHOICER_COSAS_MUJER = (
+            (1,'Panel solar'),
+            (2,'Animales (Ganado mayor o menor)'),
+            (3,'Equipos de producción'),
+    )
+
+class Genero2(models.Model):
+    encuesta = models.ForeignKey(Encuesta)
+    pregunta = models.IntegerField(choices=CHOICER_COSAS_MUJER)
+    respuesta = models.IntegerField(choices=CHOICE_JEFE)
+
+    class Meta:
+        verbose_name_plural = '45_¿Tiene a nombre de la mujer (compañera del jefe del hogar) algunos de los siguientes bienes?'
+
+class Genero3(models.Model):
+    encuesta = models.ForeignKey(Encuesta)
+    respuesta = models.IntegerField(choices=CHOICE_JEFE, 
+        verbose_name='¿La mujer (compañera del jefe del hogar) pertenece a algún tipo de organización?')
+
+    class Meta:
+        verbose_name_plural = '46_¿La mujer (compañera del jefe del hogar) pertenece a algún tipo de organización ?'
+
+CHOICER_NIVEL_MUJER = (
+            (1,'No lee, ni escribe'),
+            (2,'Primaria incompleta'),
+            (3,'Primaria completa'),
+            (4,'Secundaria incompleta'),
+            (5,'Bachiller'),
+            (6,'Universitario o técnico'),
+    )
+
+class Genero4(models.Model):
+    encuesta = models.ForeignKey(Encuesta)
+    opcion = models.IntegerField(choices=CHOICER_NIVEL_MUJER, 
+        verbose_name='¿nivel de educación de la mujer (compañera del jefe del hogar)?')
+    respuesta = models.IntegerField(choices=CHOICE_JEFE)
+
+    class Meta:
+        verbose_name_plural = '47_¿Cuál es el nivel de educación de la mujer (compañera del jefe del hogar)'
+
 
 class TotalIngreso(models.Model):
     encuesta = models.OneToOneField(Encuesta)
