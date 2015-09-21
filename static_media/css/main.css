@@ -32,6 +32,8 @@ header .eli-pad p {
 }
 .text-muted {
   color: #a6a6a6;
+  padding: 20px 0px;
+  margin: 0px;
 }
 .simas {
   text-align: right;
@@ -56,22 +58,19 @@ header .eli-pad p {
   padding-top: 10px;
   padding-bottom: 10px;
 }
-#id_sexo {
-  margin-left: 10px;
-}
-#id_organizacion,
-#id_sexo {
-  background: #ccc8c7;
-  width: 100%;
-  padding: 5px;
-  font-size: 16px;
-  line-height: 1;
-  border-radius: 0;
-  height: 34px;
-  -webkit-appearance: none;
-  background: #ccc8c7 url("https://cdn3.iconfinder.com/data/icons/faticons/32/arrow-down-01-16.png") no-repeat right center;
-  background-position: 95% 50%;
-}
+/*#id_sexo
+	margin-left 10px
+#id_organizacion,#id_sexo
+	background gris
+	width 100%
+	padding 5px
+	font-size 16px
+	line-height 1
+	border-radius 0
+	height 34px
+	-webkit-appearance none
+	background gris url("https://cdn3.iconfinder.com/data/icons/faticons/32/arrow-down-01-16.png") no-repeat right center
+	background-position 95% 50%*/
 .btn-filtro {
   background-color: #ed6d16;
   -webkit-border-radius: 0px;
@@ -88,9 +87,10 @@ header .eli-pad p {
 .btn-filtro:focus {
   color: #fff;
 }
-.eliminar-mar {
-  margin: 0px;
-}
+/*.eliminar-mar
+	margin 0px
+
+*/
 .contenedor-index {
   background: linear-gradient(rgba(0,104,55,0.5), rgba(0,104,55,0.5)), url("/static/img/fondo.JPG");
   -webkit-background-size: cover;
@@ -103,10 +103,8 @@ header .eli-pad p {
   margin: 0px;
 }
 .info-index {
-  margin-top: 180px;
-  margin-bottom: 180px;
   padding: 25px;
-  text-align: center;
+  text-align: justify;
   background-color: rgba(117,197,94,0.5);
   color: #fff;
   font-size: 0.9em;
@@ -116,6 +114,7 @@ header .eli-pad p {
 }
 .slider {
   margin-bottom: 10px;
+  margin-top: 50px;
 }
 /*.bx-prev
 	margin-left -7%
@@ -656,6 +655,21 @@ header .eli-pad p {
   margin-top: 30px;
   margin-bottom: 60px;
 }
+.panel-body {
+  background-color: #4b3f3c;
+  padding-top: 25px;
+  padding-bottom: 25px;
+  color: #fff;
+  font-weight: bold;
+  vertical-align: middle;
+}
+.n-encuesta {
+  font-size: 2.5em;
+  color: #ed6d16;
+}
+.n-raas {
+  display: none;
+}
 /*********lg************/
 @media (min-width: 1200px) {
   .contenido-general,
@@ -708,6 +722,42 @@ header .eli-pad p {
     margin-left: 1%;
     margin-right: 1%;
   }
+  #encuesta {
+    text-align: center;
+    position: absolute;
+    z-index: 3;
+    top: 200px;
+    right: 20px;
+  }
+}
+/**************21/09/115*******************/
+.page-contenido {
+  margin-top: 50px;
+}
+.page-contenido .panel {
+  margin-bottom: 0px;
+}
+.page-contenido .panel ul {
+  list-style: none;
+}
+.page-contenido .panel ul li {
+  margin-bottom: 10px;
+  margin-top: 10px;
+  color: #000;
+}
+.page-contenido .panel .panel-body {
+  padding: 0px;
+  background: transparent;
+}
+.page-contenido .panel .panel-heading {
+  background-color: #93c55e;
+}
+.page-contenido .panel .panel-heading a {
+  color: #fff;
+  text-decoration: none;
+}
+.btn-ex {
+  margin-left: 60%;
 }
 /*********md************/
 @media (min-width: 992px) {
@@ -723,6 +773,13 @@ header .eli-pad p {
   }
   .contenido-general {
     margin-top: 20px;
+  }
+  #encuesta {
+    text-align: center;
+    position: absolute;
+    z-index: 3;
+    top: 200px;
+    right: 20px;
   }
 }
 /*********xs************/
@@ -769,5 +826,19 @@ header .eli-pad p {
   }
   .list-anos h5 {
     text-align: center;
+  }
+  .mapa {
+    margin-top: -130px;
+    margin-bottom: -116px;
+  }
+}
+/*********sm************/
+@media (min-width: 768px) {
+  #encuesta {
+    text-align: center;
+    position: absolute;
+    z-index: 3;
+    top: 130px;
+    left: 0px;
   }
 }
