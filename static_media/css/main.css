@@ -670,6 +670,44 @@ header .eli-pad p {
 .n-raas {
   display: none;
 }
+/**************21/09/115*******************/
+.page-contenido {
+  margin-top: 50px;
+}
+.page-contenido .panel {
+  margin-bottom: 0px;
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  -o-border-radius: 0px;
+  border-radius: 0px;
+  border-top: 1px solid transparent;
+}
+.page-contenido .panel ul {
+  list-style: none;
+}
+.page-contenido .panel ul li {
+  margin-bottom: 10px;
+  margin-top: 10px;
+  color: #000;
+}
+.page-contenido .panel .panel-body {
+  padding: 0px;
+  background: transparent;
+}
+.page-contenido .panel .panel-heading {
+  background-color: #93c55e;
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  -o-border-radius: 0px;
+  border-radius: 0px;
+}
+.page-contenido .panel .panel-heading a {
+  color: #fff;
+  text-decoration: none;
+}
+.btn-ex {
+  margin-left: 60%;
+}
 /*********lg************/
 @media (min-width: 1200px) {
   .contenido-general,
@@ -729,35 +767,6 @@ header .eli-pad p {
     top: 200px;
     right: 20px;
   }
-}
-/**************21/09/115*******************/
-.page-contenido {
-  margin-top: 50px;
-}
-.page-contenido .panel {
-  margin-bottom: 0px;
-}
-.page-contenido .panel ul {
-  list-style: none;
-}
-.page-contenido .panel ul li {
-  margin-bottom: 10px;
-  margin-top: 10px;
-  color: #000;
-}
-.page-contenido .panel .panel-body {
-  padding: 0px;
-  background: transparent;
-}
-.page-contenido .panel .panel-heading {
-  background-color: #93c55e;
-}
-.page-contenido .panel .panel-heading a {
-  color: #fff;
-  text-decoration: none;
-}
-.btn-ex {
-  margin-left: 60%;
 }
 /*********md************/
 @media (min-width: 992px) {
