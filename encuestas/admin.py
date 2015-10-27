@@ -182,6 +182,31 @@ class InlineAlimentosFueraFinca(admin.TabularInline):
     model = AlimentosFueraFinca
     extra = 1
 
+class InlineGenero(admin.TabularInline):
+    model = Genero
+    extra = 1
+    max_num = 1
+
+class InlineGenero1(admin.TabularInline):
+    model = Genero1
+    extra = 1
+    max_num = 1
+
+class InlineGenero2(admin.TabularInline):
+    model = Genero2
+    extra = 1
+    max_num = 1
+
+class InlineGenero3(admin.TabularInline):
+    model = Genero3
+    extra = 1
+    max_num = 1
+
+class InlineGenero4(admin.TabularInline):
+    model = Genero4
+    extra = 1
+    max_num = 1
+
 class AdminEncuesta(admin.ModelAdmin):
     form = ProductorAdminForm
     fields = (('entrevistado','fecha','encuestador'),'mapa_finca', 'org_responsable','dueno',)
@@ -207,7 +232,8 @@ class AdminEncuesta(admin.ModelAdmin):
                 InlineGanaderia,InlineProcesamiento,InlineIntroducidosTradicionales,
                 InlineIntroducidosHuertos,InlineGastoHogar,InlineGastoProduccion,
                 InlinePrestamo,InlinePracticasAgroecologicas,InlineSeguridadAlimentaria,
-                InlineRespuestaNo41,InlineOtrasSeguridad,InlineAlimentosFueraFinca,]
+                InlineRespuestaNo41,InlineOtrasSeguridad,InlineAlimentosFueraFinca,
+                InlineGenero,InlineGenero1,InlineGenero2,InlineGenero3,InlineGenero4,]
 
     list_display = ('entrevistado','dueno','get_departamento','year')
     search_fields = ('entrevistado__nombre',)
