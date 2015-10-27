@@ -14,6 +14,11 @@ CHOICE_SEXO = (
                 (1, 'Mujer'),
                 (2, 'Hombre'),
               )
+CHOICE_SEXO1 = (
+                (1, 'Mujer'),
+                (2, 'Hombre'),
+                (3, 'Ambos'),
+              )
 CHOICE_JEFE = (
                 (1, 'Si'),
                 (2, 'No'),
@@ -252,6 +257,7 @@ CHOICE_PANEL_SOLAR = (
 class PanelSolar(models.Model):
     encuesta = models.ForeignKey(Encuesta)
     panel = models.IntegerField(choices=CHOICE_PANEL_SOLAR)
+    si_no = models.IntegerField(choices=CHOICE_JEFE, null=True, blank=True)
 
     class Meta:
         verbose_name_plural = '11.1_En el caso que tenga panel solar, cuál es el fin'
@@ -673,6 +679,7 @@ class Ganaderia(models.Model):
 #procesamiento
 
 class ProductoProcesado(models.Model):
+    codigo = models.CharField(max_length=4, null=True, blank=True)
     nombre = models.CharField(max_length=250)
     unidad_medida = models.IntegerField(choices=CHOICE_MEDIDA)
 
@@ -683,6 +690,7 @@ class ProductoProcesado(models.Model):
 class Procesamiento(models.Model):
     encuesta = models.ForeignKey(Encuesta)
     producto = models.ForeignKey(ProductoProcesado)
+    cantidad_total = models.FloatField('Cantidad', null=True, blank=True)
     cantidad = models.IntegerField('Cantidad consumida en el hogar')
     cantidad_vendida = models.IntegerField('Cantidad vendida este año')
     precio = models.FloatField('Precio de venta en C$')
@@ -838,13 +846,13 @@ class PracticasAgroecologicas(models.Model):
     cinco_principales = models.ManyToManyField(Practicas,
                                             verbose_name='29.1_Mencione cinco principales',blank=True)
     manejo = models.IntegerField(choices=CHOICE_MANEJO,
-                    verbose_name='31_Sobre el manejo del suelo ¿Cómo preparan el suelo?', null=True, blank=True)
+                    verbose_name='30_Sobre el manejo del suelo ¿Cómo preparan el suelo?', null=True, blank=True)
     traccion = models.IntegerField(choices=CHOICE_TRACCION,
-                    verbose_name='32_¿Qué tipo de tracción utilizan para la preparación del suelo?', null=True, blank=True)
+                    verbose_name='31_¿Qué tipo de tracción utilizan para la preparación del suelo?', null=True, blank=True)
     fertilidad = models.IntegerField(choices=CHOICE_JEFE,
-                    verbose_name='33_¿Realizan análisis de fertilidad del suelo?', null=True, blank=True)
+                    verbose_name='32_¿Realizan análisis de fertilidad del suelo?', null=True, blank=True)
     control = models.IntegerField(choices=CHOICE_JEFE,
-                    verbose_name='34_¿Realiza control y monitoreo de plagas y enfermedades?', null=True, blank=True)
+                    verbose_name='33_¿Realiza control y monitoreo de plagas y enfermedades?', null=True, blank=True)
 
     class Meta:
         verbose_name_plural = 'Prácticas agroecológicas'
@@ -874,30 +882,24 @@ class TipoSecado(models.Model):
 class SeguridadAlimentaria(models.Model):
     encuesta = models.ForeignKey(Encuesta)
     misma_finca = models.IntegerField(choices=CHOICE_PORCENTAJE,
-        verbose_name='35.1_¿Qué porcentaje alimentos que consumen en su hogar provienen de la misma finca?',
-        null=True, blank=True)
-    fuera_finca = models.IntegerField(choices=CHOICE_PORCENTAJE,
-        verbose_name='35.2_¿Qué porcentaje alimentos que consumen en su hogar provienen fuera de la finca?',
-        null=True, blank=True)
+        verbose_name='34_¿Qué porcentaje alimentos que consumen en su hogar provienen de la misma finca?', null=True, blank=True)
     economico = models.IntegerField(choices=CHOICE_JEFE,
-        verbose_name='36_¿Disponen suficiente recursos económicos para manejo de finca?',
+        verbose_name='35_¿Disponen suficiente recursos económicos para manejo de finca?',
         null=True, blank=True)
     secado = models.IntegerField(choices=CHOICE_JEFE,
-        verbose_name='37_¿Dispone de tecnología para el secado y almacenamiento de cosecha?',
-        null=True, blank=True)
+        verbose_name='36_¿Dispone de tecnología para el secado y almacenamiento de cosecha?', null=True, blank=True)
     tipo_secado = models.ForeignKey(TipoSecado, verbose_name='Si es si cuál?',
         null=True, blank=True)
     plan_cosecha = models.IntegerField(choices=CHOICE_JEFE,
-        verbose_name='38_¿Cuentan con un plan de cosecha?',
+        verbose_name='37_¿Cuentan con un plan de cosecha?',
         null=True, blank=True)
     ayuda = models.IntegerField(choices=CHOICE_JEFE,
-        verbose_name='39_¿Cuentan con ayuda de alimentos en momentos de escasez?',
+        verbose_name='38_¿Cuentan con ayuda de alimentos en momentos de escasez?',
         null=True, blank=True)
     suficiente_alimento = models.IntegerField(choices=CHOICE_JEFE,
-        verbose_name='40_¿Le ha preocupado que en su hogar no hubiera suficiente alimentos?',
-        null=True, blank=True)
+        verbose_name='39_¿Le ha preocupado que en su hogar no hubiera suficiente alimentos?', null=True, blank=True)
     consumo_diario = models.IntegerField(choices=CHOICE_JEFE,
-        verbose_name='41_¿Considera que su familia cuenta con la cantidad necesaria de alimentos que necesitan para el consumo diario del hogar?',
+        verbose_name='40_¿Considera que su familia cuenta con la cantidad necesaria de alimentos que necesitan para el consumo diario del hogar?',
         null=True, blank=True)
 
     class Meta:
@@ -931,7 +933,7 @@ class RespuestaNo41(models.Model):
     inversion = MultiSelectField(choices=CHOICE_INVERSION)
 
     class Meta:
-        verbose_name_plural = '41.1_Si responde NO'
+        verbose_name_plural = '40.1_Si responde NO'
 
 class AdquiereAgua(models.Model):
     nombre = models.CharField(max_length=250)
@@ -948,9 +950,9 @@ class TrataAgua(models.Model):
 class OtrasSeguridad(models.Model):
     encuesta = models.ForeignKey(Encuesta)
     adquiere_agua = models.ForeignKey(AdquiereAgua,
-                    verbose_name='42_En momentos de sequía como adquiere el agua de consumo')
+                    verbose_name='41_En momentos de sequía como adquiere el agua de consumo')
     tratamiento = models.IntegerField(choices=CHOICE_JEFE,
-                    verbose_name='42_1 Le da algún tipo de tratamiento:')
+                    verbose_name='41_1 Le da algún tipo de tratamiento:')
     tipo_tratamiento = models.ForeignKey(TrataAgua)
 
     class Meta:
@@ -983,7 +985,7 @@ class AlimentosFueraFinca(models.Model):
         models.signals.post_save.send(sender=Encuesta, instance=self.encuesta)
 
     class Meta:
-        verbose_name_plural = '43_Indique los alimentos que compra fuera de la finca'
+        verbose_name_plural = '42_Indique los alimentos que compra fuera de la finca'
 
 CHOICER_INGRESO = (
             (1,'Cultivo tradicionales '),
@@ -994,10 +996,12 @@ CHOICER_INGRESO = (
             (6,'Otras fuentes'),
     )
 
+#VII Genero
+
 class Genero(models.Model):
     encuesta = models.ForeignKey(Encuesta)
     tipo = models.IntegerField(choices=CHOICER_INGRESO)
-    porcentaje = models.FloatField()
+    porcentaje = models.FloatField(choices=CHOICE_PORCENTAJE)
 
     class Meta:
         verbose_name_plural = '43_¿Qué porcentaje de ingreso es aportado por la mujer (compañera del jefe del hogar)'
@@ -1028,7 +1032,7 @@ class Genero2(models.Model):
 
 class Genero3(models.Model):
     encuesta = models.ForeignKey(Encuesta)
-    respuesta = models.IntegerField(choices=CHOICE_JEFE, 
+    respuesta = models.IntegerField(choices=CHOICE_JEFE,
         verbose_name='¿La mujer (compañera del jefe del hogar) pertenece a algún tipo de organización?')
 
     class Meta:
@@ -1045,7 +1049,7 @@ CHOICER_NIVEL_MUJER = (
 
 class Genero4(models.Model):
     encuesta = models.ForeignKey(Encuesta)
-    opcion = models.IntegerField(choices=CHOICER_NIVEL_MUJER, 
+    opcion = models.IntegerField(choices=CHOICER_NIVEL_MUJER,
         verbose_name='¿nivel de educación de la mujer (compañera del jefe del hogar)?')
     respuesta = models.IntegerField(choices=CHOICE_JEFE)
 
