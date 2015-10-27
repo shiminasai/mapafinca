@@ -687,7 +687,7 @@ class ProductoProcesado(models.Model):
     unidad_medida = models.IntegerField(choices=CHOICE_MEDIDA)
 
     def __unicode__(self):
-        return u'%s-%s' % (self.nombre, self.unidad_medida)
+        return u'%s-%s' % (self.codigo, self.nombre)
 
 
 class Procesamiento(models.Model):
