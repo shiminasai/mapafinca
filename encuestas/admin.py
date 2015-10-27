@@ -185,7 +185,7 @@ class InlineAlimentosFueraFinca(admin.TabularInline):
 class InlineGenero(admin.TabularInline):
     model = Genero
     extra = 1
-    max_num = 1
+    max_num = 6
 
 class InlineGenero1(admin.TabularInline):
     model = Genero1
@@ -195,7 +195,7 @@ class InlineGenero1(admin.TabularInline):
 class InlineGenero2(admin.TabularInline):
     model = Genero2
     extra = 1
-    max_num = 1
+    max_num = 3
 
 class InlineGenero3(admin.TabularInline):
     model = Genero3

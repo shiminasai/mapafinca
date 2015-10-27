@@ -383,7 +383,8 @@ CHOICE_TRATAMIENTO = (
                 (2, 'Se clora'),
                 (3, 'Se usa filtro'),
                 (4, 'Se deja reposar'),
-                (5, 'Ninguno')
+                (5, 'Sodificación'),
+                (6, 'Ninguno')
               )
 
 CHOICE_OTRO_USO = (
@@ -506,6 +507,8 @@ CHOICE_MEDIDA = (
                 (3, 'Docena'),
                 (4, 'Cien'),
                 (5, 'Cabeza'),
+                (6, 'Litro'),
+                (7, 'Unidad'),
                 )
 
 CHOICE_PERIODO = (
@@ -1010,7 +1013,7 @@ class Genero1(models.Model):
     encuesta = models.ForeignKey(Encuesta)
     tipo = models.IntegerField(choices=CHOICE_JEFE,
         verbose_name='44 ¿Tiene crédito a nombre de la mujer (compañera del jefe del hogar)?')
-    monto = models.FloatField()
+    monto = models.FloatField(null=True, blank=True)
 
     class Meta:
         verbose_name_plural = '44_¿Tiene crédito a nombre de la mujer (compañera del jefe del hogar)?'
@@ -1051,7 +1054,6 @@ class Genero4(models.Model):
     encuesta = models.ForeignKey(Encuesta)
     opcion = models.IntegerField(choices=CHOICER_NIVEL_MUJER,
         verbose_name='¿nivel de educación de la mujer (compañera del jefe del hogar)?')
-    respuesta = models.IntegerField(choices=CHOICE_JEFE)
 
     class Meta:
         verbose_name_plural = '47_¿Cuál es el nivel de educación de la mujer (compañera del jefe del hogar)'
