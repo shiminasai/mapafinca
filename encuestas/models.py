@@ -931,10 +931,10 @@ CHOICE_INVERSION = (
 
 class RespuestaNo41(models.Model):
     encuesta = models.ForeignKey(Encuesta)
-    fenomeno = MultiSelectField(choices=CHOICE_FENOMENOS)
-    agricola = MultiSelectField(choices=CHOICE_AGRICOLA)
-    mercado = MultiSelectField(choices=CHOICE_MERCADO)
-    inversion = MultiSelectField(choices=CHOICE_INVERSION)
+    fenomeno = MultiSelectField(choices=CHOICE_FENOMENOS, null=True, blank=True)
+    agricola = MultiSelectField(choices=CHOICE_AGRICOLA, null=True, blank=True)
+    mercado = MultiSelectField(choices=CHOICE_MERCADO, null=True, blank=True)
+    inversion = MultiSelectField(choices=CHOICE_INVERSION, null=True, blank=True)
 
     class Meta:
         verbose_name_plural = '40.1_Si responde NO'
@@ -957,7 +957,7 @@ class OtrasSeguridad(models.Model):
                     verbose_name='41_En momentos de sequía como adquiere el agua de consumo')
     tratamiento = models.IntegerField(choices=CHOICE_JEFE,
                     verbose_name='41_1 Le da algún tipo de tratamiento:')
-    tipo_tratamiento = models.ForeignKey(TrataAgua)
+    tipo_tratamiento = models.ForeignKey(TrataAgua, null=True, blank=True)
 
     class Meta:
         verbose_name_plural = 'Pregunta 42'

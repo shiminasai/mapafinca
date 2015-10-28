@@ -69,7 +69,7 @@ class InlineCalidadAgua(admin.TabularInline):
 class InlineContaminada(admin.TabularInline):
     model = Contaminada
     extra = 1
-    max_num = 1
+    max_num = 5
 
 class InlineEvidencia(admin.TabularInline):
     model = Evidencia
@@ -82,7 +82,7 @@ class InlineTratamientoAgua(admin.TabularInline):
 class InlineUsosAgua(admin.TabularInline):
     model = UsosAgua
     extra = 1
-    max_num = 1
+    max_num = 5
 
 class InlineOrganizacionComunitaria(admin.TabularInline):
     model = OrganizacionComunitaria
