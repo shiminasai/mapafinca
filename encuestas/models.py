@@ -13,6 +13,7 @@ from django.dispatch import receiver
 CHOICE_SEXO = (
                 (1, 'Mujer'),
                 (2, 'Hombre'),
+                (3, 'Ambos'),
               )
 CHOICE_SEXO1 = (
                 (1, 'Mujer'),
@@ -189,7 +190,7 @@ class DuenoNo(models.Model):
 class SexoMiembros(models.Model):
     encuesta = models.ForeignKey(Encuesta)
     sexo = models.IntegerField(choices=CHOICE_SEXO,
-                verbose_name='7_Sexo del jefe (a) del hogar')
+                verbose_name='7_Quien es el jefe (a) del hogar')
     cantidad = models.IntegerField('8_Cantidad de personas que habitan en el hogar')
 
     def __unicode__(self):
