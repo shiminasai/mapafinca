@@ -885,7 +885,7 @@ class TipoSecado(models.Model):
 
 class SeguridadAlimentaria(models.Model):
     encuesta = models.ForeignKey(Encuesta)
-    misma_finca = models.IntegerField(choices=CHOICE_PORCENTAJE,
+    misma_finca = models.IntegerField(
         verbose_name='34_¿Qué porcentaje alimentos que consumen en su hogar provienen de la misma finca?', null=True, blank=True)
     economico = models.IntegerField(choices=CHOICE_JEFE,
         verbose_name='35_¿Disponen suficiente recursos económicos para manejo de finca?',
