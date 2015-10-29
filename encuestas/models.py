@@ -477,7 +477,7 @@ class TipoFuenteIngreso(models.Model):
     nombre = models.CharField('especifique tipo', max_length=250)
 
     def __unicode__(self):
-        return self.nombre
+        return u'%s - %s ' % (self.get_tipo_display(), self.nombre)
 
 
 class Fuentes(models.Model):
