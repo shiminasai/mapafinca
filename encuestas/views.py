@@ -45,6 +45,10 @@ def IndexView(request,template="index.html"):
             del request.session['organizacion']
         except:
             pass
+        paises = {}
+        for obj in Pais.objects.all():
+            algo = Encuesta.objects.filter(entrevistado__pais=obj).distinct('entrevistado_id')
+            paises[obj] = algo
 
     return render(request, template, locals())
 
@@ -264,7 +268,7 @@ def indicadores(request, template='indicadores.html'):
 
 #FUNCIONES PARA LAS DEMAS SALIDAS DEL SISTEMA
 
-def sexo_duenos(request, template="sexo_duenos.html"):
+def sexo_duenos(request, template="indicadores/sexo_duenos.html"):
     si_dueno = Encuesta.objects.filter(dueno=1).count()
     no_dueno = Encuesta.objects.filter(dueno=2).count()
 
@@ -286,7 +290,7 @@ def sexo_duenos(request, template="sexo_duenos.html"):
 
     return render(request, template, locals())
 
-def escolaridad(request, template="escolaridad.html"):
+def escolaridad(request, template="indicadores/escolaridad.html"):
     #filtro = _queryset_filtrado(request)
 
     tabla_educacion = []
@@ -320,7 +324,7 @@ def escolaridad(request, template="escolaridad.html"):
 
     return render(request, template, locals())
 
-def energia(request, template="energia.html"):
+def energia(request, template="indicadores/energia.html"):
 
     grafo_tipo_energia = {}
     for obj in Energia.objects.all():
@@ -345,7 +349,7 @@ def energia(request, template="energia.html"):
 
     return render(request, template, locals())
 
-def agua(request, template="agua.html"):
+def agua(request, template="indicadores/agua.html"):
 
     grafo_agua_consumo = {}
     for obj in AguaConsumo.objects.all():
@@ -380,7 +384,7 @@ def agua(request, template="agua.html"):
 
     return render(request, template, locals())
 
-def organizaciones(request, template="organizaciones.html"):
+def organizaciones(request, template="indicadores/organizaciones.html"):
 
     grafo_pertenece = {}
     for obj in CHOICE_JEFE:
@@ -399,7 +403,7 @@ def organizaciones(request, template="organizaciones.html"):
 
     return render(request, template, locals())
 
-def tierra(request, template="tierra.html"):
+def tierra(request, template="indicadores/tierra.html"):
 
     #promedio de manzanas por todas las personas
     promedio_mz = Encuesta.objects.aggregate(p=Avg('organizacionfinca__area_finca'))['p']
@@ -411,7 +415,7 @@ def tierra(request, template="tierra.html"):
 
     return render(request, template, locals())
 
-def prestamos(request, template="prestamo.html"):
+def prestamos(request, template="indicadores/prestamo.html"):
 
     grafo_prestamo_sino = {}
     for obj in CHOICE_JEFE:
@@ -430,7 +434,7 @@ def prestamos(request, template="prestamo.html"):
 
     return render(request, template, locals())
 
-def practicas(request, template="practicas.html"):
+def practicas(request, template="indicadores/practicas.html"):
 
     grafo_practicas_sino = {}
     for obj in CHOICE_JEFE:
@@ -459,7 +463,7 @@ def practicas(request, template="practicas.html"):
 
     return render(request, template, locals())
 
-def seguridad(request, template="seguridad.html"):
+def seguridad(request, template="indicadores/seguridad.html"):
 
     grafo_practicas_sino = {}
     for obj in CHOICE_JEFE:

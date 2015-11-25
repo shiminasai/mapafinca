@@ -52,56 +52,23 @@
 			<img src="/static/img/ca.png" alt="">
 		</div>
 		<div class="col-md-3 col-lg-3">
+		{{paises}}
+		{% for k,v in paises.items %}
 			<div class="panel">
 				<div class="panel-heading">
-					<a href=""> Guatemala</a>
-					<a class="btn-ex" data-toggle="collapse" href="#guatemala" aria-expanded="false" aria-controls="guatemala">
-					  <span class="glyphicon glyphicon-chevron-down"></span>
-					</a>
-					
-					
-				</div>
-				<div class="collapse panel-body" id="guatemala" >
-					 <ul>
-					 	<li><a href="">Organizacion 1</a></li>
-					 	<li><a href="">Organizacion 2</a></li>
-					 	<li><a href="">Organizacion 3</a></li>
-					 </ul>
-				</div>
-
-			</div>
-
-			<div class="panel">
-				<div class="panel-heading"><a href="">El Salvador</a> 
-					<a class="btn-ex" data-toggle="collapse" href="#salvador" aria-expanded="false" aria-controls="salvador">
+					<a href="">{{k}}</a>
+					<a class="btn-ex" data-toggle="collapse" href="#{{k|slugify}}" aria-expanded="false" aria-controls="{{k|slugify}}">
 					  <span class="glyphicon glyphicon-chevron-down"></span>
 					</a>
 				</div>
-				<div class="collapse panel-body" id="salvador" >
+				<div class="collapse panel-body" id="{{k|slugify}}" >
 					 <ul>
-					 	<li><a href="">Organizacion 1</a></li>
-					 	<li><a href="">Organizacion 2</a></li>
-					 	<li><a href="">Organizacion 3</a></li>
+					
 					 </ul>
 				</div>
-
 			</div>
-
+		{% endfor %}
 		</div>
-	
-
-
-
-
-
-
-
-
-
-
-
-
-		
 		
 	</div>
 	<div class="col-xs-12 col-sm-12 col-md-8 col-lg-8 col-md-offset-2  col-lg-offset-2 slider">

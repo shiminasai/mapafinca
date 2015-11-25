@@ -2,6 +2,11 @@
 from django.contrib import admin
 from models import *
 
+class PaisAdmin(admin.ModelAdmin):
+    list_display = ['nombre']
+    list_filter = ['nombre']
+    search_fields = ['nombre']
+
 class DepartamentoAdmin(admin.ModelAdmin):
     list_display = ['nombre']
     list_filter = ['nombre']
@@ -24,6 +29,7 @@ class MicrocuencaAdmin(admin.ModelAdmin):
     list_filter = ['comunidad']
     search_fields = ['nombre']
 
+admin.site.register(Pais, PaisAdmin)
 admin.site.register(Departamento, DepartamentoAdmin)
 admin.site.register(Municipio, MunicipioAdmin)
 admin.site.register(Comunidad, ComunidadAdmin)
