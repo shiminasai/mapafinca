@@ -9,13 +9,12 @@
 		$(document).ready(function(){
 		  $('.bxslider').bxSlider({
 		  	minSlides: 2,
-		  	maxSlides: 3,
-		  	slideWidth: 200,
+		  	maxSlides: 4,
+		  	slideWidth: 150,
   			slideMargin: 15,
 		  });
 		});
 	</script>
-
 {% endblock extra_js %}
 {% block contenido %}
 <div class="row contenedor-index">
@@ -28,7 +27,7 @@
 		    
 		</div>
 	</div>
-	<div class="page-contenido">
+<!--	<div class="page-contenido">
 		<div class="row eliminar-mar">
 			<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-md-offset-3 col-lg-offset-3 info-index">
 				<p>El Programa Medios de Vida Sostenible con enfoque en la gestión de riesgo y el cambio climático de CAFOD, implementa el sistema de monitoreo de finca que tiene como fin identificar la mejoría del bienestar de vida de familias campesinas atendidas por el programa a través de co-partes en territorio. Toda la información generada por el sistema de monitoreo de finca proviene de la aplicación de una encuesta a familias y medir avances con respecto años anteriores.</p>
@@ -39,8 +38,72 @@
 				<hr>
 			</div>
 		</div>
-	</div>
+	</div>-->
+	<div class="page-contenido">
+		<div class="col-md-3 col-lg-3">
+			<div class="info-index">
+				<p>El Programa Medios de Vida Sostenible con enfoque en la gestión de riesgo y el cambio climático de CAFOD, implementa el sistema de monitoreo de finca que tiene como fin identificar la mejoría del bienestar de vida de familias campesinas atendidas por el programa a través de co-partes en territorio. Toda la información generada por el sistema de monitoreo de finca proviene de la aplicación de una encuesta a familias y medir avances con respecto años anteriores.</p>
+				<br>
+				<p>El Sistema de monitoreo de Finca permitirá visualizar cómo esta la finca hoy y pensar cómo se quiere ver en el futuro, de acuerdo a las posibilidades de las familias y condiciones medioambientales. Se podrá obtener datos generados a través de gráficos, tablas e imágenes y podrá verlo desde teléfonos móviles y tabletas.</p>
+				<hr>
+			</div>
+		</div>
+		<div class="map-ca col-md-6 col-lg-6">
+			<img src="/static/img/ca.png" alt="">
+		</div>
+		<div class="col-md-3 col-lg-3">
+			<div class="panel">
+				<div class="panel-heading">
+					<a href=""> Guatemala</a>
+					<a class="btn-ex" data-toggle="collapse" href="#guatemala" aria-expanded="false" aria-controls="guatemala">
+					  <span class="glyphicon glyphicon-chevron-down"></span>
+					</a>
+					
+					
+				</div>
+				<div class="collapse panel-body" id="guatemala" >
+					 <ul>
+					 	<li><a href="">Organizacion 1</a></li>
+					 	<li><a href="">Organizacion 2</a></li>
+					 	<li><a href="">Organizacion 3</a></li>
+					 </ul>
+				</div>
 
+			</div>
+
+			<div class="panel">
+				<div class="panel-heading"><a href="">El Salvador</a> 
+					<a class="btn-ex" data-toggle="collapse" href="#salvador" aria-expanded="false" aria-controls="salvador">
+					  <span class="glyphicon glyphicon-chevron-down"></span>
+					</a>
+				</div>
+				<div class="collapse panel-body" id="salvador" >
+					 <ul>
+					 	<li><a href="">Organizacion 1</a></li>
+					 	<li><a href="">Organizacion 2</a></li>
+					 	<li><a href="">Organizacion 3</a></li>
+					 </ul>
+				</div>
+
+			</div>
+
+		</div>
+	
+
+
+
+
+
+
+
+
+
+
+
+
+		
+		
+	</div>
 	<div class="col-xs-12 col-sm-12 col-md-8 col-lg-8 col-md-offset-2  col-lg-offset-2 slider">
 		<ul class="bxslider">
 		  <li><img class="center-block" src="/static/img/logos/LogoJuanXXIII.jpg" /></li>
