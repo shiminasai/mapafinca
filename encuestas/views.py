@@ -46,9 +46,17 @@ def IndexView(request,template="index.html"):
         except:
             pass
         paises = {}
-        for obj in Pais.objects.all():
-            algo = Encuesta.objects.filter(entrevistado__pais=obj).distinct('entrevistado_id')
-            paises[obj] = algo
+        for pais in Pais.objects.all():
+            paises[pais] = {}
+            for mun in Municipio.objects.all():
+                m = Encuesta.objects.filter(entrevistado__municipio=mun, entrevistado__pais=pais).count()
+                if m > 0:
+                    paises[pais][mun.departamento.nombre] = (m,mun.departamento.id)
+
+    for k,v in paises.items():
+        print v
+
+
 
     return render(request, template, locals())
 
