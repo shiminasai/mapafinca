@@ -53,11 +53,6 @@ def IndexView(request,template="index.html"):
                 if m > 0:
                     paises[pais][mun.departamento.nombre] = (m,mun.departamento.id)
 
-    for k,v in paises.items():
-        print v
-
-
-
     return render(request, template, locals())
 
 def obtener_mapa_dashboard(request):
