@@ -5,66 +5,251 @@
 <script src="http://code.highcharts.com/exporting.js"></script>
 <script>
 
-	$(function () {
+$(function () {
     $('#container').highcharts({
+        chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false,
+            type: 'pie'
+        },
+        title: {
+            text: '¿Realiza prácticas agroecológicas en la finca? '
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: true,
+                    format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                    style: {
+                        color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                    }
+                }
+            }
+        },
+        series: [{
+            name: "",
+            colorByPoint: true,
+            data: [ {% for k,v  in  grafo_practicas_sino.items %}
+                        {
+                            name: "{{k}}",
+                            y: {{v}}
+                        },
+                        {% endfor %}
+                    ]
+        }]
+    });
+
+$('#container1').highcharts({
         chart: {
             type: 'column'
         },
         title: {
-            text: 'Cantidad de miembros del hogar que poseen algun tipo de educación'
+            text: 'Preparación del suelo para la siembra'
+        },
+        subtitle: {
+            text: ''
+        },
+        xAxis: {
+            type: 'category'
         },
         yAxis: {
             title: {
-                text: 'Valores'
+                text: 'Frecuencias'
             }
+
         },
-        credits: {
+        legend: {
             enabled: false
         },
-        yAxis: {
-                min: 0,
-                title: {
-                    text: 'Porcentajes (%)'
+        plotOptions: {
+            series: {
+                borderWidth: 0,
+                dataLabels: {
+                    enabled: true,
+                    format: '{point.y:.1f}'
                 }
-            },
-            tooltip: {
-                formatter: function() {
-                    return ''+
-                        this.series.name +': '+ this.y +'%';
-                }
-            },
-        series: [
-                {% for value in grafo %}
+            }
+        },
+
+        tooltip: {
+            headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+            pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}</b> of total<br/>'
+        },
+
+        series: [{
+            name: "",
+            colorByPoint: true,
+            data: [
+            {% for k,v in grafo_manejo.items %}
                 {
-                    name: '{{value.0}}',
-                    data: [{{value.1}}],
-                    dataLabels: {
-                        enabled: true,
-                        rotation: 0,
-                        color: '#632D00',
-                        align: 'center',
-                        x: -3,
-                        y: 0,
-                            formatter: function() {
-                                return this.y + '%';
-                                                  },
-                        style: {
-                            font: 'normal 13px Verdana, sans-serif'
-                                }
-                                }
+                    name: "{{k}}",
+                    y: {{v}},
                 },
-                {% endfor %}
-                ]
+            {% endfor %}
+            ]
+        }],
     });
+
+$('#container2').highcharts({
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Tracción que utiliza para preparar el suelo'
+        },
+        subtitle: {
+            text: ''
+        },
+        xAxis: {
+            type: 'category'
+        },
+        yAxis: {
+            title: {
+                text: 'Frecuencias'
+            }
+
+        },
+        legend: {
+            enabled: false
+        },
+        plotOptions: {
+            series: {
+                borderWidth: 0,
+                dataLabels: {
+                    enabled: true,
+                    format: '{point.y:.1f}'
+                }
+            }
+        },
+
+        tooltip: {
+            headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+            pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}</b> of total<br/>'
+        },
+
+        series: [{
+            name: "",
+            colorByPoint: true,
+            data: [
+            {% for k,v in grafo_traccion.items %}
+                {
+                    name: "{{k}}",
+                    y: {{v}},
+                },
+            {% endfor %}
+            ]
+        }],
+    });
+
+$('#container3').highcharts({
+        chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false,
+            type: 'pie'
+        },
+        title: {
+            text: '¿Realizan análisis de fertilidad de suelo? '
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: true,
+                    format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                    style: {
+                        color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                    }
+                }
+            }
+        },
+        series: [{
+            name: "",
+            colorByPoint: true,
+            data: [ {% for k,v  in  grafo_fertilidad.items %}
+                        {
+                            name: "{{k}}",
+                            y: {{v}}
+                        },
+                        {% endfor %}
+                    ]
+        }]
+    });
+
+
+$('#container4').highcharts({
+        chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false,
+            type: 'pie'
+        },
+        title: {
+            text: '¿Realizan control de plagas y enfermedades?'
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: true,
+                    format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                    style: {
+                        color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                    }
+                }
+            }
+        },
+        series: [{
+            name: "",
+            colorByPoint: true,
+            data: [ {% for k,v  in  grafo_control.items %}
+                        {
+                            name: "{{k}}",
+                            y: {{v}}
+                        },
+                        {% endfor %}
+                    ]
+        }]
+    });
+
 });
 </script>
 
 {% endblock extra_js %}
 
 {% block contenido %}
-<div class="contenido-indicadores">
-<div class="col-md-12" id="container" style="margin: 0 auto"></div>
-
-{% include "menu_indicadores.html" %}
+<br>
+<div class="row">
+    <div class="col-md-6">
+        <div id="container" style="height: 400px;"></div>
+    </div>
+    <div class="col-md-6">
+        <div id="container1" style="height: 400px;"></div>
+    </div>
 </div>
+<br><br>
+<div class="row">
+  <div class="col-md-6"><div id="container2" style="height: 400px;"></div></div>
+  <div class="col-md-6"><div id="container3" style="height: 400px;"></div></div>
+</div>
+<br><br>
+<div class="row">
+  <div class="col-md-6"><div id="container4" style="height: 400px;"></div></div>
+  <div class="col-md-6"><div id="container5" style="height: 400px;"></div></div>
+</div>
+{% include "menu_indicadores.html" %}
 {% endblock contenido %}

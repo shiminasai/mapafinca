@@ -10,6 +10,7 @@ from clima.models import *
 from collections import OrderedDict
 # Create your views here.
 
+
 def _queryset_filtrado(request):
     params = {}
     if request.session['sexo']:
@@ -19,6 +20,7 @@ def _queryset_filtrado(request):
         params['org_responsable'] = request.session['organizacion']
 
     return Encuesta.objects.filter(**params)
+
 
 def IndexView(request,template="index.html"):
     if request.method == 'POST':
@@ -55,6 +57,7 @@ def IndexView(request,template="index.html"):
 
     return render(request, template, locals())
 
+
 def obtener_mapa_dashboard(request):
     if request.is_ajax():
         lista = []
@@ -68,6 +71,7 @@ def obtener_mapa_dashboard(request):
         serializado = simplejson.dumps(lista)
         return HttpResponse(serializado, content_type='application/json')
 
+
 class GalleryView(TemplateView):
     template_name = "galeria.html"
 
@@ -76,8 +80,10 @@ class GalleryView(TemplateView):
         context['object_list'] = Encuesta.objects.all()
         return context
 
+
 class DetailIndicadorView(TemplateView):
     template_name = "detalle_indicador.html"
+
 
 class FirstMapaView(TemplateView):
     template_name = "primer_mapa.html"
@@ -85,9 +91,9 @@ class FirstMapaView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(FirstMapaView, self).get_context_data(**kwargs)
         context['nicaragua'] = Encuesta.objects.filter(entrevistado__pais_id=1).count()
-        context['elsalvado'] = 0#Encuesta.objects.filter(entrevistado__pais_id=2).count()
-        context['honduras'] = 0#Encuesta.objects.filter(entrevistado__pais_id=3).count()
-        context['guatemala'] = 0#Encuesta.objects.filter(entrevistado__pais_id=4).count()
+        context['elsalvado'] = 0  #Encuesta.objects.filter(entrevistado__pais_id=2).count()
+        context['honduras'] = 0  #Encuesta.objects.filter(entrevistado__pais_id=3).count()
+        context['guatemala'] = 0  #Encuesta.objects.filter(entrevistado__pais_id=4).count()
         return context
 
 
@@ -468,55 +474,99 @@ def practicas(request, template="indicadores/practicas.html"):
 
 def seguridad(request, template="indicadores/seguridad.html"):
 
-    grafo_practicas_sino = {}
+    grafo_economico = {}
     for obj in CHOICE_JEFE:
-        valor = Encuesta.objects.filter(seguridadalimentaria__misma_finca=obj[0]).count()
-        grafo_practicas_sino[obj[1]] =  valor
-
-    grafo_manejo = {}
-    for obj in CHOICE_MANEJO:
-        valor = Encuesta.objects.filter(seguridadalimentaria__fuera_finca=obj[0]).count()
-        grafo_manejo[obj[1]] =  valor
-
-    grafo_traccion = {}
-    for obj in CHOICE_TRACCION:
         valor = Encuesta.objects.filter(seguridadalimentaria__economico=obj[0]).count()
-        grafo_traccion[obj[1]] =  valor
+        grafo_economico[obj[1]] =  valor
 
-    grafo_fertilidad = {}
+    grafo_secado = {}
     for obj in CHOICE_JEFE:
         valor = Encuesta.objects.filter(seguridadalimentaria__secado=obj[0]).count()
-        grafo_fertilidad[obj[1]] =  valor
+        grafo_secado[obj[1]] =  valor
 
-    grafo_control = {}
-    for obj in CHOICE_JEFE:
-        valor = Encuesta.objects.filter(seguridadalimentaria__control=obj[0]).count()
-        grafo_control[obj[1]] =  valor
-
-    grafo_uso_prestamo = {}
+    grafo_tipo_secado = {}
     for obj in TipoSecado.objects.all():
         valor = Encuesta.objects.filter(seguridadalimentaria__tipo_secado=obj).count()
-        grafo_uso_prestamo[obj] =  valor
+        grafo_tipo_secado[obj] =  valor
 
-    grafo_control = {}
+    grafo_plan_cosecha = {}
     for obj in CHOICE_JEFE:
         valor = Encuesta.objects.filter(seguridadalimentaria__plan_cosecha=obj[0]).count()
-        grafo_control[obj[1]] =  valor
+        grafo_plan_cosecha[obj[1]] =  valor
 
-    grafo_control = {}
+    grafo_ayuda = {}
     for obj in CHOICE_JEFE:
         valor = Encuesta.objects.filter(seguridadalimentaria__ayuda=obj[0]).count()
-        grafo_control[obj[1]] =  valor
+        grafo_ayuda[obj[1]] =  valor
 
-    grafo_control = {}
+    grafo_suficiente_alimento = {}
     for obj in CHOICE_JEFE:
         valor = Encuesta.objects.filter(seguridadalimentaria__suficiente_alimento=obj[0]).count()
-        grafo_control[obj[1]] =  valor
+        grafo_suficiente_alimento[obj[1]] =  valor
 
-    grafo_control = {}
+    grafo_consumo_diario = {}
     for obj in CHOICE_JEFE:
         valor = Encuesta.objects.filter(seguridadalimentaria__consumo_diario=obj[0]).count()
-        grafo_control[obj[1]] =  valor
+        grafo_consumo_diario[obj[1]] =  valor
+
+
+    conteo_fenomeno = {}
+    for obj in CHOICE_FENOMENOS:
+        valor = Encuesta.objects.filter(respuestano41__fenomeno=obj[0]).count()
+        conteo_fenomeno[obj[1]] =  valor
+
+    conteo_agricola = {}
+    for obj in CHOICE_AGRICOLA:
+        valor = Encuesta.objects.filter(respuestano41__agricola=obj[0]).count()
+        conteo_agricola[obj[1]] =  valor
+
+    conteo_mercado = {}
+    for obj in CHOICE_MERCADO:
+        valor = Encuesta.objects.filter(respuestano41__mercado=obj[0]).count()
+        conteo_mercado[obj[1]] =  valor
+
+    conteo_inversion = {}
+    for obj in CHOICE_INVERSION:
+        valor = Encuesta.objects.filter(respuestano41__inversion=obj[0]).count()
+        conteo_inversion[obj[1]] =  valor
+
+    grafo_adquiere_agua = {}
+    for obj in AdquiereAgua.objects.all():
+        valor = Encuesta.objects.filter(otrasseguridad__adquiere_agua=obj).count()
+        grafo_adquiere_agua[obj] =  valor
+
+    grafo_tratamiento_agua = {}
+    for obj in CHOICE_JEFE:
+        valor = Encuesta.objects.filter(otrasseguridad__tratamiento=obj[0]).count()
+        grafo_tratamiento_agua[obj[1]] =  valor
+
+    grafo_tipo_tratamientos = {}
+    for obj in TrataAgua.objects.all():
+        valor = Encuesta.objects.filter(otrasseguridad__tipo_tratamiento=obj).count()
+        grafo_tipo_tratamientos[obj] =  valor
+
+    return render(request, template, locals())
+
+def genero(request, template="indicadores/genero.html"):
+
+    #promedio de manzanas por todas las personas
+    promedio_mz = Encuesta.objects.aggregate(p=Avg('organizacionfinca__area_finca'))['p']
+
+    grafo_credito_mujer = {}
+    for obj in CHOICE_JEFE:
+        valor = Encuesta.objects.filter(genero1__tipo=obj[0]).count()
+        grafo_credito_mujer[obj[1]] =  valor
+
+    grafo_bienes_mujer = {}
+    for obj in CHOICER_COSAS_MUJER:
+        valor_si = Encuesta.objects.filter(genero2__pregunta=obj[0], genero2__respuesta=1).count()
+        valor_no = Encuesta.objects.filter(genero2__pregunta=obj[0], genero2__respuesta=2).count()
+        grafo_bienes_mujer[obj[1]] =  (valor_si, valor_no)
+
+    grafo_organizacion_mujer = {}
+    for obj in CHOICE_JEFE:
+        valor = Encuesta.objects.filter(genero3__respuesta=obj[0]).count()
+        grafo_organizacion_mujer[obj[1]] =  valor
 
     return render(request, template, locals())
 

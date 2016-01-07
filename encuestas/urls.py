@@ -19,5 +19,8 @@ urlpatterns = [
     url(r'^organizaciones/$', views.organizaciones, name='organizaciones'),
     url(r'^tierra/$', views.tierra, name='tierra'),
     url(r'^prestamos/$', views.prestamos, name='prestamos'),
+    url(r'^practicas/$', views.practicas, name='practicas'),
+    url(r'^seguridad/$', views.seguridad, name='seguridad'),
+    url(r'^genero/$', views.genero, name='genero'),
 
 ]

@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block extra_js %}
+<script src="http://code.highcharts.com/highcharts.js"></script>
+<script src="http://code.highcharts.com/exporting.js"></script>
+<script type="text/javascript">
+
+$(function () {
+$('#container').highcharts({
+        chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false,
+            type: 'pie'
+        },
+        title: {
+            text: '¿Tiene crédito a nombre de la mujer (compañera del jefe del hogar)? '
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: true,
+                    format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                    style: {
+                        color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                    }
+                }
+            }
+        },
+        series: [{
+            name: "",
+            colorByPoint: true,
+            data: [ {% for k,v  in  grafo_credito_mujer.items %}
+                        {
+                            name: "{{k}}",
+                            y: {{v}}
+                        },
+                        {% endfor %}
+                    ]
+        }]
+    });
+
+$('#container2').highcharts({
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Tipos de tratamientos que se les da al agua'
+        },
+        subtitle: {
+            text: ''
+        },
+        xAxis: {
+            type: 'category'
+        },
+        yAxis: {
+            title: {
+                text: 'Frecuencias'
+            }
+
+        },
+        legend: {
+            enabled: false
+        },
+        plotOptions: {
+            series: {
+                borderWidth: 0,
+                dataLabels: {
+                    enabled: true,
+                    format: '{point.y:.1f}'
+                }
+            }
+        },
+
+        tooltip: {
+            headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+            pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}</b> of total<br/>'
+        },
+
+        series: [{
+            name: "",
+            colorByPoint: true,
+            data: [
+            {% for k,v in grafo_organizacion_mujer.items %}
+                {
+                    name: "{{k}}",
+                    y: {{v}},
+                },
+            {% endfor %}
+            ]
+        }],
+    });
+
+
+});
+</script>
+{% endblock extra_js %}
+
+
+{% block contenido %}
+<br><br>
+<div class="row">
+  <div class="col-md-6"><div id="container" style="height: 400px;"></div></div>
+  <div class="col-md-6">
+   <table class="table">
+            <tr>
+                <th>Bienes</th>
+                <th>Si</th>
+                <th>No</th>
+            </tr>
+            {% for k,v in grafo_bienes_mujer.items %}
+                <tr>
+                    <td>{{k}}</td>
+                    <td>{{v.0}}</td>
+                    <td>{{v.1}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+  </div>
+</div>
+<br><br>
+<div class="row">
+  <div class="col-md-6"><div id="container2" style="height: 400px;"></div></div>
+  <div class="col-md-6"><div id="container3" style="height: 400px;"></div></div>
+</div>
+<br><br>
+{% include "menu_indicadores.html" %}
+{% endblock contenido %}
