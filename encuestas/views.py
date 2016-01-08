@@ -61,7 +61,7 @@ def IndexView(request,template="index.html"):
 def obtener_mapa_dashboard(request):
     if request.is_ajax():
         lista = []
-        for objeto in Encuesta.objects.all().distinct('entrevistado_id'):
+        for objeto in Encuesta.objects.filter(entrevistado__departamento=request.session['departamento']).distinct('entrevistado_id'):
             dicc = dict(nombre=objeto.entrevistado.nombre, id=objeto.id,
                         lon=float(objeto.entrevistado.municipio.longitud),
                         lat=float(objeto.entrevistado.municipio.latitud)
@@ -119,8 +119,8 @@ def principal_dashboard(request, template='dashboard.html', departamento_id=None
         geolat.append(obj.latitud)
         geolong.append(obj.longitud)
 
-    latitud = geolat[-2]
-    longitud = geolong[-2]
+    latitud = geolat[-1]
+    longitud = geolong[-1]
 
     # grafico de patron de gastos
     gasto_finca = Encuesta.objects.filter(entrevistado__departamento=departamento_id,gastohogar__tipo=5).aggregate(t=Sum('gastohogar__total'))['t']

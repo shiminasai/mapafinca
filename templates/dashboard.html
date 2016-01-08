@@ -14,7 +14,7 @@
         var infowindow = new google.maps.InfoWindow();
         var myLatlng = new google.maps.LatLng({{latitud}}, {{longitud}});
         var myOptions = {
-            zoom: 10,
+            zoom: 8,
             mapTypeControl: true,
             scaleControl: false,
             scrollwheel: false,
@@ -448,8 +448,6 @@ $(function () {
 
     </ol>
 </div>
-
-
 <div class="contenido-general">
     <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 ">
@@ -468,7 +466,9 @@ $(function () {
                         <tr>
                             <th>NOMBRE DE FINCA</th>
                             <th>SEXO</th>
-                            <th>DETALLE</th>
+                            {% if  request.user.is_authenticated %}
+                                <th>DETALLE</th>
+                            {% endif %}
                         </tr>
                     </thead>
                     <tbody>
@@ -478,16 +478,15 @@ $(function () {
                             <td class="sexo">
                                 {% if obj.entrevistado.sexo == '2' %}
                                 <span class="fa fa-female"> Femenino</span>
-
                                 {% else %}
                                 <span class="fa fa-male"> Masculino</span>
                                 {% endif %}
-
-
                             </td>
-                            <td>
-                                <a class='btn center-block btn-tabla' href="{% url 'detalle-finca' obj.entrevistado.id %}">Detalle</a>
-                            </td>
+                            {% if  request.user.is_authenticated %}
+                                 <td>
+                                    <a class='btn center-block btn-tabla' href="{% url 'detalle-finca' obj.entrevistado.id %}">Detalle</a>
+                                </td>
+                            {% endif %}
                         </tr>
                         {% endfor %}
 
