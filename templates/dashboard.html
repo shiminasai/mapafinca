@@ -6,6 +6,7 @@
 <script src="https://maps.googleapis.com/maps/api/js"></script>
 <script type="text/javascript" src="/static/js/markerclusterer.js"></script>
 <script type="text/javascript" src="/static/js/infobox.js"></script>
+<script src="https://code.highcharts.com/highcharts-more.js"></script>
 <script type="text/javascript">
     var map;
     var markers = [];
@@ -41,7 +42,7 @@
     });
 
 </script>
-// estos son los graficos de clima y indicadores
+<!-- estos son los graficos de clima y indicadores-->
 <script>
     $(function () {
     $('#grafico5').highcharts({
@@ -370,7 +371,61 @@ $(function () {
         ]
     });
 });
+$(function () {
 
+    $('#arana').highcharts({
+
+        chart: {
+            polar: true,
+            type: 'line'
+        },
+
+        title: {
+            text: 'Budget vs spending',
+            x: -80
+        },
+
+        pane: {
+            size: '80%'
+        },
+
+        xAxis: {
+            categories: ['Sales', 'Marketing', 'Development', 'Customer Support',
+                    'Information Technology', 'Administration'],
+            tickmarkPlacement: 'on',
+            lineWidth: 0
+        },
+
+        yAxis: {
+            gridLineInterpolation: 'polygon',
+            lineWidth: 0,
+            min: 0
+        },
+
+        tooltip: {
+            shared: true,
+            pointFormat: '<span style="color:{series.color}">{series.name}: <b>${point.y:,.0f}</b><br/>'
+        },
+
+        legend: {
+            align: 'right',
+            verticalAlign: 'top',
+            y: 70,
+            layout: 'vertical'
+        },
+
+        series: [{
+            name: 'Allocated Budget',
+            data: [43000, 19000, 60000, 35000, 17000, 10000],
+            pointPlacement: 'on'
+        }, {
+            name: 'Actual Spending',
+            data: [50000, 39000, 42000, 31000, 26000, 14000],
+            pointPlacement: 'on'
+        }]
+
+    });
+});
 </script>
 {% endblock extra_js %}
 
@@ -378,7 +433,7 @@ $(function () {
  <style>
       #map-canvas {
         width: 100%;
-        height: 580px;
+        height: 359px;
         margin: 0 auto;
         background-color: #CCC;
       }
@@ -397,14 +452,52 @@ $(function () {
 
 <div class="contenido-general">
     <div class="row">
-        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 mapa-general">
-        {# mapa #}
-            <div id="map-canvas"></div>
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 ">
+            <div class="mapa-general ">
+                {# mapa #}
+                <div id="map-canvas"></div>
 
-            <a class='btn btn-tgeneral center-block' href="/indicadores/">TABLERO DE INDICADORES</a>
+                <a class='btn btn-tgeneral center-block' href="/indicadores/">TABLERO DE INDICADORES</a>
+            </div>
         </div>
-        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 graficos-general">
-            <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6  ">
+            <div class="table-responsive graficos-general tabla-productor" >
+                <table class="table table-hover">
+
+                    <thead>
+                        <tr>
+                            <th>NOMBRE DE FINCA</th>
+                            <th>SEXO</th>
+                            <th>DETALLE</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for obj in ahora %}
+                        <tr>
+                            <td>{{obj.entrevistado.finca}}</td>
+                            <td class="sexo">
+                                {% if obj.entrevistado.sexo == '2' %}
+                                <span class="fa fa-female"> Femenino</span>
+
+                                {% else %}
+                                <span class="fa fa-male"> Masculino</span>
+                                {% endif %}
+
+
+                            </td>
+                            <td>
+                                <a class='btn center-block btn-tabla' href="{% url 'detalle-finca' obj.entrevistado.id %}">Detalle</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+<!--            <div class="row">
                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
                     <div class="grafico-indicador" >
                         <div class="titulo-grafico text-right">
@@ -442,54 +535,55 @@ $(function () {
                     </div>
                 </div>
             </div>
-
-
+-->
+    <div class="row fila3">
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 ">
+            <div class="mapa-general ">
+                <div id="grafico1"></div>
+            </div>
         </div>
+         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 ">
+            <div class="mapa-general ">
+                <div id="grafico2"></div>
+            </div>
+        </div>
+
     </div>
 
-
-    <div class="row fila2">
-        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 table-responsive tabla-productor">
-            <table class="table table-hover">
-
-                <thead>
-                    <tr>
-                        <th>NOMBRE DE FINCA</th>
-                        <th>SEXO</th>
-                        <th>DETALLE</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for obj in ahora %}
-                    <tr>
-                        <td>{{obj.entrevistado.finca}}</td>
-                        <td class="sexo">
-                        {% if obj.entrevistado.sexo == '2' %}
-                            <span class="fa fa-female"> Femenino</span>
-
-                          {% else %}
-                            <span class="fa fa-male"> Masculino</span>
-                        {% endif %}
-
-
-                         </td>
-                        <td>
-                            <a class='btn center-block btn-tabla' href="{% url 'detalle-finca' obj.entrevistado.id %}">Detalle</a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-
+    <div class="row fila3">
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 ">
+            <div class="mapa-general ">
+                <div id="grafico3"></div>
+            </div>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 ">
+            <div class="mapa-general ">
+                <div id="grafico4"></div>
+            </div>
         </div>
 
-        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 grafico-clima alinear grafico5" id="grafico5">
+    </div>
 
+    <div class="row fila3">
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 ">
+            <div class="mapa-general ">
+                <div id="arana"></div>
+            </div>
         </div>
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 ">
+            <div class="mapa-general ">
+                <div id="grafico5"></div>
+            </div>
+        </div>
+
     </div>
 </div>
 
 <!--
+
+
+
+
 
 	<div class="row">
 
