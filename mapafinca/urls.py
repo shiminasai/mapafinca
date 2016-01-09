@@ -26,7 +26,8 @@ admin.site.site_header = "administración"
 admin.site.site_title = "sitio administrativo"
 
 urlpatterns = [
-    url(r'', include(encuestas_urls)),
+    url(r'^$', TemplateView.as_view(template_name="contruccion.html")),
+    url(r'^encuesta/', include(encuestas_urls)),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^chaining/', include('smart_selects.urls')),
     url(r'^selectable/', include('selectable.urls')),
