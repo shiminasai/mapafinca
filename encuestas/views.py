@@ -50,10 +50,10 @@ def IndexView(request,template="index.html"):
         paises = {}
         for pais in Pais.objects.all():
             paises[pais] = {}
-            for mun in Municipio.objects.all():
-                m = Encuesta.objects.filter(entrevistado__municipio=mun, entrevistado__pais=pais).count()
+            for mun in Departamento.objects.all():
+                m = Encuesta.objects.filter(entrevistado__departamento=mun, entrevistado__pais=pais).count()
                 if m > 0:
-                    paises[pais][mun.departamento.nombre] = (m,mun.departamento.id)
+                    paises[pais][mun.nombre] = (m,mun.id)
 
     return render(request, template, locals())
 
@@ -123,28 +123,54 @@ def principal_dashboard(request, template='dashboard.html', departamento_id=None
     longitud = geolong[-1]
 
     # grafico de patron de gastos
-    gasto_finca = Encuesta.objects.filter(entrevistado__departamento=departamento_id,gastohogar__tipo=5).aggregate(t=Sum('gastohogar__total'))['t'] / 12
-    gasto_fuera_finca = Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('gastoproduccion__total'))['t'] / 12
-
+    try:
+        gasto_finca = Encuesta.objects.filter(entrevistado__departamento=departamento_id,gastohogar__tipo=5).aggregate(t=Sum('gastohogar__total'))['t'] / 12
+    except:
+        pass
+    try:    
+        gasto_fuera_finca = Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('gastoproduccion__total'))['t'] / 12
+    except:
+        pass
     # grafico de ingresos
-    tradicional = Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('cultivostradicionales__total'))['t'] / 12
+    try:
+        tradicional = Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('cultivostradicionales__total'))['t'] / 12
+    except:
+        pass
 
-    huertos = Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('cultivoshuertosfamiliares__total'))['t'] / 12
+    try:
+        huertos = Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('cultivoshuertosfamiliares__total'))['t'] / 12
+    except:
+        pass
 
-    frutas = Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('cultivosfrutasfinca__total'))['t'] / 12
+    try:
+        frutas = Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('cultivosfrutasfinca__total'))['t'] / 12
+    except:
+        pass
 
-    fuente = Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('fuentes__total'))['t'] / 12
+    try:
+        fuente = Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('fuentes__total'))['t'] / 12
+    except:
+        pass
 
-    ganado = Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('ganaderia__total'))['t'] / 12
+    try:
+        ganado = Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('ganaderia__total'))['t'] / 12
+    except:
+        pass
 
-    procesamiento = Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('procesamiento__total'))['t'] / 12
+    try:
+        procesamiento = Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('procesamiento__total'))['t'] / 12
+    except:
+        pass
 
     #grafico de kcalorias aun esta en proceso
 
     #grafico sobre gastos alimentarios
     gastos_alimentarios = {}
     for obj in ProductosFueraFinca.objects.all():
-        cada_uno = Encuesta.objects.filter(entrevistado__departamento=departamento_id, alimentosfuerafinca__producto=obj).aggregate(t=Avg('alimentosfuerafinca__total'))['t']  / 12
+        try:
+            cada_uno = float(Encuesta.objects.filter(entrevistado__departamento=departamento_id, alimentosfuerafinca__producto=obj).aggregate(t=Avg('alimentosfuerafinca__total'))['t']) / 12
+        except:
+            pass
         if cada_uno == None:
             cada_uno = 0
         gastos_alimentarios[obj] = cada_uno
@@ -457,6 +483,11 @@ def organizaciones(request, template="indicadores/organizaciones.html"):
 
 def tierra(request, template="indicadores/tierra.html"):
 
+    #tabla distribucion de frecuencia
+    uno_num = Encuesta.objects.filter(organizacionfinca__area_finca__range=(0.1,5.99)).count()
+    seis_num = Encuesta.objects.filter(organizacionfinca__area_finca__range=(6,10.99)).count()
+    diez_mas = Encuesta.objects.filter(organizacionfinca__area_finca__gt=11).count()
+
     #promedio de manzanas por todas las personas
     promedio_mz = Encuesta.objects.aggregate(p=Avg('organizacionfinca__area_finca'))['p']
 
@@ -610,6 +641,20 @@ def genero(request, template="indicadores/genero.html"):
     for obj in CHOICE_JEFE:
         valor = Encuesta.objects.filter(genero3__respuesta=obj[0]).count()
         grafo_organizacion_mujer[obj[1]] =  valor
+
+    return render(request, template, locals())
+
+def ingresos(request, template="indicadores/ingresos.html"):
+
+    percibe_ingreso = {}
+    for obj in CHOICE_JEFE:
+        valor = Encuesta.objects.filter(percibeingreso__si_no=obj[0]).count()
+        percibe_ingreso[obj[1]] =  valor
+
+    fuente_ingresos = {}
+    for obj in TipoFuenteIngreso.objects.all():
+        valor = Encuesta.objects.filter(fuentes__fuente_ingreso=obj).count()
+        fuente_ingresos[obj] =  valor
 
     return render(request, template, locals())
 
