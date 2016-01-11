@@ -65,8 +65,8 @@
 				</div>
 				<div class="collapse panel-body" id="{{k|slugify}}" >
 					 <ul>
-						{% for k,v in v.items %}
-							<li><a href="/dashboard-principal/{{v.1}}">{{k}}</a> - {{v.0}}</li>
+						{% for key,value in v.items %}
+							<li><a href="/dashboard-principal/{{value.1}}">{{key}}</a> - {{value.0}}</li>
 						{% endfor %}
 					 </ul>
 				</div>

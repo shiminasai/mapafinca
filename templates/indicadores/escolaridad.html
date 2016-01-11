@@ -5,13 +5,13 @@
 <script src="http://code.highcharts.com/exporting.js"></script>
 <script>
 
-	$(function () {
+$(function () {
     $('#container').highcharts({
         chart: {
             type: 'column'
         },
         title: {
-            text: 'Cantidad de miembros del hogar que poseen algun tipo de educación'
+            text: 'Cantidad de miembros del hogar que poseen algun tipo de educación (hombre jefe)'
         },
         yAxis: {
             title: {
@@ -34,7 +34,7 @@
                 }
             },
         series: [
-                {% for value in grafo %}
+                {% for value in grafo_hombre %}
                 {
                     name: '{{value.0}}',
                     data: [{{value.1}}],
@@ -56,17 +56,73 @@
                 {% endfor %}
                 ]
     });
+//grafo mujer
+     $('#container1').highcharts({
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Cantidad de miembros del hogar que poseen algun tipo de educación (mujer jefe)'
+        },
+        yAxis: {
+            title: {
+                text: 'Valores'
+            }
+        },
+        credits: {
+            enabled: false
+        },
+        yAxis: {
+                min: 0,
+                title: {
+                    text: 'Porcentajes (%)'
+                }
+            },
+            tooltip: {
+                formatter: function() {
+                    return ''+
+                        this.series.name +': '+ this.y +'%';
+                }
+            },
+        series: [
+                {% for value in grafo_mujer %}
+                {
+                    name: '{{value.0}}',
+                    data: [{{value.1}}],
+                    dataLabels: {
+                        enabled: true,
+                        rotation: 0,
+                        color: '#632D00',
+                        align: 'center',
+                        x: -3,
+                        y: 0,
+                            formatter: function() {
+                                return this.y + '%';
+                                                  },
+                        style: {
+                            font: 'normal 13px Verdana, sans-serif'
+                                }
+                                }
+                },
+                {% endfor %}
+                ]
+    });
+
+
+
 });
 </script>
 
 {% endblock extra_js %}
 
 {% block contenido %}
+<div class="row">
 <div class="contenido-indicadores">
-<div class="col-md-12" id="container" style="margin: 0 auto"></div>
+<div class="col-md-6" id="container" style="margin: 0 auto"></div>
+<div class="col-md-6" id="container1" style="margin: 0 auto"></div>
 	<div class="col-md-12">
 		<table class="table table-bordered table-hover" cellspacing="0" width="100%">
-                        <caption>Escolaridad</caption>
+                        <caption>Escolaridad caundo el hombre es jefe</caption>
                         <thead>
                             <tr>
                                 <th></th>
@@ -80,7 +136,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {%for fila in tabla_educacion%}
+                            {%for fila in tabla_educacion_hombre%}
                             <tr>
                                 {%for celda in fila %}
                                 <td>{{celda|default:'0'}}</td>
@@ -90,7 +146,35 @@
                         </tbody>
                     </table>
 	</div>
-    {% include "menu_indicadores.html" %}
+
+        <div class="col-md-12">
+        <table class="table table-bordered table-hover" cellspacing="0" width="100%">
+                        <caption>Escolaridad caundo el mujer es jefe</caption>
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Número total</th>
+                                <th>No sabe leer %</th>
+                                <th>Primaria incompleta %</th>
+                                <th>Primaria completa %</th>
+                                <th>Secundaria incompleta %</th>
+                                <th>Bachiller %</th>
+                                <th>Universitario %</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {%for fila in tabla_educacion_mujer%}
+                            <tr>
+                                {%for celda in fila %}
+                                <td>{{celda|default:'0'}}</td>
+                                {%endfor%}
+                            </tr>
+                            {%endfor%}
+                        </tbody>
+                    </table>
+    </div>
 </div>
 
+</div>
+ {% include "menu_indicadores.html" %}
 {% endblock contenido %}

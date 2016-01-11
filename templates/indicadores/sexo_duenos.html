@@ -186,5 +186,40 @@ $(function () {
   <div class="col-md-6"><div id="container3" style="height: 400px;"></div></div>
 </div>
 <br><br>
+<div class="row">
+  <div class="col-md-6">
+        <table class="table">
+            <tr>
+                <th>Cuando el jefe es</th>
+                <th>No de personas</th>
+                <th>Porcentajes</th>
+            </tr>
+            {% for k,v in personas_habitan.items %}
+                <tr>
+                    <td>{{k}}</td>
+                    <td>{{v}}</td>
+                    <td>{{v}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+  </div>
+  <div class="col-md-6">
+    <table class="table">
+            <tr>
+                <th>Cuando el jefe es</th>
+                <th>No de personas</th>
+                <th>Porcentajes</th>
+            </tr>
+            {% for k,v in detalle_edad.items %}
+                <tr>
+                    <td>{{k}}</td>
+                    <td>{{v}}</td>
+                    <td>{{v}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+  </div>
+</div>
+<br><br>
 {% include "menu_indicadores.html" %}
 {% endblock contenido %}

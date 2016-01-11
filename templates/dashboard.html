@@ -169,83 +169,86 @@ $(function () {
         },
         series: [{
             name: 'Alimentarios',
-            data: [{% if gasto_finca == None %}0 {%else%}{{gasto_finca}},{% endif %}]
+            data: [{% if gasto_finca == None %}0 {%else%}{{gasto_finca|floatformat:2}},{% endif %}]
         }, {
             name: 'No alimentarios',
-            data: [{% if gasto_fuera_finca == None %}0 {%else%}{{gasto_fuera_finca}},{% endif %}]
+            data: [{% if gasto_fuera_finca == None %}0 {%else%}{{gasto_fuera_finca|floatformat:2}},{% endif %}]
         }]
     });
 });
 
 
 $(function () {
+    // Create the chart
     $('#grafico2').highcharts({
         chart: {
             type: 'column'
         },
         title: {
-            text: 'INGRESOS'
+            text: 'Ingresos en {{request.session.departamento}}'
+        },
+        subtitle: {
+            text: 'Distribución de los ingresos en las  fincas'
         },
         xAxis: {
-            categories: ['Ingresos en {{request.session.departamento}}']
+            type: 'category'
         },
         yAxis: {
-            min: 0,
             title: {
-                text: ''
-            },
-            stackLabels: {
-                enabled: true,
-                style: {
-                    fontWeight: 'bold',
-                    color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
-                }
+                text: 'Total mensual en C$'
             }
+
         },
         legend: {
-            align: 'center',
-            verticalAlign: 'bottom',
-            backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || 'white',
-            borderColor: '#CCC',
-            borderWidth: 1,
-            shadow: false
+            enabled: false
         },
-       tooltip: {
-                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-            },
         plotOptions: {
-            column: {
-                stacking: 'normal',
+            series: {
+                borderWidth: 0,
                 dataLabels: {
                     enabled: true,
-                    color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
-                    style: {
-                        textShadow: '0 0 3px black'
-                    }
+                    format: '{point.y:.1f}'
                 }
             }
         },
+
+        tooltip: {
+            headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+            pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f} </b>total mensual<br/>'
+        },
+
         series: [{
-            name: 'c. tradicionales',
-            data: [{% if tradicional == None %}0 {%else%}{{tradicional}},{% endif %}]
-        }, {
-            name: 'c. huertos',
-            data: [{% if huertos == None %}0 {%else%}{{huertos}},{% endif %}]
-        }, {
-            name: 'o. fuentes',
-            data: [{% if fuente == None %}0 {%else%}{{fuente}},{% endif %}]
-        },
-        {
-            name: 'ganado',
-            data: [{% if ganado == None %}0 {%else%}{{ganado}},{% endif %}]
-        },
-        {
-            name: 'procesamiento',
-            data: [{% if ganado == None %}0 {%else%}{{ganado}}{% endif %},]
-        },]
+            name: "Ingresos",
+            colorByPoint: true,
+            data: [
+            {
+                name: "Cultivos tradicionales",
+                y: {% if tradicional == None %}0 {%else%}{{tradicional|floatformat:2}},{% endif %}
+
+            }, {
+                name: "Cultivos huertos",
+                y: {% if huertos == None %}0 {%else%}{{huertos|floatformat:2}},{% endif %}
+
+            }, {
+                name: "Frutales",
+                y: {% if frutas == None %}0 {%else%}{{frutas|floatformat:2}},{% endif %}
+
+            }, {
+                name: "Otras fuentes",
+                y: {% if fuente == None %}0 {%else%}{{fuente|floatformat:2}},{% endif %}
+
+            }, {
+                name: "Ganado",
+                y: {% if ganado == None %}0 {%else%}{{ganado|floatformat:2}},{% endif %}
+
+            }, {
+                name: "Procesamientos",
+                y: {% if procesamiento == None %}0 {%else%}{{procesamiento|floatformat:2}}{% endif %}
+
+            }]
+        }],
     });
 });
-
 
 $(function () {
     $('#grafico3').highcharts({
@@ -365,7 +368,7 @@ $(function () {
         {% for k,v in gastos_alimentarios.items %}
           {
             name: '{{k}}',
-            data: [{{v}}]
+            data: [{{v|floatformat:2}}]
         },
         {% endfor %}
         ]

@@ -123,26 +123,28 @@ def principal_dashboard(request, template='dashboard.html', departamento_id=None
     longitud = geolong[-1]
 
     # grafico de patron de gastos
-    gasto_finca = Encuesta.objects.filter(entrevistado__departamento=departamento_id,gastohogar__tipo=5).aggregate(t=Sum('gastohogar__total'))['t']
-    gasto_fuera_finca = Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('gastoproduccion__total'))['t']
+    gasto_finca = Encuesta.objects.filter(entrevistado__departamento=departamento_id,gastohogar__tipo=5).aggregate(t=Sum('gastohogar__total'))['t'] / 12
+    gasto_fuera_finca = Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('gastoproduccion__total'))['t'] / 12
 
     # grafico de ingresos
-    tradicional = Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('cultivostradicionales__total'))['t']
+    tradicional = Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('cultivostradicionales__total'))['t'] / 12
 
-    huertos = Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('cultivoshuertosfamiliares__total'))['t']
+    huertos = Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('cultivoshuertosfamiliares__total'))['t'] / 12
 
-    fuente = Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('fuentes__total'))['t']
+    frutas = Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('cultivosfrutasfinca__total'))['t'] / 12
 
-    ganado = Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('ganaderia__total'))['t']
+    fuente = Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('fuentes__total'))['t'] / 12
 
-    procesamiento = Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('procesamiento__total'))['t']
+    ganado = Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('ganaderia__total'))['t'] / 12
+
+    procesamiento = Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('procesamiento__total'))['t'] / 12
 
     #grafico de kcalorias aun esta en proceso
 
     #grafico sobre gastos alimentarios
     gastos_alimentarios = {}
     for obj in ProductosFueraFinca.objects.all():
-        cada_uno = Encuesta.objects.filter(entrevistado__departamento=departamento_id, alimentosfuerafinca__producto=obj).aggregate(t=Avg('alimentosfuerafinca__total'))['t']
+        cada_uno = Encuesta.objects.filter(entrevistado__departamento=departamento_id, alimentosfuerafinca__producto=obj).aggregate(t=Avg('alimentosfuerafinca__total'))['t']  / 12
         if cada_uno == None:
             cada_uno = 0
         gastos_alimentarios[obj] = cada_uno
@@ -220,14 +222,14 @@ def detalle_finca(request, template='detalle_finca.html', entrevistado_id=None):
 def indicadores(request, template='indicadores.html'):
     #a = _queryset_filtrado(request)
     #indicadores = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento']).distinct('entrevistado__id')
-    total_entrevistados = Entrevistados.objects.count()
-    total_hombres = Entrevistados.objects.filter(sexo=2).count()
-    total_mujeres = Entrevistados.objects.filter(sexo=1).count()
+    total_entrevistados = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento']).distinct('entrevistado__id').count()
+    total_hombres = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], entrevistado__sexo=2).distinct('entrevistado__id').count()
+    total_mujeres = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], entrevistado__sexo=1).distinct('entrevistado__id').count()
 
-    porcentaje_hombres = total_hombres / total_entrevistados * 100
-    porcentaje_mujeres = total_mujeres / total_entrevistados * 100
+    porcentaje_hombres = float(total_hombres) / float(total_entrevistados) * 100
+    porcentaje_mujeres = float(total_mujeres) / float(total_entrevistados) * 100
 
-    organizaciones = OrganizacionResp.objects.count()
+    organizaciones = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento']).distinct('entrevistado__departamento').count()
     familias = Entrevistados.objects.count()
 
     #años que tiene ese productor
@@ -296,17 +298,27 @@ def sexo_duenos(request, template="indicadores/sexo_duenos.html"):
         conteos = Encuesta.objects.filter(sexomiembros__sexo=obj[0]).count()
         sexo_jefe_hogar[obj[1]] = conteos
 
+    personas_habitan = {}
+    for obj in CHOICE_SEXO:
+        conteos = Encuesta.objects.filter(sexomiembros__sexo=obj[0]).aggregate(t=Sum('sexomiembros__cantidad'))['t']
+        personas_habitan[obj[1]] = conteos
+
+    detalle_edad = {}
+    for obj in CHOICE_EDAD:
+        conteos = Encuesta.objects.filter(detallemiembros__edad=obj[0]).aggregate(t=Sum('detallemiembros__cantidad'))['t']
+        detalle_edad[obj[1]] = conteos
+
 
     return render(request, template, locals())
 
 def escolaridad(request, template="indicadores/escolaridad.html"):
     #filtro = _queryset_filtrado(request)
 
-    tabla_educacion = []
-    grafo = []
-    suma = 0
+    tabla_educacion_hombre = []
+    grafo_hombre = []
+    suma_hombre = 0
     for e in CHOICE_ESCOLARIDAD:
-        objeto = Encuesta.objects.filter(escolaridad__sexo = e[0]).aggregate(num_total = Sum('escolaridad__total'),
+        objeto = Encuesta.objects.filter(escolaridad__sexo = e[0], entrevistado__sexo=2, entrevistado__jefe=1).aggregate(num_total = Sum('escolaridad__total'),
                 no_leer = Sum('escolaridad__no_leer'),
                 p_incompleta = Sum('escolaridad__pri_incompleta'),
                 p_completa = Sum('escolaridad__pri_completa'),
@@ -316,11 +328,11 @@ def escolaridad(request, template="indicadores/escolaridad.html"):
 
                 )
         try:
-            suma = int(objeto['p_completa'] or 0) + int(objeto['s_incompleta'] or 0) + int(objeto['bachiller'] or 0) + int(objeto['universitario'] or 0)
+            suma_hombre = int(objeto['p_completa'] or 0) + int(objeto['s_incompleta'] or 0) + int(objeto['bachiller'] or 0) + int(objeto['universitario'] or 0)
         except:
             pass
-        variable = round(saca_porcentajes(suma,objeto['num_total']))
-        grafo.append([e[1],variable])
+        variable = round(saca_porcentajes(suma_hombre,objeto['num_total']))
+        grafo_hombre.append([e[1],variable])
         fila = [e[1], objeto['num_total'],
                 saca_porcentajes(objeto['no_leer'], objeto['num_total'], False),
                 saca_porcentajes(objeto['p_incompleta'], objeto['num_total'], False),
@@ -329,7 +341,38 @@ def escolaridad(request, template="indicadores/escolaridad.html"):
                 saca_porcentajes(objeto['bachiller'], objeto['num_total'], False),
                 saca_porcentajes(objeto['universitario'], objeto['num_total'], False),
                 ]
-        tabla_educacion.append(fila)
+        tabla_educacion_hombre.append(fila)
+
+        #tabla para cuando la mujer es jefe
+
+    tabla_educacion_mujer = []
+    grafo_mujer = []
+    suma_mujer = 0
+    for e in CHOICE_ESCOLARIDAD:
+        objeto = Encuesta.objects.filter(escolaridad__sexo = e[0], entrevistado__sexo=1, entrevistado__jefe=1).aggregate(num_total = Sum('escolaridad__total'),
+                no_leer = Sum('escolaridad__no_leer'),
+                p_incompleta = Sum('escolaridad__pri_incompleta'),
+                p_completa = Sum('escolaridad__pri_completa'),
+                s_incompleta = Sum('escolaridad__secu_incompleta'),
+                bachiller = Sum('escolaridad__bachiller'),
+                universitario = Sum('escolaridad__uni_tecnico'),
+
+                )
+        try:
+            suma_mujer = int(objeto['p_completa'] or 0) + int(objeto['s_incompleta'] or 0) + int(objeto['bachiller'] or 0) + int(objeto['universitario'] or 0)
+        except:
+            pass
+        variable = round(saca_porcentajes(suma_mujer,objeto['num_total']))
+        grafo_mujer.append([e[1],variable])
+        fila = [e[1], objeto['num_total'],
+                saca_porcentajes(objeto['no_leer'], objeto['num_total'], False),
+                saca_porcentajes(objeto['p_incompleta'], objeto['num_total'], False),
+                saca_porcentajes(objeto['p_completa'], objeto['num_total'], False),
+                saca_porcentajes(objeto['s_incompleta'], objeto['num_total'], False),
+                saca_porcentajes(objeto['bachiller'], objeto['num_total'], False),
+                saca_porcentajes(objeto['universitario'], objeto['num_total'], False),
+                ]
+        tabla_educacion_mujer.append(fila)
 
     return render(request, template, locals())
 
