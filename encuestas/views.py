@@ -656,6 +656,29 @@ def ingresos(request, template="indicadores/ingresos.html"):
         valor = Encuesta.objects.filter(fuentes__fuente_ingreso=obj).count()
         fuente_ingresos[obj] =  valor
 
+    #ingreso de cultivos tracionales
+
+    ingreso_cultivo_tradicional = {}
+    for obj in Cultivos.objects.all():
+        cultivo = CultivosTradicionales.objects.filter(encuesta__entrevistado__departamento=request.session['departamento'],
+                                                        cultivo=obj)
+        cosechada = cultivo.aggregate(t=Sum('cantidad_cosechada'))['t']
+        venta = cultivo.aggregate(t=Sum('venta'))['t']
+        precio = cultivo.aggregate(t=Avg('precio'))['t']
+        try:
+            ingreso = venta * precio
+        except:
+            ingreso = 0 
+        costo = cultivo.aggregate(t=Avg('costo'))['t']
+
+        ingreso_cultivo_tradicional[obj] = {'unidad':obj.get_unidad_medida_display(),
+                                            'cantidad_cosechada':cosechada,
+                                            'venta':venta,
+                                            'precio':precio,
+                                            'ingreso': ingreso,
+                                            'costo':costo}
+
+
     return render(request, template, locals())
 
 #FUNCIONES UTILITARIAS
