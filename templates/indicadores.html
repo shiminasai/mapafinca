@@ -584,6 +584,23 @@ $(function () {
         }]
     });
 });
+
+// $(document).ready(function(){
+//   $('.side-button').click(function(){
+//     $('.sidebar').toggleClass("left");
+//     $('.list').toggleClass("top");
+//   });
+// });
+function show(target) {
+    document.getElementById(target).style.display = 'block';
+    document.getElementById( 'open' ).style.display = 'none';
+    document.getElementById( 'sidebar' ).toggle( "bounce", { times: 3 }, "slow" );
+}
+
+function hide(target) {
+    document.getElementById(target).style.display = 'none';
+    document.getElementById( 'open' ).style.display = 'block';
+}
 </script>
 {% endblock extra_js %}
 {% block contenido %}
@@ -652,6 +669,36 @@ $(function () {
 
     </ol>
 </div>
+
+
+
+
+
+<!--<link href='http://fonts.googleapis.com/css?family=Maven+Pro:400,900' rel='stylesheet' type='text/css'>
+
+<div class="sidebar">
+
+  <ul class="list">
+  <li> <a href="#block">List items</a></li>
+    <li><a href="#block2">List items</a></li>
+    <li><a href="#block3">List items</a></li>
+    <li><a href="#block4">List items</a></li>
+    <li><a href="#block5">List items</a></li>
+    <li><a href="#block6">List items</a></li>
+  </ul>
+
+  <div class="side-button"></div>
+  
+</div>-->
+
+<div class="sidebar" id="prueba">
+<a href="#" id="close" onclick="hide('prueba')">Close</a>
+    </div>
+
+
+<a href="#" id="open" onclick="show('prueba')">Open DIV</a>
+
+
 
 <div class="contenido-indicadores">
 	<!--fila 1-->
