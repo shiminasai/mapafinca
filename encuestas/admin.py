@@ -235,7 +235,8 @@ class AdminEncuesta(admin.ModelAdmin):
                 InlineRespuestaNo41,InlineOtrasSeguridad,InlineAlimentosFueraFinca,
                 InlineGenero,InlineGenero1,InlineGenero2,InlineGenero3,InlineGenero4,]
 
-    list_display = ('entrevistado','dueno','get_departamento','year')
+    list_display = ('entrevistado','dueno','org_responsable','get_departamento','year')
+    list_filter = ('org_responsable','year',)
     search_fields = ('entrevistado__nombre',)
 
     def get_departamento(self, obj):

@@ -64,8 +64,50 @@
 {% block contenido %}
 <br>
 <div class="row">
-    <div class="col-md-6"><div id="promedio" style="height: 400px;"></div>Promedio en Mz: {{promedio_mz}}</div>
+    <h4>Promedio en Mz: {{promedio_mz|floatformat:2}} Mz</h4>
+    <div class="col-md-6">
+    <table class="table">
+        <tr>
+            <th>Uso de tierra</th>
+            <th>Frecuencias</th>
+            <th>Porcentajes</th>
+        </tr>
+        {% for k,v in grafo_distribucion_tierra.items %}
+            <tr>
+                <td>{{k}}</td>
+                <td>{{v}}</td>
+                <td>{{v}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    </div>
     <div class="col-md-6"><div id="container" style="height: 400px;"></div></div>
+    <div class="col-md-6">
+        <table class="table">
+        <tr>
+            <th>Categoria</th>
+            <th>Frecuencias</th>
+            <th>Porcentajes</th>
+        </tr>
+        
+        <tr>
+            <td>1 - 5 Mz</td>
+            <td>{{uno_num}}</td>
+            <td>{{uno_num}}</td>
+        </tr>
+        <tr>
+            <td>6 - 10 Mz</td>
+            <td>{{seis_num}}</td>
+            <td>{{seis_num}}</td>
+        </tr>
+        <tr>
+            <td>11 Mz a más</td>
+            <td>{{diez_mas}}</td>
+            <td>{{diez_mas}}</td>
+        </tr>
+        
+    </table>
+    </div>
 </div>
 <br><br>
 
