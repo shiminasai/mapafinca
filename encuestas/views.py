@@ -670,8 +670,8 @@ def ingresos(request, template="indicadores/ingresos.html"):
         except:
             ingreso = 0
         costo = cultivo.aggregate(t=Avg('costo'))['t']
-
-        ingreso_cultivo_tradicional[obj] = {'unidad':obj.get_unidad_medida_display(),
+        if venta > 0:
+            ingreso_cultivo_tradicional[obj] = {'unidad':obj.get_unidad_medida_display(),
                                             'cantidad_cosechada':cosechada,
                                             'venta':venta,
                                             'precio':precio,
@@ -693,15 +693,114 @@ def ingresos(request, template="indicadores/ingresos.html"):
             ingreso = 0
         costo = CostoHuerto.objects.filter(encuesta__entrevistado__departamento=request.session['departamento']).aggregate(t=Avg('costo'))['t']
 
-        ingreso_huertos[obj] = {'unidad':obj.get_unidad_medida_display(),
+        if venta > 0:
+            ingreso_huertos[obj] = {'unidad':obj.get_unidad_medida_display(),
                                             'cantidad_cosechada':cosechada,
                                             'venta':venta,
                                             'precio':precio,
                                             'ingreso': ingreso,
                                             'costo':costo}
 
+    # cultivos frutales
+
+    ingreso_frutales = {}
+    for obj in CultivosFrutas.objects.all():
+        cultivo = CultivosFrutasFinca.objects.filter(encuesta__entrevistado__departamento=request.session['departamento'],
+                                                        cultivo=obj)
+        cosechada = cultivo.aggregate(t=Sum('cantidad_cosechada'))['t']
+        venta = cultivo.aggregate(t=Sum('venta'))['t']
+        precio = cultivo.aggregate(t=Avg('precio'))['t']
+        try:
+            ingreso = venta * precio
+        except:
+            ingreso = 0
+        costo = CostoFrutas.objects.filter(encuesta__entrevistado__departamento=request.session['departamento']).aggregate(t=Avg('costo'))['t']
+
+        if venta > 0:
+            ingreso_frutales[obj] = {'unidad':obj.get_unidad_medida_display(),
+                                            'cantidad_cosechada':cosechada,
+                                            'venta':venta,
+                                            'precio':precio,
+                                            'ingreso': ingreso,
+                                            'costo':costo}
+
+    # animales en la finca
+
+    ingreso_ganaderia = {}
+    for obj in Animales.objects.all():
+        cultivo = Ganaderia.objects.filter(encuesta__entrevistado__departamento=request.session['departamento'],
+                                                        animal=obj)
+        cantidad = cultivo.aggregate(t=Avg('cantidad'))['t']
+        venta = cultivo.aggregate(t=Sum('cantidad_vendida'))['t']
+        precio = cultivo.aggregate(t=Avg('precio'))['t']
+        try:
+            ingreso = venta * precio
+        except:
+            ingreso = 0
+
+        if venta > 0:
+            ingreso_ganaderia[obj] = {'cantidad':cantidad,
+                                    'venta':venta,
+                                    'precio':precio,
+                                    'ingreso': ingreso,
+                                    }
+
+    # comercializacion de productos procesados
+
+    ingreso_procesado = {}
+    for obj in ProductoProcesado.objects.all():
+        cultivo = Procesamiento.objects.filter(encuesta__entrevistado__departamento=request.session['departamento'],
+                                                        producto=obj)
+        cantidad = cultivo.aggregate(t=Avg('cantidad_total'))['t']
+        venta = cultivo.aggregate(t=Sum('cantidad_vendida'))['t']
+        precio = cultivo.aggregate(t=Avg('precio'))['t']
+        try:
+            ingreso = venta * precio
+        except:
+            ingreso = 0
+
+        if venta > 0:
+            ingreso_procesado[obj] = {'unidad':obj.get_unidad_medida_display(),
+                                    'cantidad':cantidad,
+                                    'venta':venta,
+                                    'precio':precio,
+                                    'ingreso': ingreso,
+                                    }
+
 
     return render(request, template, locals())
+
+def gastos(request, template="indicadores/gastos.html"):
+
+    introducido_tradicional = {}
+    for obj in Cultivos.objects.all():
+        valor = IntroducidosTradicionales.objects.filter(encuesta__entrevistado__departamento=request.session['departamento'],
+                                                        cultivo=obj,si_no=1).count()
+        introducido_tradicional[obj] =  valor
+
+    introducido_huerto = {}
+    for obj in CultivosHuertos.objects.all():
+        valor = IntroducidosHuertos.objects.filter(encuesta__entrevistado__departamento=request.session['departamento'],
+                                                        cultivo=obj,si_no=1).count()
+        introducido_huerto[obj] =  valor
+
+    gasto_hogar = {}
+    for obj in CHOICE_TIPO_GASTOS:
+        valor = GastoHogar.objects.filter(encuesta__entrevistado__departamento=request.session['departamento'],
+                                                    tipo=obj[0]).aggregate(t=Avg('cantidad'))['t']
+        gasto_hogar[obj[1]] =  valor
+
+
+    gasto_produccion = {}
+    for obj in TipoGasto.objects.all():
+        valor = GastoProduccion.objects.filter(encuesta__entrevistado__departamento=request.session['departamento'],
+                                                        tipo=obj).aggregate(t=Avg('cantidad'))['t']
+        gasto_produccion[obj] =  valor
+
+
+
+    return render(request, template, locals())
+
 
 #FUNCIONES UTILITARIAS
 def saca_porcentajes(dato, total, formato=True):
