@@ -127,7 +127,7 @@ def principal_dashboard(request, template='dashboard.html', departamento_id=None
         gasto_finca = Encuesta.objects.filter(entrevistado__departamento=departamento_id,gastohogar__tipo=5).aggregate(t=Sum('gastohogar__total'))['t'] / 12
     except:
         pass
-    try:    
+    try:
         gasto_fuera_finca = Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('gastoproduccion__total'))['t'] / 12
     except:
         pass
@@ -668,10 +668,32 @@ def ingresos(request, template="indicadores/ingresos.html"):
         try:
             ingreso = venta * precio
         except:
-            ingreso = 0 
+            ingreso = 0
         costo = cultivo.aggregate(t=Avg('costo'))['t']
 
         ingreso_cultivo_tradicional[obj] = {'unidad':obj.get_unidad_medida_display(),
+                                            'cantidad_cosechada':cosechada,
+                                            'venta':venta,
+                                            'precio':precio,
+                                            'ingreso': ingreso,
+                                            'costo':costo}
+
+    #cultivos huertos familiares
+
+    ingreso_huertos = {}
+    for obj in CultivosHuertos.objects.all():
+        cultivo = CultivosHuertosFamiliares.objects.filter(encuesta__entrevistado__departamento=request.session['departamento'],
+                                                        cultivo=obj)
+        cosechada = cultivo.aggregate(t=Sum('cantidad_cosechada'))['t']
+        venta = cultivo.aggregate(t=Sum('venta'))['t']
+        precio = cultivo.aggregate(t=Avg('precio'))['t']
+        try:
+            ingreso = venta * precio
+        except:
+            ingreso = 0
+        costo = CostoHuerto.objects.filter(encuesta__entrevistado__departamento=request.session['departamento']).aggregate(t=Avg('costo'))['t']
+
+        ingreso_huertos[obj] = {'unidad':obj.get_unidad_medida_display(),
                                             'cantidad_cosechada':cosechada,
                                             'venta':venta,
                                             'precio':precio,

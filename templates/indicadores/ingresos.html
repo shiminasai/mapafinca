@@ -5,8 +5,8 @@
 {% block contenido %}
 <br>
 <div class="row">
-	<div class="col-md-6">
-		<table class="table">
+<div class="col-md-6">
+    <table class="table">
         <caption>Los cultivos tradicionales</caption>
         <thead>
             <tr>
@@ -31,6 +31,37 @@
             	<td>{{value.ingreso|floatformat:1|default:0}}</td>
             	<td>{{value.costo|floatformat:1|default:0}}</td>
             	<td>{{value.ingreso|calculaUtilidad:value.costo|default:0|floatformat:1}}</td>
+            </tr>
+            {%endfor%}
+        <tbody>
+    </table>
+    </div>
+<div class="col-md-6">
+    <table class="table">
+        <caption>Los cultivos huertos de la finca</caption>
+        <thead>
+            <tr>
+                <th>Rubro</th>
+                <th>Unidad de medida</th>
+                <th>Cantidad cosechada</th>
+                <th>Cantidad vendida</th>
+                <th>Precio de venta</th>
+                <th>Ingreso</th>
+                <th>Costo</th>
+                <th>Utilidad o perdida</th>
+            </tr>
+        </thead>
+        <tbody>
+            {%for key, value in ingreso_huertos.items%}
+            <tr>
+                <td>{{key}}</td>
+                <td>{{value.unidad}}</td>
+                <td>{{value.cantidad_cosechada|default:0}}</td>
+                <td>{{value.venta|default:0}}</td>
+                <td>{{value.precio|floatformat:1|default:0}}</td>
+                <td>{{value.ingreso|floatformat:1|default:0}}</td>
+                <td>{{value.costo|floatformat:1|default:0}}</td>
+                <td>{{value.ingreso|calculaUtilidad:value.costo|default:0|floatformat:1}}</td>
             </tr>
             {%endfor%}
         <tbody>
