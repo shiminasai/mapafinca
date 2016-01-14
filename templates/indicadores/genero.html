@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% load helpertags %}
+
 {% block extra_js %}
 <script src="http://code.highcharts.com/highcharts.js"></script>
 <script src="http://code.highcharts.com/exporting.js"></script>
@@ -50,7 +52,7 @@ $('#container2').highcharts({
             type: 'column'
         },
         title: {
-            text: 'Tipos de tratamientos que se les da al agua'
+            text: 'La mujer (compañera del jefe del hogar) pertenece a algún tipo de organización?'
         },
         subtitle: {
             text: ''
@@ -96,7 +98,42 @@ $('#container2').highcharts({
         }],
     });
 
-
+$('#container3').highcharts({
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false,
+                type: 'pie'
+            },
+            title: {
+                text: 'Tipo organización que participa mujer (mujer jefe de familia)'
+            },
+            tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: false
+                    },
+                    showInLegend: true
+                }
+            },
+            series: [{
+                name: 'Organización',
+                colorByPoint: true,
+                data: [
+                {% for k,v in mujer_organizacion.items %}
+                    {
+                    name: '{{k}}',
+                    y: {{v}}
+                },
+                {% endfor %}
+                ]
+            }]
+        });
 });
 </script>
 {% endblock extra_js %}
@@ -104,6 +141,7 @@ $('#container2').highcharts({
 
 {% block contenido %}
 <br><br>
+
 <div class="row">
   <div class="col-md-6"><div id="container" style="height: 400px;"></div></div>
   <div class="col-md-6">
@@ -118,7 +156,7 @@ $('#container2').highcharts({
                     <td>{{k}}</td>
                     <td>{{v.0}}</td>
                     <td>{{v.1}}</td>
-            </tr>
+                </tr>
             {% endfor %}
         </table>
   </div>
@@ -127,6 +165,29 @@ $('#container2').highcharts({
 <div class="row">
   <div class="col-md-6"><div id="container2" style="height: 400px;"></div></div>
   <div class="col-md-6"><div id="container3" style="height: 400px;"></div></div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+   <table class="table">
+        <caption>Mujeres con nivel de escolaridad</caption>
+        <thead>
+            <tr>
+                <th>Nivel escolaridad</th>
+                <th>Frecuencia</th>
+                <th>Porcentaje</th>
+            </tr>
+        </thead>
+        <tbody>
+            {%for key, value in nivel_educacion_mujer.items%}
+            <tr>
+                <td>{{key}}</td>
+                <td>{{value}}</td>
+                <td>{{value|calculaperct:divisor}} %</td>
+            </tr>
+            {%endfor%}
+        <tbody>
+    </table>
+  </div>
 </div>
 <br><br>
 {% include "menu_indicadores.html" %}

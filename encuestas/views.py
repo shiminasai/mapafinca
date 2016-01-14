@@ -623,8 +623,14 @@ def seguridad(request, template="indicadores/seguridad.html"):
 
 def genero(request, template="indicadores/genero.html"):
 
-    #promedio de manzanas por todas las personas
-    promedio_mz = Encuesta.objects.aggregate(p=Avg('organizacionfinca__area_finca'))['p']
+    porcentaje_aporta_mujer = OrderedDict()
+    for obj in CHOICER_INGRESO:
+        porcentaje_aporta_mujer[obj[1]] = OrderedDict()
+        for obj2 in CHOICE_PORCENTAJE:
+            valor = Encuesta.objects.filter(genero__tipo=obj[0], genero__porcentaje=obj2[0]).count()
+            if valor > 0:
+                porcentaje_aporta_mujer[obj[1]][obj2[1]] =  valor
+    
 
     grafo_credito_mujer = {}
     for obj in CHOICE_JEFE:
@@ -642,6 +648,21 @@ def genero(request, template="indicadores/genero.html"):
         valor = Encuesta.objects.filter(genero3__respuesta=obj[0]).count()
         grafo_organizacion_mujer[obj[1]] =  valor
 
+    mujer_organizacion = {}
+    for obj in OrgComunitarias.objects.all():
+        dato = OrganizacionComunitaria.objects.filter(encuesta__entrevistado__departamento=request.session['departamento'],
+                                                    caso_si=obj, encuesta__entrevistado__jefe=1).count()
+        mujer_organizacion[obj] = dato
+
+
+    nivel_educacion_mujer = {}
+    for obj in CHOICER_NIVEL_MUJER:
+        valor = Genero4.objects.filter(encuesta__entrevistado__departamento=request.session['departamento'],
+                                        opcion=obj[0]).count()
+        nivel_educacion_mujer[obj[1]] =  valor
+
+    divisor = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento']).distinct('entrevistado__id').count()
+    
     return render(request, template, locals())
 
 def ingresos(request, template="indicadores/ingresos.html"):
@@ -776,13 +797,15 @@ def gastos(request, template="indicadores/gastos.html"):
     for obj in Cultivos.objects.all():
         valor = IntroducidosTradicionales.objects.filter(encuesta__entrevistado__departamento=request.session['departamento'],
                                                         cultivo=obj,si_no=1).count()
-        introducido_tradicional[obj] =  valor
+        if valor > 0:
+            introducido_tradicional[obj] =  valor
 
     introducido_huerto = {}
     for obj in CultivosHuertos.objects.all():
         valor = IntroducidosHuertos.objects.filter(encuesta__entrevistado__departamento=request.session['departamento'],
                                                         cultivo=obj,si_no=1).count()
-        introducido_huerto[obj] =  valor
+        if valor > 0:
+            introducido_huerto[obj] =  valor
 
     gasto_hogar = {}
     for obj in CHOICE_TIPO_GASTOS:
