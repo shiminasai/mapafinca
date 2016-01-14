@@ -1,20 +1,70 @@
 {% extends "base.html" %}
 {% block extra_js %}
+	<script src="/static/js/modernizr.custom.js"></script>
+	<script src="/static/js/classie.js"></script>
+	<script src="/static/js/uiMorphingButton_fixed.js"></script>
+	<script>
+			(function() {	
+				var docElem = window.document.documentElement, didScroll, scrollPosition;
 
-	<script src="/static/js/jquery.bxslider.js"></script>
-	<!-- bxSlider CSS file -->
-	<link href="/static/css/jquery.bxslider.css" rel="stylesheet" />
+				// trick to prevent scrolling when opening/closing button
+				function noScrollFn() {
+					window.scrollTo( scrollPosition ? scrollPosition.x : 0, scrollPosition ? scrollPosition.y : 0 );
+				}
 
-	<script type="text/javascript">
-		$(document).ready(function(){
-		  $('.bxslider').bxSlider({
-		  	minSlides: 2,
-		  	maxSlides: 4,
-		  	slideWidth: 150,
-  			slideMargin: 15,
-		  });
-		});
-	</script>
+				function noScroll() {
+					window.removeEventListener( 'scroll', scrollHandler );
+					window.addEventListener( 'scroll', noScrollFn );
+				}
+
+				function scrollFn() {
+					window.addEventListener( 'scroll', scrollHandler );
+				}
+
+				function canScroll() {
+					window.removeEventListener( 'scroll', noScrollFn );
+					scrollFn();
+				}
+
+				function scrollHandler() {
+					if( !didScroll ) {
+						didScroll = true;
+						setTimeout( function() { scrollPage(); }, 60 );
+					}
+				};
+
+				function scrollPage() {
+					scrollPosition = { x : window.pageXOffset || docElem.scrollLeft, y : window.pageYOffset || docElem.scrollTop };
+					didScroll = false;
+				};
+
+				scrollFn();
+
+				var UIBtnn = new UIMorphingButton( document.querySelector( '.morph-button' ), {
+					closeEl : '.icon-close',
+					onBeforeOpen : function() {
+						// don't allow to scroll
+						noScroll();
+					},
+					onAfterOpen : function() {
+						// can scroll again
+						canScroll();
+					},
+					onBeforeClose : function() {
+						// don't allow to scroll
+						noScroll();
+					},
+					onAfterClose : function() {
+						// can scroll again
+						canScroll();
+					}
+				} );
+
+				document.getElementById( 'terms' ).addEventListener( 'change', function() {
+					UIBtnn.toggle();
+				} );
+			})();
+		</script>
 {% endblock extra_js %}
 {% block contenido %}
 <div class="row contenedor-index">
@@ -30,65 +80,63 @@
 
 		</div>
 	</div>
-<!--	<div class="page-contenido">
-		<div class="row eliminar-mar">
-			<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-md-offset-3 col-lg-offset-3 info-index">
-				<p>El Programa Medios de Vida Sostenible con enfoque en la gestión de riesgo y el cambio climático de CAFOD, implementa el sistema de monitoreo de finca que tiene como fin identificar la mejoría del bienestar de vida de familias campesinas atendidas por el programa a través de co-partes en territorio. Toda la información generada por el sistema de monitoreo de finca proviene de la aplicación de una encuesta a familias y medir avances con respecto años anteriores.</p>
-				<br>
-				<p>El Sistema de monitoreo de Finca permitirá visualizar cómo esta la finca hoy y pensar cómo se quiere ver en el futuro, de acuerdo a las posibilidades de las familias y condiciones medioambientales. Se podrá obtener datos generados a través de gráficos, tablas e imágenes y podrá verlo desde teléfonos móviles y tabletas.</p>
-				<br>
-				<p>El sistema de monitoreo permite al usuario filtrar resultados por país, municipio, comunidad, encuestado y sexo, generando datos que se muestran en cuadros y gráficos dinámicos. Los resultados de los datos pueden copiarse fácilmente para ser utilizadas en el proceso de elaboración de informes que pueden ser compartidos con las familias, organizaciones en territorio, decisores y sociedad en general.</p>
-				<hr>
-			</div>
-		</div>
-	</div>-->
+
 	<div class="page-contenido">
-		<div class="col-md-3 col-lg-3">
-			<div class="info-index">
-				<p>El Programa Medios de Vida Sostenible con enfoque en la gestión de riesgo y el cambio climático de CAFOD, implementa el sistema de monitoreo de finca que tiene como fin identificar la mejoría del bienestar de vida de familias campesinas atendidas por el programa a través de co-partes en territorio. Toda la información generada por el sistema de monitoreo de finca proviene de la aplicación de una encuesta a familias y medir avances con respecto años anteriores.</p>
-				<br>
-				<p>El Sistema de monitoreo de Finca permitirá visualizar cómo esta la finca hoy y pensar cómo se quiere ver en el futuro, de acuerdo a las posibilidades de las familias y condiciones medioambientales. Se podrá obtener datos generados a través de gráficos, tablas e imágenes y podrá verlo desde teléfonos móviles y tabletas.</p>
-				<hr>
-			</div>
+		<div class="map-ca col-md-8 col-lg-8">
+			<img class="center-block" src="/static/img/mapa.png" alt="">
 		</div>
-		<div class="map-ca col-md-6 col-lg-6">
-			<img src="/static/img/ca.png" alt="">
-		</div>
-		<div class="col-md-3 col-lg-3">
-		{% for k,v in paises.items %}
-			<div class="panel">
-				<div class="panel-heading">
-					<a href="">{{k}}</a>
-					<a class="btn-ex" data-toggle="collapse" href="#{{k|slugify}}" aria-expanded="false" aria-controls="{{k|slugify}}">
-					  <span class="glyphicon glyphicon-chevron-down"></span>
-					</a>
+
+		
+		<div class="col-md-4 col-lg-4">
+			{% for k,v in paises.items %}
+				<div class="panel">
+					<div class="panel-heading">
+						<a href="">{{k}}</a>
+						<a class="btn-ex" data-toggle="collapse" href="#{{k|slugify}}" aria-expanded="false" aria-controls="{{k|slugify}}">
+						  <span class="glyphicon glyphicon-chevron-down"></span>
+						</a>
+					</div>
+					<div class="collapse panel-body" id="{{k|slugify}}" >
+						 <ul>
+							{% for key,value in v.items %}
+								<li><a href="/dashboard-principal/{{value.1}}">{{key}}</a> - {{value.0}}</li>
+							{% endfor %}
+						 </ul>
+					</div>
 				</div>
-				<div class="collapse panel-body" id="{{k|slugify}}" >
-					 <ul>
-						{% for key,value in v.items %}
-							<li><a href="/dashboard-principal/{{value.1}}">{{key}}</a> - {{value.0}}</li>
-						{% endfor %}
-					 </ul>
+			{% endfor %}
+			<section>
+
+				<div class="mockup-content">
+					<div class="morph-button morph-button-modal morph-button-modal-1 morph-button-fixed">
+						<button type="button" class="btn btn-filtro">Monitoreo</button>
+						<div class="morph-content">
+							<div>
+								<div class="content-style-text">
+									<span class="icon icon-close">Close the dialog</span>
+									<h2>Monitoreo</h2>
+									<p>El Programa Medios de Vida Sostenible con enfoque en la gestión de riesgo y el cambio climático de CAFOD, implementa el sistema de monitoreo de finca que tiene como fin identificar la mejoría del bienestar de vida de familias campesinas atendidas por el programa a través de co-partes en territorio. Toda la información generada por el sistema de monitoreo de finca proviene de la aplicación de una encuesta a familias y medir avances con respecto años anteriores.</p>
+									<br>
+									<p>El Sistema de monitoreo de Finca permitirá visualizar cómo esta la finca hoy y pensar cómo se quiere ver en el futuro, de acuerdo a las posibilidades de las familias y condiciones medioambientales. Se podrá obtener datos generados a través de gráficos, tablas e imágenes y podrá verlo desde teléfonos móviles y tabletas.</p>
+									
+								</div>
+							</div>
+						</div>
+					</div><!-- morph-button -->
+					<span></span>
+					<span></span>
+				</div><!-- /form-mockup -->
+			</section>
+			<!--<div class="">
+				<div class="info-index">
+					
+					<hr>
 				</div>
-			</div>
-		{% endfor %}
+			</div>-->
 		</div>
+
+
 
 	</div>
-	<div class="col-xs-12 col-sm-12 col-md-8 col-lg-8 col-md-offset-2  col-lg-offset-2 slider">
-		<ul class="bxslider">
-		  <li><img class="center-block" src="/static/img/logos/LogoJuanXXIII.jpg" /></li>
-		  <li><img class="center-block" src="/static/img/logos/caritas_logo.jpg" /></li>
-		  <li><img class="center-block" src="/static/img/logos/logo_Cehprodec.png" /></li>
-		  <li><img class="center-block" src="/static/img/logos/logo_SJD.jpg" /></li>
-		  <li><img class="center-block" src="/static/img/logos/logo_asomupro.jpg" /></li>
-		  <li><img class="center-block" src="/static/img/logos/logo_nati.jpg" /></li>
-		  <li><img class="center-block" src="/static/img/logos/logoredcomal.png" /></li>
-		  <li><img class="center-block" src="/static/img/logos/logotipo_1.jpg" /></li>
-		  <li><img class="center-block" src="/static/img/logos/logotipoSIMAS.jpg" /></li>
-		</ul>
-	</div>
-
-
 </div>
 {% endblock contenido %}
