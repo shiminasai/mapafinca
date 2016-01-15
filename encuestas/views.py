@@ -303,6 +303,19 @@ def indicadores(request, template='indicadores.html'):
 
     return render(request, template, locals())
 
+
+def indicadores1(request, template='indicadores1.html'):
+    total_entrevistados = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento']).distinct('entrevistado__id').count()
+    total_hombres = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], entrevistado__sexo=2).distinct('entrevistado__id').count()
+    total_mujeres = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], entrevistado__sexo=1).distinct('entrevistado__id').count()
+
+    porcentaje_hombres = float(total_hombres) / float(total_entrevistados) * 100
+    porcentaje_mujeres = float(total_mujeres) / float(total_entrevistados) * 100
+
+    organizaciones = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento']).distinct('entrevistado__departamento').count()
+    familias = Entrevistados.objects.count()
+    return render(request, template, locals())
+
 #FUNCIONES PARA LAS DEMAS SALIDAS DEL SISTEMA
 
 def sexo_duenos(request, template="indicadores/sexo_duenos.html"):

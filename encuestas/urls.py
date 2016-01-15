@@ -8,6 +8,7 @@ urlpatterns = [
     url(r'^dashboard-principal/(?P<departamento_id>[0-9]+)/$', views.principal_dashboard, name='dashboard'),
     url(r'^finca/(?P<entrevistado_id>[0-9]+)/$', views.detalle_finca, name='detalle-finca'),
     url(r'^indicadores/$', views.indicadores, name='indicadores'),
+    url(r'^indicadores1/$', views.indicadores1, name='indicadores1'),
     url(r'^mapa_dash/$', views.obtener_mapa_dashboard, name='obtener-lista'),
     url(r'^galeria/$', views.GalleryView.as_view(), name='galeria'),
     url(r'^detalle_indicador/$', views.DetailIndicadorView.as_view(), name='galeria'),

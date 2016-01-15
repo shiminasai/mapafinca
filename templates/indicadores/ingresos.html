@@ -47,8 +47,6 @@
                 <th>Cantidad vendida</th>
                 <th>Precio de venta</th>
                 <th>Ingreso</th>
-                <th>Costo</th>
-                <th>Utilidad o perdida</th>
             </tr>
         </thead>
         <tbody>
@@ -60,8 +58,6 @@
                 <td>{{value.venta|default:0}}</td>
                 <td>{{value.precio|floatformat:1|default:0}}</td>
                 <td>{{value.ingreso|floatformat:1|default:0}}</td>
-                <td>{{value.costo|floatformat:1|default:0}}</td>
-                <td>{{value.ingreso|calculaUtilidad:value.costo|default:0|floatformat:1}}</td>
             </tr>
             {%endfor%}
         <tbody>
@@ -79,8 +75,6 @@
                 <th>Cantidad vendida</th>
                 <th>Precio de venta</th>
                 <th>Ingreso</th>
-                <th>Costo</th>
-                <th>Utilidad o perdida</th>
             </tr>
         </thead>
         <tbody>
@@ -92,8 +86,6 @@
                 <td>{{value.venta|default:0}}</td>
                 <td>{{value.precio|floatformat:1|default:0}}</td>
                 <td>{{value.ingreso|floatformat:1|default:0}}</td>
-                <td>{{value.costo|floatformat:1|default:0}}</td>
-                <td>{{value.ingreso|calculaUtilidad:value.costo|default:0|floatformat:1}}</td>
             </tr>
             {%endfor%}
         <tbody>
