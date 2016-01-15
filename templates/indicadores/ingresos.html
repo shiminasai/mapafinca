@@ -47,6 +47,8 @@
                 <th>Cantidad vendida</th>
                 <th>Precio de venta</th>
                 <th>Ingreso</th>
+                <th>costo</th>
+                <th>utilidad</th>
             </tr>
         </thead>
         <tbody>
@@ -61,6 +63,16 @@
             </tr>
             {%endfor%}
         <tbody>
+        <tr>
+            <th>TOTALES</th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th>{{ingreso_patio|floatformat:1}}</th>
+            <th>{{costo_huerto|floatformat:1}}</th>
+            <th>{{ingreso_patio|calculaUtilidad:costo_huerto|floatformat:1}}</th>
+        </tr>
     </table>
     </div>
 
@@ -75,6 +87,8 @@
                 <th>Cantidad vendida</th>
                 <th>Precio de venta</th>
                 <th>Ingreso</th>
+                <th>costo</th>
+                <th>utilidad</th>
             </tr>
         </thead>
         <tbody>
@@ -89,6 +103,16 @@
             </tr>
             {%endfor%}
         <tbody>
+        <tr>
+            <th>TOTALES</th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th>{{ingreso_fruta|floatformat:1}}</th>
+            <th>{{costo_fruta|floatformat:1}}</th>
+            <th>{{ingreso_fruta|calculaUtilidad:costo_fruta|floatformat:1}}</th>
+        </tr>
     </table>
     </div>
 <div class="col-md-6">

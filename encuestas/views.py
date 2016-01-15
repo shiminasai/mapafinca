@@ -715,6 +715,7 @@ def ingresos(request, template="indicadores/ingresos.html"):
     #cultivos huertos familiares
 
     ingreso_huertos = {}
+    ingreso_patio = 0
     for obj in CultivosHuertos.objects.all():
         cultivo = CultivosHuertosFamiliares.objects.filter(encuesta__entrevistado__departamento=request.session['departamento'],
                                                         cultivo=obj)
@@ -725,7 +726,8 @@ def ingresos(request, template="indicadores/ingresos.html"):
             ingreso = venta * precio
         except:
             ingreso = 0
-        costo = CostoHuerto.objects.filter(encuesta__entrevistado__departamento=request.session['departamento']).aggregate(t=Avg('costo'))['t']
+        costo_huerto = CostoHuerto.objects.filter(encuesta__entrevistado__departamento=request.session['departamento']).aggregate(t=Avg('costo'))['t']
+        ingreso_patio += ingreso
 
         if venta > 0:
             ingreso_huertos[obj] = {'unidad':obj.get_unidad_medida_display(),
@@ -733,11 +735,12 @@ def ingresos(request, template="indicadores/ingresos.html"):
                                             'venta':venta,
                                             'precio':precio,
                                             'ingreso': ingreso,
-                                            'costo':costo}
+                                            }
 
     # cultivos frutales
 
     ingreso_frutales = {}
+    ingreso_fruta = 0
     for obj in CultivosFrutas.objects.all():
         cultivo = CultivosFrutasFinca.objects.filter(encuesta__entrevistado__departamento=request.session['departamento'],
                                                         cultivo=obj)
@@ -748,15 +751,16 @@ def ingresos(request, template="indicadores/ingresos.html"):
             ingreso = venta * precio
         except:
             ingreso = 0
-        costo = CostoFrutas.objects.filter(encuesta__entrevistado__departamento=request.session['departamento']).aggregate(t=Avg('costo'))['t']
+        costo_fruta = CostoFrutas.objects.filter(encuesta__entrevistado__departamento=request.session['departamento']).aggregate(t=Avg('costo'))['t']
 
+        ingreso_fruta += ingreso
         if venta > 0:
             ingreso_frutales[obj] = {'unidad':obj.get_unidad_medida_display(),
                                             'cantidad_cosechada':cosechada,
                                             'venta':venta,
                                             'precio':precio,
                                             'ingreso': ingreso,
-                                            'costo':costo}
+                                            }
 
     # animales en la finca
 

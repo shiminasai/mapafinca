@@ -428,6 +428,57 @@ $(function () {
         }]
 
     });
+
+    $('#container100').highcharts({
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false,
+                type: 'pie'
+            },
+            title: {
+                text: 'Ingresos'
+            },
+            tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: false
+                    },
+                    showInLegend: true
+                }
+            },
+            series: [{
+                name: 'Brands',
+                colorByPoint: true,
+                data: [{
+                    name: 'Cultivos tradicionales',
+                    y: {% if tradicional == None %}0 {%else%}{{tradicional|floatformat:2}},{% endif %}
+                }, {
+                    name: 'Cultivos huertos',
+                    y: {% if huertos == None %}0 {%else%}{{huertos|floatformat:2}},{% endif %}
+                    sliced: true,
+                    selected: true
+                }, {
+                    name: 'Frutales',
+                    y: {% if frutas == None %}0 {%else%}{{frutas|floatformat:2}},{% endif %}
+                }, {
+                    name: 'Otras fuentes',
+                    y: {% if fuente == None %}0 {%else%}{{fuente|floatformat:2}},{% endif %}
+                }, {
+                    name: 'Ganado',
+                    y: {% if ganado == None %}0 {%else%}{{ganado|floatformat:2}},{% endif %}
+                }, {
+                    name: 'Procesamientos',
+                    y: {% if procesamiento == None %}0 {%else%}{{procesamiento|floatformat:2}}{% endif %}
+                }]
+            }]
+        });
+
 });
 </script>
 {% endblock extra_js %}
@@ -574,7 +625,7 @@ $(function () {
         </div>
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 ">
             <div class="mapa-general ">
-                <div id="grafico5"></div>
+                <div id="container100"></div>
             </div>
         </div>
 
