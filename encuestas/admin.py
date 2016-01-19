@@ -235,14 +235,24 @@ class AdminEncuesta(admin.ModelAdmin):
                 InlineRespuestaNo41,InlineOtrasSeguridad,InlineAlimentosFueraFinca,
                 InlineGenero,InlineGenero1,InlineGenero2,InlineGenero3,InlineGenero4,]
 
-    list_display = ('entrevistado','dueno','org_responsable','get_departamento','year')
-    list_filter = ('org_responsable','year',)
+    list_display = ('entrevistado','dueno','org_responsable','get_municipio','get_comunidad' ,'year')
+    list_filter = ('org_responsable','year','entrevistado__departamento__municipio', 'entrevistado__departamento__municipio__comunidad')
     search_fields = ('entrevistado__nombre',)
 
     def get_departamento(self, obj):
         return obj.entrevistado.departamento
     get_departamento.short_description = 'Departamento'
     get_departamento.admin_order_field = 'entrevistado__departamento'
+
+    def get_municipio(self, obj):
+        return obj.entrevistado.municipio
+    get_municipio.short_description = 'Municipio'
+    get_municipio.admin_order_field = 'entrevistado__departamento__municipio'
+
+    def get_comunidad(self, obj):
+        return obj.entrevistado.comunidad
+    get_comunidad.short_description = 'Comunidad'
+    get_comunidad.admin_order_field = 'entrevistado__departamento__municipio__comunidad'
 
     class Media:
         css = {
