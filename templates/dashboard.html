@@ -35,7 +35,20 @@
                     id: elemento.id
                 });
                 markers.push(marker);
-            });
+
+                google.maps.event.addListener(marker, "click", function() {
+               var html = '<b><a href="#' +'" class="verde">' + elemento.finca +
+                          '</a></b><br><b class="gris">Sexo →</b> ' + elemento.sexo +
+                          '<br><b class="gris">comunidad →</b> ' + elemento.comunidad +
+                          '<br><a href="/finca/'+ elemento.id +'" class="btn botopococ btn-mini btn-success">Ver Productor</a>';
+                infowindow = new google.maps.InfoWindow({
+                          content: html,
+                          zIndex: 999,
+                });
+                    infowindow.open(map, this);
+                }); // termina addListener
+
+            }); //termina each
             var markerCluster = new MarkerClusterer(map, markers);
         });
 
@@ -177,79 +190,75 @@ $(function () {
     });
 });
 
-
 $(function () {
-    // Create the chart
     $('#grafico2').highcharts({
         chart: {
             type: 'column'
         },
         title: {
-            text: 'Ingresos en {{request.session.departamento}}'
-        },
-        subtitle: {
-            text: 'Distribución de los ingresos en las  fincas'
+            text: 'INGRESOS EN {{request.session.departamento}}'
         },
         xAxis: {
-            type: 'category'
+            categories: ['Gasto en {{request.session.departamento}}']
         },
         yAxis: {
+            min: 0,
             title: {
-                text: 'Total mensual en C$'
-            }
-
-        },
-        legend: {
-            enabled: false
-        },
-        plotOptions: {
-            series: {
-                borderWidth: 0,
-                dataLabels: {
-                    enabled: true,
-                    format: '{point.y:.1f}'
+                text: ''
+            },
+            stackLabels: {
+                enabled: true,
+                style: {
+                    fontWeight: 'bold',
+                    color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
                 }
             }
         },
-
-        tooltip: {
-            headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
-            pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f} </b>total mensual<br/>'
+        legend: {
+            align: 'center',
+            verticalAlign: 'bottom',
+            backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || 'white',
+            borderColor: '#CCC',
+            borderWidth: 1,
+            shadow: false
         },
-
-        series: [{
-            name: "Ingresos",
-            colorByPoint: true,
-            data: [
+       tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+        plotOptions: {
+            column: {
+                stacking: 'normal',
+                dataLabels: {
+                    enabled: true,
+                    color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
+                    style: {
+                        textShadow: '0 0 3px black'
+                    }
+                }
+            }
+        },
+        series: [
             {
                 name: "Cultivos tradicionales",
-                y: {% if tradicional == None %}0 {%else%}{{tradicional|floatformat:2}},{% endif %}
-
+                data: [{% if tradicional == None %}0 {%else%}{{tradicional|floatformat:2}},{% endif %}]
             }, {
                 name: "Cultivos huertos",
-                y: {% if huertos == None %}0 {%else%}{{huertos|floatformat:2}},{% endif %}
-
+                data: [{% if huertos == None %}0 {%else%}{{huertos|floatformat:2}},{% endif %}]
             }, {
                 name: "Frutales",
-                y: {% if frutas == None %}0 {%else%}{{frutas|floatformat:2}},{% endif %}
-
+                data: [{% if frutas == None %}0 {%else%}{{frutas|floatformat:2}},{% endif %}]
             }, {
                 name: "Otras fuentes",
-                y: {% if fuente == None %}0 {%else%}{{fuente|floatformat:2}},{% endif %}
-
+                data: [{% if fuente == None %}0 {%else%}{{fuente|floatformat:2}},{% endif %}]
             }, {
                 name: "Ganado",
-                y: {% if ganado == None %}0 {%else%}{{ganado|floatformat:2}},{% endif %}
-
+                data: [{% if ganado == None %}0 {%else%}{{ganado|floatformat:2}},{% endif %}]
             }, {
                 name: "Procesamientos",
-                y: {% if procesamiento == None %}0 {%else%}{{procesamiento|floatformat:2}}{% endif %}
-
-            }]
-        }],
+                data: [{% if procesamiento == None %}0 {%else%}{{procesamiento|floatformat:2}}{% endif %}]
+        }]
     });
 });
-
 $(function () {
     $('#grafico3').highcharts({
         chart: {
@@ -384,7 +393,7 @@ $(function () {
         },
 
         title: {
-            text: 'Budget vs spending',
+            text: '',
             x: -80
         },
 
@@ -393,8 +402,7 @@ $(function () {
         },
 
         xAxis: {
-            categories: ['Sales', 'Marketing', 'Development', 'Customer Support',
-                    'Information Technology', 'Administration'],
+            categories: ['Capital natural', 'Capital social', 'Capital financiero', 'Capital fisico','Capital humano'],
             tickmarkPlacement: 'on',
             lineWidth: 0
         },
@@ -407,7 +415,7 @@ $(function () {
 
         tooltip: {
             shared: true,
-            pointFormat: '<span style="color:{series.color}">{series.name}: <b>${point.y:,.0f}</b><br/>'
+            pointFormat: '<span style="color:{series.color}">{series.name}: <b>{point.y:,.0f}</b><br/>'
         },
 
         legend: {
@@ -418,67 +426,24 @@ $(function () {
         },
 
         series: [{
-            name: 'Allocated Budget',
-            data: [43000, 19000, 60000, 35000, 17000, 10000],
+            name: 'Jefe de hogar hombre',
+            data: [{{capital_natural_hombre}}, {{capital_social_hombre}}, {{capital_financiero_hombre}}, {{capital_fisico_hombre}}, {{capital_humano_hombre}}],
             pointPlacement: 'on'
         }, {
-            name: 'Actual Spending',
-            data: [50000, 39000, 42000, 31000, 26000, 14000],
+            name: 'Jefe de hogar mujer',
+            data: [{{capital_natural_mujer}}, {{capital_social_mujer}}, {{capital_financiero_mujer}}, {{capital_fisico_mujer}}, {{capital_humano_mujer}}],
+            pointPlacement: 'on'
+        }, {
+            name: 'Ambos',
+            data: [{{capital_natural_ambos}}, {{capital_social_ambos}}, {{capital_financiero_ambos}}, {{capital_fisico_ambos}}, {{capital_humano_ambos}}],
+            pointPlacement: 'on'
+        }, {
+            name: 'Mujer no jefa de hogar',
+            data: [0, 0, 0, 0, 0],
             pointPlacement: 'on'
         }]
 
     });
-
-    $('#container100').highcharts({
-            chart: {
-                plotBackgroundColor: null,
-                plotBorderWidth: null,
-                plotShadow: false,
-                type: 'pie'
-            },
-            title: {
-                text: 'Ingresos'
-            },
-            tooltip: {
-                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-            },
-            plotOptions: {
-                pie: {
-                    allowPointSelect: true,
-                    cursor: 'pointer',
-                    dataLabels: {
-                        enabled: false
-                    },
-                    showInLegend: true
-                }
-            },
-            series: [{
-                name: 'Brands',
-                colorByPoint: true,
-                data: [{
-                    name: 'Cultivos tradicionales',
-                    y: {% if tradicional == None %}0 {%else%}{{tradicional|floatformat:2}},{% endif %}
-                }, {
-                    name: 'Cultivos huertos',
-                    y: {% if huertos == None %}0 {%else%}{{huertos|floatformat:2}},{% endif %}
-                    sliced: true,
-                    selected: true
-                }, {
-                    name: 'Frutales',
-                    y: {% if frutas == None %}0 {%else%}{{frutas|floatformat:2}},{% endif %}
-                }, {
-                    name: 'Otras fuentes',
-                    y: {% if fuente == None %}0 {%else%}{{fuente|floatformat:2}},{% endif %}
-                }, {
-                    name: 'Ganado',
-                    y: {% if ganado == None %}0 {%else%}{{ganado|floatformat:2}},{% endif %}
-                }, {
-                    name: 'Procesamientos',
-                    y: {% if procesamiento == None %}0 {%else%}{{procesamiento|floatformat:2}}{% endif %}
-                }]
-            }]
-        });
-
 });
 </script>
 {% endblock extra_js %}
@@ -625,7 +590,7 @@ $(function () {
         </div>
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 ">
             <div class="mapa-general ">
-                <div id="container100"></div>
+                <div id="grafico5"></div>
             </div>
         </div>
 
