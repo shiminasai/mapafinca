@@ -522,6 +522,9 @@ class Cultivos(models.Model):
     codigo = models.CharField(max_length=4)
     nombre = models.CharField(max_length=250)
     unidad_medida = models.IntegerField(choices=CHOICE_MEDIDA)
+    calorias = models.FloatField(null=True, blank=True)
+    proteinas = models.FloatField(null=True, blank=True)
+
 
     def __unicode__(self):
         return u'%s-%s' % (self.codigo, self.nombre)
@@ -567,6 +570,8 @@ class CultivosHuertos(models.Model):
     codigo = models.CharField(max_length=4)
     nombre = models.CharField(max_length=250)
     unidad_medida = models.IntegerField(choices=CHOICE_MEDIDA)
+    calorias = models.FloatField(null=True, blank=True)
+    proteinas = models.FloatField(null=True, blank=True)
 
     def __unicode__(self):
         return u'%s-%s' % (self.codigo, self.nombre)
@@ -612,6 +617,8 @@ class CultivosFrutas(models.Model):
     codigo = models.CharField(max_length=4)
     nombre = models.CharField(max_length=250)
     unidad_medida = models.IntegerField(choices=CHOICE_MEDIDA)
+    calorias = models.FloatField(null=True, blank=True)
+    proteinas = models.FloatField(null=True, blank=True)
 
     def __unicode__(self):
         return u'%s-%s' % (self.codigo, self.nombre)
@@ -686,6 +693,8 @@ class ProductoProcesado(models.Model):
     codigo = models.CharField(max_length=4, null=True, blank=True)
     nombre = models.CharField(max_length=250)
     unidad_medida = models.IntegerField(choices=CHOICE_MEDIDA)
+    calorias = models.FloatField(null=True, blank=True)
+    proteinas = models.FloatField(null=True, blank=True)
 
     def __unicode__(self):
         return u'%s-%s' % (self.codigo, self.nombre)
@@ -967,9 +976,11 @@ class OtrasSeguridad(models.Model):
 class ProductosFueraFinca(models.Model):
     nombre = models.CharField(max_length=250)
     unidad_medida = models.CharField(max_length=150)
+    calorias = models.FloatField(null=True, blank=True)
+    proteinas = models.FloatField(null=True, blank=True)
 
     def __unicode__(self):
-        return self.nombre
+        return u'%s en %s' % (self.nombre, self.unidad_medida)
 
 class AlimentosFueraFinca(models.Model):
     encuesta = models.ForeignKey(Encuesta)
@@ -987,6 +998,9 @@ class AlimentosFueraFinca(models.Model):
 
         # activar signal post_save de encuesta
         models.signals.post_save.send(sender=Encuesta, instance=self.encuesta)
+
+    def __unicode__(self):
+        return u'%s' % (self.producto)
 
     class Meta:
         verbose_name_plural = '42_Indique los alimentos que compra fuera de la finca'

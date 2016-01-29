@@ -218,9 +218,6 @@ def principal_dashboard(request, template='dashboard.html', departamento_id=None
                                                                                     Q(escolaridad__secu_incompleta__gt=1) |  Q(escolaridad__bachiller__gt=1) |  Q(escolaridad__uni_tecnico__gt=1)).count()
     capital_humano_ambos = Encuesta.objects.filter(Q(entrevistado__departamento=departamento_id), Q(sexomiembros__sexo=3),
                                                                                     Q(escolaridad__secu_incompleta__gt=1) |  Q(escolaridad__bachiller__gt=1) |  Q(escolaridad__uni_tecnico__gt=1)).count()
-    print "hola hola"
-    print capital_humano_ambos
-
 
     return render(request,template,locals())
 
@@ -249,24 +246,6 @@ def detalle_finca(request, template='detalle_finca.html', entrevistado_id=None):
     #los años del detalle del productor
     gran_dicc = {}
     for year in years:
-        tabla_educacion = []
-        grafo = []
-        suma = 0
-        for e in CHOICE_ESCOLARIDAD:
-            objeto = detalle.filter(year=year[0],escolaridad__sexo = e[0]).aggregate(num_total = Sum('escolaridad__total'),
-                    no_leer = Sum('escolaridad__no_leer'),
-                    p_incompleta = Sum('escolaridad__pri_incompleta'),
-                    p_completa = Sum('escolaridad__pri_completa'),
-                    s_incompleta = Sum('escolaridad__secu_incompleta'),
-                    bachiller = Sum('escolaridad__bachiller'),
-                    universitario = Sum('escolaridad__uni_tecnico'))
-            try:
-                suma = int(objeto['p_completa'] or 0) + int(objeto['s_incompleta'] or 0) + int(objeto['bachiller'] or 0) + int(objeto['universitario'] or 0)
-            except:
-                pass
-            variable = round(saca_porcentajes(suma,objeto['num_total']))
-            grafo.append([e[1],variable])
-
         #calculo ingreso vs gasto
         gasto_total = detalle.filter(year=year[0]).aggregate(t=Sum('totalingreso__total_gasto'))['t']
         gasto_total_fuera = detalle.filter(year=year[0]).aggregate(t=Sum('totalingreso__total_gasto_fuera_finca'))['t']
@@ -274,7 +253,53 @@ def detalle_finca(request, template='detalle_finca.html', entrevistado_id=None):
         ingreso_total = detalle.filter(year=year[0]).aggregate(t=Sum('totalingreso__total'))['t']
         total_gastos = gasto_total + gasto_total_fuera
 
-        gran_dicc[year[1]] = (grafo, ingreso_total, total_gastos)
+        ingreso_cultivo_tradicional = {}
+        for obj in Cultivos.objects.all():
+            cultivo = CultivosTradicionales.objects.filter(encuesta__entrevistado__departamento=request.session['departamento'],
+                                                            cultivo=obj, encuesta__entrevistado__id=entrevistado_id, encuesta__year=year[0])
+            cosechada = cultivo.aggregate(t=Sum('cantidad_cosechada'))['t']
+            venta = cultivo.aggregate(t=Sum('venta'))['t']
+            precio = cultivo.aggregate(t=Avg('precio'))['t']
+            try:
+                ingreso = venta * precio
+            except:
+                ingreso = 0
+            costo = cultivo.aggregate(t=Avg('costo'))['t']
+            if venta > 0:
+                ingreso_cultivo_tradicional[obj] = {'unidad':obj.get_unidad_medida_display(),
+                                                'cantidad_cosechada':cosechada,
+                                                'venta':venta,
+                                                'precio':precio,
+                                                'ingreso': ingreso,
+                                                'costo':costo}
+
+        ingreso_huertos = {}
+        ingreso_patio = 0
+        for obj in CultivosHuertos.objects.all():
+            cultivo = CultivosHuertosFamiliares.objects.filter(cultivo=obj,
+                                                                                            encuesta__entrevistado__id=entrevistado_id,
+                                                                                            encuesta__year=year[0])
+            print cultivo
+            cosechada = cultivo.aggregate(t=Sum('cantidad_cosechada'))['t']
+            venta = cultivo.aggregate(t=Sum('venta'))['t']
+            precio = cultivo.aggregate(t=Avg('precio'))['t']
+            try:
+                ingreso = venta * precio
+            except:
+                ingreso = 0
+            costo_huerto = CostoHuerto.objects.filter(encuesta__entrevistado__id=entrevistado_id,
+                                                                                 encuesta__year=year[0]).aggregate(t=Avg('costo'))['t']
+            ingreso_patio += ingreso
+
+            if venta > 0:
+                ingreso_huertos[obj] = {'unidad':obj.get_unidad_medida_display(),
+                                                'cantidad_cosechada':cosechada,
+                                                'venta':venta,
+                                                'precio':precio,
+                                                'ingreso': ingreso,
+                                                }
+
+        gran_dicc[year[1]] = (ingreso_total, total_gastos,ingreso_cultivo_tradicional, ingreso_huertos)
 
     return render(request, template, locals())
 
@@ -864,14 +889,27 @@ def gastos(request, template="indicadores/gastos.html"):
                                                     tipo=obj[0]).aggregate(t=Avg('cantidad'))['t']
         gasto_hogar[obj[1]] =  valor
 
-
     gasto_produccion = {}
     for obj in TipoGasto.objects.all():
         valor = GastoProduccion.objects.filter(encuesta__entrevistado__departamento=request.session['departamento'],
                                                         tipo=obj).aggregate(t=Avg('cantidad'))['t']
         gasto_produccion[obj] =  valor
 
+    return render(request, template, locals())
 
+def gastos(request, template="indicadores/calorias.html"):
+
+    calorias_tradicional = {}
+    for obj in Cultivos.objects.all():
+        calculo = CultivosTradicionales.objects.filter(encuesta__entrevistado__departamento=request.session['departamento'],
+                                                                                cultivo=obj)
+        consumida = calculo.consumo_familia * 12
+        consumida_gramos = consumida * obj.calorias
+        calorias_dia = float(consumida_gramos * obj.calorias) / 100
+        gramo_dia = float(obj.proteinas*consumida_gramos) / 100
+        calorias_tradicional[obj] = (consumida, obj.unidad_medida,consumida_gramos,obj.calorias, obj.proteinas,calorias_dia,gramo_dia)
+
+    print calorias_tradicional
 
     return render(request, template, locals())
 

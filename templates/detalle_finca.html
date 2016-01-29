@@ -1,6 +1,9 @@
 {% extends "base.html" %}
+
 {% load humanize %}
 {% load thumbnail %}
+{% load helpertags %}
+
 {% block extra_js %}
 <script src="http://code.highcharts.com/highcharts.js"></script>
 <script src="http://code.highcharts.com/modules/exporting.js"></script>
@@ -11,10 +14,11 @@
 <script type="text/javascript">
 
     function initialize() {
-  			var myLatlng = new google.maps.LatLng({{latitud}},{{longitud}});
-  			var mapOptions = {
-    		zoom: 12,
-    		center: myLatlng
+		var myLatlng = new google.maps.LatLng({{latitud}},{{longitud}});
+		var mapOptions = {
+    		zoom: 18,
+    		center: myLatlng,
+                         mapTypeId: google.maps.MapTypeId.SATELLITE
   		}
   		var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
@@ -39,54 +43,6 @@
 $(function () {
     // Create the chart
     {% for k,v in gran_dicc.items %}
-
-    $('#ficha-grafico1-{{k}}').highcharts({
-        chart: {
-            type: 'column'
-        },
-        title: {
-            text: 'Miembros que poseen educación {{k}}'
-        },
-        xAxis: {
-            type: 'category'
-        },
-        yAxis: {
-            title: {
-                text: 'porcentaje'
-            }
-        },
-        legend: {
-            enabled: false
-        },
-        plotOptions: {
-            series: {
-                borderWidth: 0,
-                dataLabels: {
-                    enabled: true,
-                    format: '{point.y:.1f}'
-                }
-            }
-        },
-        tooltip: {
-            headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
-            pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}</b><br/>'
-        },
-        series: [{
-            name: "porcentaje",
-            colorByPoint: true,
-            data: [
-            {% for value in v.0 %}
-            {
-                name: "{{value.0}}",
-                y: {{value.1}},
-            },
-            {% endfor %}
-            ]
-        }],
-    });
-
-	//fin del grafico de educacion
-	//
 	//Inicio del grafico de ingreso
 	$('#ficha-grafico2-{{k}}').highcharts({
             chart: {
@@ -116,93 +72,18 @@ $(function () {
                 colorByPoint: true,
                 data: [{
                     name: "Ingreso",
-                    y: {{v.1}}
+                    y: {{v.0}}
                 }, {
                     name: "Gasto",
-                    y: {{v.2}},
+                    y: {{v.1}},
                     sliced: true,
                     selected: true
                 }]
             }]
         });
-
-
 	{% endfor %}
 }); //fin funcion anonima
 
-$(function () {
-
-    $(document).ready(function () {
-
-        // Build the chart
-
-    });
-});
-
-$(function () {
-    $('#ficha-grafico3').highcharts({
-        chart: {
-            type: 'line'
-        },
-
-        xAxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-        },
-        yAxis: {
-            title: {
-                text: 'Temperature (°C)'
-            }
-        },
-        plotOptions: {
-            line: {
-                dataLabels: {
-                    enabled: true
-                },
-                enableMouseTracking: false
-            }
-        },
-        series: [{
-            name: 'Tokyo',
-            data: [7.0, 6.9, 9.5, 14.5, 18.4, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6]
-        }, {
-            name: 'London',
-            data: [3.9, 4.2, 5.7, 8.5, 11.9, 15.2, 17.0, 16.6, 14.2, 10.3, 6.6, 4.8]
-        }]
-    });
-});
-
-
-$(function () {
-    $('#ficha-grafico4').highcharts({
-        chart: {
-            type: 'line'
-        },
-
-        xAxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-        },
-        yAxis: {
-            title: {
-                text: 'Temperature (°C)'
-            }
-        },
-        plotOptions: {
-            line: {
-                dataLabels: {
-                    enabled: true
-                },
-                enableMouseTracking: false
-            }
-        },
-        series: [{
-            name: 'Tokyo',
-            data: [7.0, 6.9, 9.5, 14.5, 18.4, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6]
-        }, {
-            name: 'London',
-            data: [3.9, 4.2, 5.7, 8.5, 11.9, 15.2, 17.0, 16.6, 14.2, 10.3, 6.6, 4.8]
-        }]
-    });
-});
 
 </script>
 {% endblock extra_js %}
@@ -419,12 +300,6 @@ $(function () {
 						</a>
 
 					</div>
-					<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 ficha-grafico alinear" >
-						<div class="titulo-info">
-								MIEMBROS DEL HOGAR QUE ALCANZARON (Pri.,Secun.,Br,Univ.)
-						</div>
-						<div id="ficha-grafico1-{{obj.year}}" style="height:370px;"></div>
-					</div>
 				</div>
 
 				<div class="row ficha-fila2">
@@ -439,24 +314,29 @@ $(function () {
 						<div class="row">
 							<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ficha-grafico espacio">
 								<div class="titulo-info">
-										TOTAL DE INGRESOS
+										TOTAL DE INGRESOS <br>
+                                                                                                                    {{obj.totalingreso.total|intcomma}}
 								</div>
-								<div id="ficha-grafico3" style="height:200px;"></div>
+
 							</div>
 							<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ficha-grafico">
 								<div class="titulo-info">
-										TOTAL GASTOS DEL HOGAR
+										TOTAL GASTOS DEL HOGAR <br>
+                                                                                                                        {{obj.totalingreso.total_gasto|intcomma}}
 								</div>
-								<div id="ficha-grafico4" style="height:200px;"></div>
+
 							</div>
+                                                                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ficha-grafico">
+                                                                                        <div class="titulo-info">
+                                                                                                TOTAL GASTOS ALIMENTOS QUE COMPRA FUERA DE LA FINCA <br>
+                                                                                             {{obj.totalingreso.total_gasto_fuera_finca|intcomma}}
+                                                                                        </div>
+
+                                                                                    </div>
 
 						</div>
 					</div>
 				</div>
-
-			  	total:{{obj.totalingreso.total|intcomma}} <br>
-			  	total gasto: {{obj.totalingreso.total_gasto|intcomma}} <br>
-			  	total gasto fuera de la finca: {{obj.totalingreso.total_gasto_fuera_finca|intcomma}} <br>
 
 			  	<div class="modal fade" id="modal-id-{{obj.year}}">
 			  		<div class="modal-dialog modal-lg">
