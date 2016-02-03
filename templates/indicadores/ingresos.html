@@ -1,42 +1,86 @@
 {% extends "base.html" %}
 
 {% load helpertags %}
+{% load humanize %}
+
+{% block extra_js %}
+<script type="text/javascript">
+$(document).ready(function() {
+    var sum = 0;
+    var quantity = 0;
+    $('.price').each(function() {
+        var price = $(this);
+        var q = price.closest('tr').find('.quantity').val();
+        sum += parseInt(price.val()) * parseInt(q);
+        quantity += parseInt(q);
+    });
+
+    $('#total_price').html(sum);
+    $('#total_quantity').html(quantity);
+});
+
+</script>
+{% endblock extra_js %}
 
 {% block contenido %}
+{% include "breadcrumb.html" %}
 <br>
+<div class="container">
+<div> <!-- fin del tabs -->
+  <!-- Nav tabs -->
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">2015</a></li>
+    <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">2016</a></li>
+    <li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">2017</a></li>
+    <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">2018</a></li>
+  </ul>
+
+  <!-- Tab panes -->
+  <div class="tab-content">
+  <div role="tabpanel" class="tab-pane fade in active" id="home">
 <div class="row">
-<div class="col-md-6">
+<div class="col-md-12">
     <table class="table">
         <caption>Los cultivos tradicionales</caption>
         <thead>
             <tr>
                 <th>Rubro</th>
-            	<th>Unidad de medida</th>
-            	<th>Cantidad cosechada</th>
-            	<th>Cantidad vendida</th>
-            	<th>Precio de venta</th>
-            	<th>Ingreso</th>
-            	<th>Costo</th>
-            	<th>Utilidad o perdida</th>
+                <th>Unidad de medida</th>
+                <th>Cantidad cosechada</th>
+                <th>Cantidad vendida</th>
+                <th>Precio de venta</th>
+                <th>Ingreso</th>
+                <th>Costo</th>
+                <th>Utilidad o perdida</th>
             </tr>
         </thead>
         <tbody>
             {%for key, value in ingreso_cultivo_tradicional.items%}
             <tr>
                 <td>{{key}}</td>
-            	<td>{{value.unidad}}</td>
-            	<td>{{value.cantidad_cosechada|default:0}}</td>
-            	<td>{{value.venta|default:0}}</td>
-            	<td>{{value.precio|floatformat:1|default:0}}</td>
-            	<td>{{value.ingreso|floatformat:1|default:0}}</td>
-            	<td>{{value.costo|floatformat:1|default:0}}</td>
-            	<td>{{value.ingreso|calculaUtilidad:value.costo|default:0|floatformat:1}}</td>
+                <td>{{value.unidad}}</td>
+                <td>{{value.cantidad_cosechada|default:0|intcomma}}</td>
+                <td>{{value.venta|default:0|intcomma}}</td>
+                <td>{{value.precio|floatformat:1|default:0|intcomma}}</td>
+                <td>{{value.ingreso|floatformat:1|default:0|intcomma}}</td>
+                <td>{{value.costo|floatformat:1|default:0|intcomma}}</td>
+                <td>{{value.ingreso|calculaUtilidad:value.costo|default:0|floatformat:2|intcomma}}</td>
             </tr>
             {%endfor%}
+            <tr>
+            <th>TOTALES</th>
+            <th>---</th>
+            <th>---</th>
+            <th>---</th>
+            <th>---</th>
+            <th>{{total_ingreso_tradicional|floatformat:2|intcomma}}</th>
+            <th>{{total_costo_tradicional|floatformat:2|intcomma}}</th>
+            <th>{{total_utilidad_tradicional|floatformat:2|intcomma}}</th>
+        </tr>
         <tbody>
     </table>
     </div>
-<div class="col-md-6">
+<div class="col-md-12">
     <table class="table">
         <caption>Los cultivos huertos de la finca</caption>
         <thead>
@@ -56,27 +100,29 @@
             <tr>
                 <td>{{key}}</td>
                 <td>{{value.unidad}}</td>
-                <td>{{value.cantidad_cosechada|default:0}}</td>
-                <td>{{value.venta|default:0}}</td>
-                <td>{{value.precio|floatformat:1|default:0}}</td>
-                <td>{{value.ingreso|floatformat:1|default:0}}</td>
+                <td>{{value.cantidad_cosechada|default:0|intcomma}}</td>
+                <td>{{value.venta|default:0|intcomma}}</td>
+                <td>{{value.precio|floatformat:1|default:0|intcomma}}</td>
+                <td>{{value.ingreso|floatformat:1|default:0|intcomma}}</td>
+                <th>---</th>
+                <th>---</th>
             </tr>
             {%endfor%}
         <tbody>
         <tr>
             <th>TOTALES</th>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th>{{ingreso_patio|floatformat:1}}</th>
-            <th>{{costo_huerto|floatformat:1}}</th>
-            <th>{{ingreso_patio|calculaUtilidad:costo_huerto|floatformat:1}}</th>
+            <th>---</th>
+            <th>---</th>
+            <th>---</th>
+            <th>---</th>
+            <th>{{ingreso_patio|floatformat:1|intcomma}}</th>
+            <th>{{costo_huerto|floatformat:1|intcomma}}</th>
+            <th>{{utilidad_huerto_patio|floatformat:2|intcomma}}</th>
         </tr>
     </table>
     </div>
 
-<div class="col-md-6">
+<div class="col-md-12">
     <table class="table">
         <caption>Los frutales en la finca</caption>
         <thead>
@@ -96,26 +142,28 @@
             <tr>
                 <td>{{key}}</td>
                 <td>{{value.unidad}}</td>
-                <td>{{value.cantidad_cosechada|default:0}}</td>
-                <td>{{value.venta|default:0}}</td>
-                <td>{{value.precio|floatformat:1|default:0}}</td>
-                <td>{{value.ingreso|floatformat:1|default:0}}</td>
+                <td>{{value.cantidad_cosechada|default:0|intcomma}}</td>
+                <td>{{value.venta|default:0|intcomma}}</td>
+                <td>{{value.precio|floatformat:1|default:0|intcomma}}</td>
+                <td>{{value.ingreso|floatformat:1|default:0|intcomma}}</td>
+                <th>---</th>
+                <th>---</th>
             </tr>
             {%endfor%}
         <tbody>
         <tr>
             <th>TOTALES</th>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
-            <th>{{ingreso_fruta|floatformat:1}}</th>
-            <th>{{costo_fruta|floatformat:1}}</th>
-            <th>{{ingreso_fruta|calculaUtilidad:costo_fruta|floatformat:1}}</th>
+            <th>---</th>
+            <th>---</th>
+            <th>---</th>
+            <th>---</th>
+            <th>{{ingreso_fruta|floatformat:1|intcomma}}</th>
+            <th>{{costo_fruta|floatformat:1|intcomma}}</th>
+            <th>{{utilidad_frutas|floatformat:2|intcomma}}</th>
         </tr>
     </table>
     </div>
-<div class="col-md-6">
+<div class="col-md-12">
     <table class="table">
         <caption>Tenencia de animales en la finca</caption>
         <thead>
@@ -131,17 +179,24 @@
             {%for key, value in ingreso_ganaderia.items%}
             <tr>
                 <td>{{key}}</td>
-                <td>{{value.cantidad|default:0|floatformat:1}}</td>
-                <td>{{value.venta|default:0}}</td>
-                <td>{{value.precio|floatformat:1|default:0}}</td>
-                <td>{{value.ingreso|floatformat:1|default:0}}</td>
+                <td>{{value.cantidad|default:0|floatformat:1|intcomma}}</td>
+                <td>{{value.venta|default:0|intcomma}}</td>
+                <td>{{value.precio|floatformat:1|default:0|intcomma}}</td>
+                <td>{{value.ingreso|floatformat:1|default:0|intcomma}}</td>
             </tr>
             {%endfor%}
+             <tr>
+            <th>TOTALES</th>
+            <th>---</th>
+            <th>---</th>
+            <th>---</th>
+            <th>{{total_ingreso_ganado|floatformat:2|intcomma}}</th>
+        </tr>
         <tbody>
     </table>
     </div>
 
-<div class="col-md-6">
+<div class="col-md-12">
     <table class="table">
         <caption>Comercialización de los productos procesados</caption>
         <thead>
@@ -159,17 +214,83 @@
             <tr>
                 <td>{{key}}</td>
                 <td>{{value.unidad}}</td>
-                <td>{{value.cantidad|default:0|floatformat:1}}</td>
-                <td>{{value.venta|default:0}}</td>
-                <td>{{value.precio|floatformat:1|default:0}}</td>
-                <td>{{value.ingreso|floatformat:1|default:0}}</td> 
+                <td>{{value.cantidad|default:0|floatformat:1|intcomma}}</td>
+                <td>{{value.venta|default:0|intcomma}}</td>
+                <td>{{value.precio|floatformat:1|default:0|intcomma}}</td>
+                <td>{{value.ingreso|floatformat:1|default:0|intcomma}}</td>
             </tr>
             {%endfor%}
+            <tr>
+                <th>TOTALES</th>
+                <th>---</th>
+                <th>---</th>
+                <th>---</th>
+                <th>---</th>
+                <th>{{total_ingreso_procesado|floatformat:2|intcomma}}</th>
+            </tr>
         <tbody>
     </table>
     </div>
+    <div class="col-md-12">
+    <table class="table">
+        <caption>Totales por cultivos</caption>
+        <thead>
+            <tr>
+                <th>Tipo de Ingreso</th>
+                <th>Ingreso / Utilidad</th>
+                <th>Número de entrevistado</th>
+                <th>Ingreso por familia</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th>Cultivo tradicional</th>
+                <th>{{total_utilidad_tradicional|floatformat:2|intcomma}}</th>
+                <th>{{request.session.encuestados}}</th>
+                <th>{{total_utilidad_tradicional|calcularIngresoXfamilia:request.session.encuestados|floatformat:2|intcomma}}</th>
+            </tr>
+            <tr>
+                <th>Cultivo huertos de patio</th>
+                <th>{{utilidad_huerto_patio|floatformat:2|intcomma}}</th>
+                <th>{{request.session.encuestados}}</th>
+                <th>{{utilidad_huerto_patio|calcularIngresoXfamilia:request.session.encuestados|floatformat:2|intcomma}}</th>
+            </tr>
+            <tr>
+                <th>Cultivo Frutales</th>
+                <th>{{utilidad_frutas|floatformat:2|intcomma}}</th>
+                <th>{{request.session.encuestados}}</th>
+                <th>{{utilidad_frutas|calcularIngresoXfamilia:request.session.encuestados|floatformat:2|intcomma}}</th>
+            </tr>
+            <tr>
+                <th>Animales en la finca</th>
+                <th>{{total_ingreso_ganado|floatformat:2|intcomma}}</th>
+                <th>{{request.session.encuestados}}</th>
+                <th>{{total_ingreso_ganado|calcularIngresoXfamilia:request.session.encuestados|floatformat:2|intcomma}}</th>
+            </tr>
+            <tr>
+                <th>Productos procesados</th>
+                <th>{{total_ingreso_procesado|floatformat:2|intcomma}}</th>
+                <th>{{request.session.encuestados}}</th>
+                <th>{{total_ingreso_procesado|calcularIngresoXfamilia:request.session.encuestados|floatformat:2|intcomma}}</th>
+            </tr>
+            <tr>
+                <th>TOTAL</th>
+                <th>---</th>
+                <th>---</th>
+                <th>calcular</th>
+            </tr>
+        <tbody>
+    </table>
+    </div>
+</div>
 
-
+  </div>
+  <div role="tabpanel" class="tab-pane fade" id="profile">...</div>
+  <div role="tabpanel" class="tab-pane fade" id="messages">...</div>
+  <div role="tabpanel" class="tab-pane fade" id="settings">...</div>
+</div>
+</div> <!-- fin del tabs -->
+<br>
 </div>
 <br><br>
 {% include "menu_indicadores.html" %}

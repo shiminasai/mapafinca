@@ -62,6 +62,8 @@
 {% endblock extra_js %}
 
 {% block contenido %}
+{% include "breadcrumb.html" %}
+<div class="container">
 <br>
 <div class="row">
     <h4>Promedio en Mz: {{promedio_mz|floatformat:2}} Mz</h4>
@@ -89,7 +91,7 @@
             <th>Frecuencias</th>
             <th>Porcentajes</th>
         </tr>
-        
+
         <tr>
             <td>1 - 5 Mz</td>
             <td>{{uno_num}}</td>
@@ -105,11 +107,11 @@
             <td>{{diez_mas}}</td>
             <td>{{diez_mas}}</td>
         </tr>
-        
+
     </table>
     </div>
 </div>
+</div>
 <br><br>
-
 {% include "menu_indicadores.html" %}
 {% endblock contenido %}

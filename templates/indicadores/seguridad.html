@@ -154,8 +154,9 @@ $('#container2').highcharts({
 </script>
 {% endblock extra_js %}
 
-
 {% block contenido %}
+{% include "breadcrumb.html" %}
+<div class="container">
 <br>
 <p class="text-center">Razones por las que no cuentan con suficientes alimentos</p>
 <div class="row">
@@ -236,6 +237,7 @@ $('#container2').highcharts({
 <div class="row">
   <div class="col-md-6"><div id="container2" style="height: 400px;"></div></div>
   <div class="col-md-6"><div id="container3" style="height: 400px;"></div></div>
+</div>
 </div>
 <br><br>
 {% include "menu_indicadores.html" %}

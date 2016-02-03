@@ -171,6 +171,8 @@ $(function () {
 {% endblock extra_js %}
 
 {% block contenido %}
+{% include "breadcrumb.html" %}
+<div class="container">
 <br>
 <div class="row">
     <div class="col-md-6">
@@ -219,6 +221,7 @@ $(function () {
             {% endfor %}
         </table>
   </div>
+</div>
 </div>
 <br><br>
 {% include "menu_indicadores.html" %}

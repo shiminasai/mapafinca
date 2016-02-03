@@ -1,0 +1,210 @@
+{% extends "base.html" %}
+
+{% load humanize %}
+
+{% block contenido %}
+
+<div class="container">
+    <table class="table-striped">
+        <caption>Tabla balance nutricional cultivo tradicional</caption>
+        <thead>
+            <tr>
+                <th>Tipo alimento</th>
+                <th>Cantidad consumida / año</th>
+                <th>Unidad de medida consumida</th>
+                <th>consumo * año (g)</th>
+                <th>Cantidad de calorias aportadas unidad</th>
+                <th>Cantidad de proteinas aportada por unidad</th>
+                <th>Calorias aportadas por alimento cal * dia</th>
+                <th>Proteinas aportadas por alimento gr * dia</th>
+            </tr>
+        </thead>
+        <tbody>
+            {%for key, value in calorias_tradicional.items%}
+            <tr>
+                <td>{{key}}</td>
+                <td>{{value.0|floatformat:2}}</td>
+                <td>{{value.1}} </td>
+                <td>{{value.2|floatformat:2}} </td>
+                <td>{{value.3}} </td>
+                <td>{{value.4}} </td>
+                <td>{{value.5|floatformat:2}} </td>
+                <td>{{value.6|floatformat:2}} </td>
+            </tr>
+            {%endfor%}
+            <tr>
+                <td><strong>TOTAL</strong></td>
+                <td></td>
+                <td> </td>
+                <td> </td>
+                <td> </td>
+                <td> </td>
+                <td><strong>{{total_calorias_tradicional|default:0|floatformat:2|intcomma}}</strong></td>
+                <td><strong>{{total_proteina_tradicional|default:0|floatformat:2|intcomma}}</strong></td>
+            </tr>
+        <tbody>
+    </table>
+
+    <table class="table-striped">
+        <caption>Tabla balance nutricional cultivo  huertos de patio</caption>
+        <thead>
+            <tr>
+                <th>Tipo alimento</th>
+                <th>Cantidad consumida / año</th>
+                <th>Unidad de medida consumida</th>
+                <th>consumo * año (g)</th>
+                <th>Cantidad de calorias aportadas unidad</th>
+                <th>Cantidad de proteinas aportada por unidad</th>
+                <th>Calorias aportadas por alimento cal * dia</th>
+                <th>Proteinas aportadas por alimento gr * dia</th>
+            </tr>
+        </thead>
+        <tbody>
+            {%for key, value in calorias_huerto.items%}
+            <tr>
+                <td>{{key}}</td>
+                <td>{{value.0|floatformat:2}}</td>
+                <td>{{value.1}} </td>
+                <td>{{value.2|floatformat:2}} </td>
+                <td>{{value.3}} </td>
+                <td>{{value.4}} </td>
+                <td>{{value.5|floatformat:2}} </td>
+                <td>{{value.6|floatformat:2}} </td>
+            </tr>
+            {%endfor%}
+            <tr>
+                <td><strong>TOTAL</strong></td>
+                <td></td>
+                <td> </td>
+                <td> </td>
+                <td> </td>
+                <td> </td>
+                <td><strong>{{total_calorias_huerto|default:0|floatformat:2|intcomma}}</strong></td>
+                <td><strong>{{total_proteina_huerto|default:0|floatformat:2|intcomma}}</strong></td>
+            </tr>
+        <tbody>
+    </table>
+
+    <table class="table-striped">
+        <caption>Tabla balance nutricional cultivo frutas</caption>
+        <thead>
+            <tr>
+                <th>Tipo alimento</th>
+                <th>Cantidad consumida / año</th>
+                <th>Unidad de medida consumida</th>
+                <th>consumo * año (g)</th>
+                <th>Cantidad de calorias aportadas unidad</th>
+                <th>Cantidad de proteinas aportada por unidad</th>
+                <th>Calorias aportadas por alimento cal * dia</th>
+                <th>Proteinas aportadas por alimento gr * dia</th>
+            </tr>
+        </thead>
+        <tbody>
+            {%for key, value in calorias_fruta.items%}
+            <tr>
+                <td>{{key}}</td>
+                <td>{{value.0|floatformat:2}}</td>
+                <td>{{value.1}} </td>
+                <td>{{value.2|floatformat:2}} </td>
+                <td>{{value.3}} </td>
+                <td>{{value.4}} </td>
+                <td>{{value.5|floatformat:2}} </td>
+                <td>{{value.6|floatformat:2}} </td>
+            </tr>
+            {%endfor%}
+            <tr>
+                <td><strong>TOTAL</strong></td>
+                <td></td>
+                <td> </td>
+                <td> </td>
+                <td> </td>
+                <td> </td>
+                <td><strong>{{total_calorias_fruta|default:0|floatformat:2|intcomma}}</strong></td>
+                <td><strong>{{total_proteina_fruta|default:0|floatformat:2|intcomma}}</strong></td>
+            </tr>
+        <tbody>
+    </table>
+
+    <table class="table-striped">
+        <caption>Tabla balance nutricional productos procesados</caption>
+        <thead>
+            <tr>
+                <th>Tipo alimento</th>
+                <th>Cantidad consumida / año</th>
+                <th>Unidad de medida consumida</th>
+                <th>consumo * año (g)</th>
+                <th>Cantidad de calorias aportadas unidad</th>
+                <th>Cantidad de proteinas aportada por unidad</th>
+                <th>Calorias aportadas por alimento cal * dia</th>
+                <th>Proteinas aportadas por alimento gr * dia</th>
+            </tr>
+        </thead>
+        <tbody>
+            {%for key, value in calorias_procesado.items%}
+            <tr>
+                <td>{{key}}</td>
+                <td>{{value.0|floatformat:2}}</td>
+                <td>{{value.1}} </td>
+                <td>{{value.2|floatformat:2}} </td>
+                <td>{{value.3}} </td>
+                <td>{{value.4}} </td>
+                <td>{{value.5|floatformat:2}} </td>
+                <td>{{value.6|floatformat:2}} </td>
+            </tr>
+            {%endfor%}
+            <tr>
+                <td><strong>TOTAL</strong></td>
+                <td></td>
+                <td> </td>
+                <td> </td>
+                <td> </td>
+                <td> </td>
+                <td><strong>{{total_calorias_procesado|default:0|floatformat:2|intcomma}}</strong></td>
+                <td><strong>{{total_proteina_procesado|default:0|floatformat:2|intcomma}}</strong></td>
+            </tr>
+        <tbody>
+    </table>
+
+    <table class="table-striped">
+        <caption>Tabla balance nutricional productos comprados fuera de la finca</caption>
+        <thead>
+            <tr>
+                <th>Tipo alimento</th>
+                <th>Cantidad consumida / año</th>
+                <th>Unidad de medida consumida</th>
+                <th>consumo * año (g)</th>
+                <th>Cantidad de calorias aportadas unidad</th>
+                <th>Cantidad de proteinas aportada por unidad</th>
+                <th>Calorias aportadas por alimento cal * dia</th>
+                <th>Proteinas aportadas por alimento gr * dia</th>
+            </tr>
+        </thead>
+        <tbody>
+            {%for key, value in calorias_fuera_finca.items%}
+            <tr>
+                <td>{{key}}</td>
+                <td>{{value.0|floatformat:2}}</td>
+                <td>{{value.1}} </td>
+                <td>{{value.2|floatformat:2}} </td>
+                <td>{{value.3}} </td>
+                <td>{{value.4}} </td>
+                <td>{{value.5|floatformat:2}} </td>
+                <td>{{value.6|floatformat:2}} </td>
+            </tr>
+            {%endfor%}
+            <tr>
+                <td><strong>TOTAL</strong></td>
+                <td></td>
+                <td> </td>
+                <td> </td>
+                <td> </td>
+                <td> </td>
+                <td><strong>{{total_calorias_fuera_finca|default:0|floatformat:2|intcomma}}</strong></td>
+                <td><strong>{{total_proteina_fuera_finca|default:0|floatformat:2|intcomma}}</strong></td>
+            </tr>
+        <tbody>
+    </table>
+</div>
+<br> <br>
+{% include "menu_indicadores.html" %}
+{% endblock contenido %}

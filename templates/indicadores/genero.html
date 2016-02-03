@@ -140,8 +140,9 @@ $('#container3').highcharts({
 
 
 {% block contenido %}
+{% include "breadcrumb.html" %}
+<div class="container">
 <br><br>
-
 <div class="row">
   <div class="col-md-6"><div id="container" style="height: 400px;"></div></div>
   <div class="col-md-6">
@@ -188,6 +189,7 @@ $('#container3').highcharts({
         <tbody>
     </table>
   </div>
+</div>
 </div>
 <br><br>
 {% include "menu_indicadores.html" %}

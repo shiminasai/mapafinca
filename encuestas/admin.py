@@ -275,6 +275,25 @@ class EntrevistadoAdmin(admin.ModelAdmin):
     list_filter = ('sexo','pais','departamento')
     search_fields = ('nombre',)
 
+#registro de los cultivos con sus propios calorias
+class CultivosAdmin(admin.ModelAdmin):
+    list_display = ('codigo', 'nombre', 'unidad_medida', 'calorias', 'proteinas')
+    list_display_links = ('codigo', 'nombre', )
+
+class CultivosHuertosAdmin(admin.ModelAdmin):
+    list_display = ('codigo', 'nombre', 'unidad_medida', 'calorias', 'proteinas')
+    list_display_links = ('codigo', 'nombre', )
+
+class CultivosFrutasAdmin(admin.ModelAdmin):
+    list_display = ('codigo', 'nombre', 'unidad_medida', 'calorias', 'proteinas')
+    list_display_links = ('codigo', 'nombre', )
+
+class ProductoProcesadoAdmin(admin.ModelAdmin):
+    list_display = ('codigo', 'nombre', 'unidad_medida', 'calorias', 'proteinas')
+    list_display_links = ('codigo', 'nombre', )
+
+class ProductosFueraFincaAdmin(admin.ModelAdmin):
+    list_display = ('nombre', 'unidad_medida', 'calorias', 'proteinas')
 
 # Register your models here.
 admin.site.register(Encuestadores)
@@ -289,11 +308,11 @@ admin.site.register(TipoContamindaAgua)
 admin.site.register(OrgComunitarias)
 admin.site.register(BeneficiosOrganizados)
 admin.site.register(TipoFuenteIngreso)
-admin.site.register(Cultivos)
+admin.site.register(Cultivos, CultivosAdmin)
 admin.site.register(TipoMercado)
-admin.site.register(CultivosHuertos)
+admin.site.register(CultivosHuertos, CultivosHuertosAdmin)
 admin.site.register(Animales)
-admin.site.register(ProductoProcesado)
+admin.site.register(ProductoProcesado, ProductoProcesadoAdmin)
 admin.site.register(TipoGasto)
 admin.site.register(RecibePrestamo)
 admin.site.register(UsoPrestamo)
@@ -301,5 +320,5 @@ admin.site.register(Practicas)
 admin.site.register(TipoSecado)
 admin.site.register(AdquiereAgua)
 admin.site.register(TrataAgua)
-admin.site.register(ProductosFueraFinca)
-admin.site.register(CultivosFrutas)
+admin.site.register(ProductosFueraFinca, ProductosFueraFincaAdmin)
+admin.site.register(CultivosFrutas, CultivosFrutasAdmin)
