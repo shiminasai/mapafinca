@@ -2,9 +2,90 @@
 
 {% load humanize %}
 
-{% block contenido %}
+{% block extra_js %}
+<script src="http://code.highcharts.com/highcharts.js"></script>
+<script src="http://code.highcharts.com/exporting.js"></script>
+<script type="text/javascript">
+$(function () {
+    // Create the chart
+    $('#container').highcharts({
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Grafico nutricional'
+        },
+        subtitle: {
+            text: ''
+        },
+        xAxis: {
+            type: 'category'
+        },
+        yAxis: {
+            title: {
+                text: 'Kcal'
+            }
 
+        },
+        legend: {
+            enabled: false
+        },
+        plotOptions: {
+            series: {
+                borderWidth: 0,
+                dataLabels: {
+                    enabled: true,
+                    format: '{point.y:.1f}'
+                }
+            }
+        },
+
+        tooltip: {
+            headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+            pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}</b> kcal<br/>'
+        },
+
+        series: [{
+            name: "",
+            colorByPoint: true,
+            data: [
+            
+                {
+                    name: "Kcal Cultivos Tradicional",
+                    y: {{total_calorias_tradicional}},
+                },
+                {
+                    name: "Kcal Huertos de patio",
+                    y: {{total_calorias_huerto}},
+                },
+                {
+                    name: "Kcal Frutas",
+                    y: {{total_calorias_fruta}},
+                },
+                {
+                    name: "Kcal Productos procesados",
+                    y: {{total_calorias_procesado}},
+                },
+                {
+                    name: "Kcal Productos comprados",
+                    y: {{total_calorias_fuera_finca}},
+                },
+            
+            ]
+        }],
+    });
+ });
+</script>
+{% endblock extra_js %}
+
+{% block contenido %}
+{% include "breadcrumb.html" %}
 <div class="container">
+<div class="row">
+    <div class="col-md-2"></div>
+    <div class="col-md-8"><div id="container" style="height: 400px;"></div></div>
+    <div class="col-md-2"></div>
+</div>
     <table class="table-striped">
         <caption>Tabla balance nutricional cultivo tradicional</caption>
         <thead>

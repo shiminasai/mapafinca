@@ -5,18 +5,17 @@
 
 {% block extra_js %}
 <script type="text/javascript">
-$(document).ready(function() {
-    var sum = 0;
-    var quantity = 0;
-    $('.price').each(function() {
-        var price = $(this);
-        var q = price.closest('tr').find('.quantity').val();
-        sum += parseInt(price.val()) * parseInt(q);
-        quantity += parseInt(q);
+$(document).ready(function () {
+    var sum = 0 
+    $('tr').each(function () {
+        $(this).find('.valor').each(function () {
+            var combat = $(this).text();
+            if (!isNaN(combat) && combat.length !== 0) {
+                sum += parseFloat(combat);
+            }
+        });
+        $('.total_ingreso', this).html(sum.toFixed(2));
     });
-
-    $('#total_price').html(sum);
-    $('#total_quantity').html(quantity);
 });
 
 </script>
@@ -244,40 +243,40 @@ $(document).ready(function() {
         </thead>
         <tbody>
             <tr>
-                <th>Cultivo tradicional</th>
-                <th>{{total_utilidad_tradicional|floatformat:2|intcomma}}</th>
-                <th>{{request.session.encuestados}}</th>
-                <th>{{total_utilidad_tradicional|calcularIngresoXfamilia:request.session.encuestados|floatformat:2|intcomma}}</th>
+                <td>Cultivo tradicional</td>
+                <td>{{total_utilidad_tradicional|floatformat:2|intcomma}}</td>
+                <td>{{request.session.encuestados}}</td>
+                <td class="valor" >{{total_utilidad_tradicional|calcularIngresoXfamilia:request.session.encuestados|floatformat:2}}</td>
             </tr>
             <tr>
-                <th>Cultivo huertos de patio</th>
-                <th>{{utilidad_huerto_patio|floatformat:2|intcomma}}</th>
-                <th>{{request.session.encuestados}}</th>
-                <th>{{utilidad_huerto_patio|calcularIngresoXfamilia:request.session.encuestados|floatformat:2|intcomma}}</th>
+                <td>Cultivo huertos de patio</td>
+                <td>{{utilidad_huerto_patio|floatformat:2|intcomma}}</td>
+                <td>{{request.session.encuestados}}</td>
+                <td class="valor">{{utilidad_huerto_patio|calcularIngresoXfamilia:request.session.encuestados|floatformat:2}}</td>
             </tr>
             <tr>
-                <th>Cultivo Frutales</th>
-                <th>{{utilidad_frutas|floatformat:2|intcomma}}</th>
-                <th>{{request.session.encuestados}}</th>
-                <th>{{utilidad_frutas|calcularIngresoXfamilia:request.session.encuestados|floatformat:2|intcomma}}</th>
+                <td>Cultivo Frutales</td>
+                <td>{{utilidad_frutas|floatformat:2|intcomma}}</td>
+                <td>{{request.session.encuestados}}</td>
+                <td class="valor">{{utilidad_frutas|calcularIngresoXfamilia:request.session.encuestados|floatformat:2}}</td>
             </tr>
             <tr>
-                <th>Animales en la finca</th>
-                <th>{{total_ingreso_ganado|floatformat:2|intcomma}}</th>
-                <th>{{request.session.encuestados}}</th>
-                <th>{{total_ingreso_ganado|calcularIngresoXfamilia:request.session.encuestados|floatformat:2|intcomma}}</th>
+                <td>Animales en la finca</td>
+                <td>{{total_ingreso_ganado|floatformat:2|intcomma}}</td>
+                <td>{{request.session.encuestados}}</td>
+                <td class="valor">{{total_ingreso_ganado|calcularIngresoXfamilia:request.session.encuestados|floatformat:2}}</td>
             </tr>
             <tr>
-                <th>Productos procesados</th>
-                <th>{{total_ingreso_procesado|floatformat:2|intcomma}}</th>
-                <th>{{request.session.encuestados}}</th>
-                <th>{{total_ingreso_procesado|calcularIngresoXfamilia:request.session.encuestados|floatformat:2|intcomma}}</th>
+                <td>Productos procesados</td>
+                <td>{{total_ingreso_procesado|floatformat:2|intcomma}}</td>
+                <td>{{request.session.encuestados}}</td>
+                <td class="valor">{{total_ingreso_procesado|calcularIngresoXfamilia:request.session.encuestados|floatformat:2}}</td>
             </tr>
             <tr>
-                <th>TOTAL</th>
-                <th>---</th>
-                <th>---</th>
-                <th>calcular</th>
+                <td><strong>TOTAL</strong></td>
+                <td>---</td>
+                <td>---</td>
+                <td class="total_ingreso"></td>
             </tr>
         <tbody>
     </table>
