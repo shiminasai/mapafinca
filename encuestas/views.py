@@ -222,6 +222,7 @@ def principal_dashboard(request, template='dashboard.html', departamento_id=None
                                                                                     Q(escolaridad__secu_incompleta__gt=1) |  Q(escolaridad__bachiller__gt=1) |  Q(escolaridad__uni_tecnico__gt=1)).count()
     capital_humano_ambos = Encuesta.objects.filter(Q(entrevistado__departamento=departamento_id), Q(sexomiembros__sexo=3),
                                                                                     Q(escolaridad__secu_incompleta__gt=1) |  Q(escolaridad__bachiller__gt=1) |  Q(escolaridad__uni_tecnico__gt=1)).count()
+    kcalorias = envio_calorias(request)
 
     return render(request,template,locals())
 
@@ -281,8 +282,8 @@ def detalle_finca(request, template='detalle_finca.html', entrevistado_id=None):
         ingreso_patio = 0
         for obj in CultivosHuertos.objects.all():
             cultivo = CultivosHuertosFamiliares.objects.filter(cultivo=obj,
-                                                                                            encuesta__entrevistado__id=entrevistado_id,
-                                                                                            encuesta__year=year[0])
+                                                            encuesta__entrevistado__id=entrevistado_id,
+                                                            encuesta__year=year[0])
             print cultivo
             cosechada = cultivo.aggregate(t=Sum('cantidad_cosechada'))['t']
             venta = cultivo.aggregate(t=Sum('venta'))['t']
@@ -921,6 +922,83 @@ def gastos(request, template="indicadores/gastos.html"):
         gasto_produccion[obj] =  valor
 
     return render(request, template, locals())
+
+
+def envio_calorias(request):
+    calorias_tradicional = {}
+    for obj in Cultivos.objects.all():
+        calculo = CultivosTradicionales.objects.filter(encuesta__entrevistado__departamento=request.session['departamento'],
+                                                                                cultivo=obj).aggregate(t=Coalesce(Avg('consumo_familia'), V(0)))['t']
+        consumida = calculo * 12
+        consumida_gramos = consumida * obj.calorias
+        calorias_dia = float(consumida_gramos * obj.calorias) / 100
+        gramo_dia = float(obj.proteinas*consumida_gramos) / 100
+        if calorias_dia > 0:
+            calorias_tradicional[obj] = (consumida, obj.get_unidad_medida_display(),consumida_gramos,obj.calorias, obj.proteinas,calorias_dia,gramo_dia)
+    total_calorias_tradicional = sum(list([ i[5] for i in calorias_tradicional.values()]))
+    total_proteina_tradicional = sum(list([ i[6] for i in calorias_tradicional.values()]))
+
+    calorias_huerto = {}
+    for obj in CultivosHuertos.objects.all():
+        calculo = CultivosHuertosFamiliares.objects.filter(encuesta__entrevistado__departamento=request.session['departamento'],
+                                                                                cultivo=obj).aggregate(t=Coalesce(Avg('consumo_familia'), V(0)))['t']
+        consumida = calculo * 12
+        consumida_gramos = consumida * obj.calorias
+        calorias_dia = float(consumida_gramos * obj.calorias) / 100
+        gramo_dia = float(obj.proteinas*consumida_gramos) / 100
+        if calorias_dia > 0:
+            calorias_huerto[obj] = (consumida, obj.get_unidad_medida_display(),consumida_gramos,obj.calorias, obj.proteinas,calorias_dia,gramo_dia)
+
+    total_calorias_huerto = sum(list([ i[5] for i in calorias_huerto.values()]))
+    total_proteina_huerto = sum(list([ i[6] for i in calorias_huerto.values()]))
+
+    calorias_fruta = {}
+    for obj in CultivosFrutas.objects.all():
+        calculo = CultivosFrutasFinca.objects.filter(encuesta__entrevistado__departamento=request.session['departamento'],
+                                                                                cultivo=obj).aggregate(t=Coalesce(Avg('consumo_familia'), V(0)))['t']
+        consumida = calculo * 12
+        consumida_gramos = consumida * obj.calorias
+        calorias_dia = float(consumida_gramos * obj.calorias) / 100
+        gramo_dia = float(obj.proteinas*consumida_gramos) / 100
+        if calorias_dia > 0:
+            calorias_fruta[obj] = (consumida, obj.get_unidad_medida_display(),consumida_gramos,obj.calorias, obj.proteinas,calorias_dia,gramo_dia)
+    total_calorias_fruta = sum(list([ i[5] for i in calorias_fruta.values()]))
+    total_proteina_fruta = sum(list([ i[6] for i in calorias_fruta.values()]))
+
+    calorias_procesado = {}
+    for obj in ProductoProcesado.objects.all():
+        calculo = Procesamiento.objects.filter(encuesta__entrevistado__departamento=request.session['departamento'],
+                                                                                producto=obj).aggregate(t=Coalesce(Avg('cantidad'), V(0)))['t']
+        consumida = calculo * 12
+        consumida_gramos = consumida * obj.calorias
+        calorias_dia = float(consumida_gramos * obj.calorias) / 100
+        gramo_dia = float(obj.proteinas*consumida_gramos) / 100
+        if calorias_dia > 0:
+            calorias_procesado[obj] = (consumida, obj.get_unidad_medida_display(),consumida_gramos,obj.calorias, obj.proteinas,calorias_dia,gramo_dia)
+
+    total_calorias_procesado = sum(list([ i[5] for i in calorias_procesado.values()]))
+    total_proteina_procesado = sum(list([ i[6] for i in calorias_procesado.values()]))
+
+    calorias_fuera_finca = {}
+    for obj in ProductosFueraFinca.objects.all():
+        calculo = AlimentosFueraFinca.objects.filter(encuesta__entrevistado__departamento=request.session['departamento'],
+                                                                                producto=obj).aggregate(t=Coalesce(Avg('cantidad'), V(0)))['t']
+        consumida = calculo * 12
+        consumida_gramos = consumida * obj.calorias
+        calorias_dia = float(consumida_gramos * obj.calorias) / 100
+        gramo_dia = float(obj.proteinas*consumida_gramos) / 100
+        if calorias_dia > 0:
+            calorias_fuera_finca[obj] = (consumida, obj.unidad_medida,consumida_gramos,obj.calorias, obj.proteinas,calorias_dia,gramo_dia)
+
+    total_calorias_fuera_finca = sum(list([ i[5] for i in calorias_fuera_finca.values()]))
+    total_proteina_fuera_finca = sum(list([ i[6] for i in calorias_fuera_finca.values()]))
+
+    datos = {'Kcal Cultivos Tradicional':total_calorias_tradicional,
+            'Kcal Huertos de patio':total_calorias_huerto,
+            'Kcal Frutas':total_calorias_fruta,
+            'Kcal Productos procesados':total_calorias_procesado,
+            'Kcal Productos comprados': total_calorias_fuera_finca}
+    return datos
 
 def calorias(request, template="indicadores/calorias.html"):
 

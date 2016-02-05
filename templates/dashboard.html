@@ -259,21 +259,23 @@ $(function () {
         }]
     });
 });
+
+
 $(function () {
     $('#grafico3').highcharts({
         chart: {
             type: 'column'
         },
         title: {
-            text: 'Consumo en Kcalorias'
+            text: 'Consumo en Kilocalorias'
         },
         xAxis: {
-            categories: ['Apples', 'Oranges', 'Pears', 'Grapes', 'Bananas']
+            categories: ['calorias {{request.session.departamento}}']
         },
         yAxis: {
             min: 0,
             title: {
-                text: 'Total fruit consumption'
+                text: ''
             },
             stackLabels: {
                 enabled: true,
@@ -284,23 +286,16 @@ $(function () {
             }
         },
         legend: {
-            align: 'right',
-            x: -30,
-            verticalAlign: 'top',
-            y: 25,
-            floating: true,
+            align: 'center',
+            verticalAlign: 'bottom',
             backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || 'white',
             borderColor: '#CCC',
             borderWidth: 1,
             shadow: false
         },
-        tooltip: {
-            formatter: function () {
-                return '<b>' + this.x + '</b><br/>' +
-                    this.series.name + ': ' + this.y + '<br/>' +
-                    'Total: ' + this.point.stackTotal;
-            }
-        },
+       tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
         plotOptions: {
             column: {
                 stacking: 'normal',
@@ -313,16 +308,14 @@ $(function () {
                 }
             }
         },
-        series: [{
-            name: 'John',
-            data: [5, 3, 4, 7, 2]
-        }, {
-            name: 'Jane',
-            data: [2, 2, 3, 2, 1]
-        }, {
-            name: 'Joe',
-            data: [3, 4, 4, 2, 5]
-        }]
+        series: [
+        {% for k,v in kcalorias.items %}
+            {
+                name: '{{k}}',
+                data: [{% if v == None %}0 {%else%}{{v|floatformat:2}},{% endif %}]
+            },
+        {% endfor %}
+        ]
     });
 });
 
