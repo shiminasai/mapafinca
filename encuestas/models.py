@@ -986,7 +986,7 @@ class AlimentosFueraFinca(models.Model):
     encuesta = models.ForeignKey(Encuesta)
     producto = models.ForeignKey(ProductosFueraFinca)
     cantidad = models.FloatField('Cantidad mensual')
-    precio = models.FloatField('Precio en C$')
+    precio = models.FloatField('Precio unitario en C$')
 
     total = models.FloatField(editable=False)
 

@@ -4,9 +4,9 @@
 <script src="http://code.highcharts.com/highcharts.js"></script>
 <script src="http://code.highcharts.com/exporting.js"></script>
 <script>
-
+{% for k,v in dicc_escolaridad.items %}
 $(function () {
-    $('#container').highcharts({
+    $('#container-{{k}}').highcharts({
         chart: {
             type: 'column'
         },
@@ -57,7 +57,7 @@ $(function () {
                 ]
     });
 //grafo mujer
-     $('#container1').highcharts({
+     $('#container1-{{k}}').highcharts({
         chart: {
             type: 'column'
         },
@@ -112,12 +112,13 @@ $(function () {
 
 });
 </script>
-
+{% endfor %}
 {% endblock extra_js %}
 
 {% block contenido %}
 {% include "breadcrumb.html" %}
 <div class="container">
+
 <div class="row">
 <div class="contenido-indicadores">
 <div class="col-md-6" id="container" style="margin: 0 auto"></div>

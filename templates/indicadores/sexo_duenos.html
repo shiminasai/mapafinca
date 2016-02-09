@@ -2,10 +2,10 @@
 
 {% block extra_js %}
 <script src="http://code.highcharts.com/highcharts.js"></script>
-
+{% for k,v in dicc_sexo_dueno.items %}
 <script type="text/javascript">
 $(function () {
-    $('#container').highcharts({
+    $('#container-{{k}}').highcharts({
         chart: {
             plotBackgroundColor: null,
             plotBorderWidth: null,
@@ -36,10 +36,10 @@ $(function () {
             colorByPoint: true,
             data: [{
                 name: "SI",
-                y: {{si_dueno}}
+                y: {{v.0}}
             }, {
                 name: "NO",
-                y: {{no_dueno}},
+                y: {{v.1}},
                 sliced: true,
                 selected: true
             }]
@@ -47,7 +47,7 @@ $(function () {
     });
 
     //otro grafo mas
-    $('#container1').highcharts({
+    $('#container1-{{k}}').highcharts({
         chart: {
             plotBackgroundColor: null,
             plotBorderWidth: null,
@@ -76,7 +76,7 @@ $(function () {
         series: [{
             name: "",
             colorByPoint: true,
-            data: [{% for k,v in a_nombre.items %}
+            data: [{% for k,v in v.2.items %}
                        {
                             name: "{{k}}",
                             y: {{v}}
@@ -87,7 +87,7 @@ $(function () {
     });
 
     // otro mas
-    $('#container2').highcharts({
+    $('#container2-{{k}}').highcharts({
         chart: {
             plotBackgroundColor: null,
             plotBorderWidth: null,
@@ -116,7 +116,7 @@ $(function () {
         series: [{
             name: "",
             colorByPoint: true,
-            data: [{% for k,v in situacion.items %}
+            data: [{% for k,v in v.3.items %}
                        {
                             name: "{{k}}",
                             y: {{v}}
@@ -127,7 +127,7 @@ $(function () {
     });
 
     // mas grafo
-    $('#container3').highcharts({
+    $('#container3-{{k}}').highcharts({
         chart: {
             plotBackgroundColor: null,
             plotBorderWidth: null,
@@ -154,9 +154,9 @@ $(function () {
             }
         },
         series: [{
-            name: "Brands",
+            name: "",
             colorByPoint: true,
-            data: [{% for k,v in sexo_jefe_hogar.items %}
+            data: [{% for k,v in v.4.items %}
                 {
                 name: "{{k}}",
                 y: {{v}}
@@ -168,35 +168,49 @@ $(function () {
 });
 
 </script>
+{% endfor %}
 {% endblock extra_js %}
 
 {% block contenido %}
 {% include "breadcrumb.html" %}
 <div class="container">
 <br>
-<div class="row">
+
+<div>
+<!-- Nav tabs -->
+  <ul class="nav nav-tabs" role="tablist">
+  {% for k,v in dicc_sexo_dueno.items %}
+    <li role="presentation" class="{% if forloop.counter == 1 %}active{% endif %}"><a href="#home-{{k}}" aria-controls="home" role="tab" data-toggle="tab">{{k}}</a></li>
+    {% endfor %}
+  </ul>
+
+<!-- Tab panes -->
+  <div class="tab-content">
+  {% for k,v in dicc_sexo_dueno.items %}
+    <div role="tabpanel" class="tab-pane fade {% if forloop.counter == 1 %}in active{% endif %}" id="home-{{k}}">
+    <div class="row">
+        <div class="col-md-6">
+            <div id="container-{{k}}" style="height: 400px;"></div>
+        </div>
     <div class="col-md-6">
-        <div id="container" style="height: 400px;"></div>
+        <div id="container1-{{k}}" style="height: 400px;"></div>
     </div>
+    </div>
+    <br><br>
+    <div class="row">
+        <div class="col-md-6"><div id="container2-{{k}}" style="height: 400px;"></div></div>
+        <div class="col-md-6"><div id="container3-{{k}}" style="height: 400px;"></div></div>
+    </div>
+    <br><br>
+    <div class="row">
     <div class="col-md-6">
-        <div id="container1" style="height: 400px;"></div>
-    </div>
-</div>
-<br><br>
-<div class="row">
-  <div class="col-md-6"><div id="container2" style="height: 400px;"></div></div>
-  <div class="col-md-6"><div id="container3" style="height: 400px;"></div></div>
-</div>
-<br><br>
-<div class="row">
-  <div class="col-md-6">
         <table class="table">
             <tr>
                 <th>Cuando el jefe es</th>
                 <th>No de personas</th>
                 <th>Porcentajes</th>
             </tr>
-            {% for k,v in personas_habitan.items %}
+            {% for k,v in v.5.items %}
                 <tr>
                     <td>{{k}}</td>
                     <td>{{v}}</td>
@@ -204,15 +218,15 @@ $(function () {
             </tr>
             {% endfor %}
         </table>
-  </div>
-  <div class="col-md-6">
-    <table class="table">
+    </div>
+    <div class="col-md-6">
+        <table class="table">
             <tr>
                 <th>Cuando el jefe es</th>
                 <th>No de personas</th>
                 <th>Porcentajes</th>
             </tr>
-            {% for k,v in detalle_edad.items %}
+            {% for k,v in v.6.items %}
                 <tr>
                     <td>{{k}}</td>
                     <td>{{v}}</td>
@@ -220,8 +234,14 @@ $(function () {
             </tr>
             {% endfor %}
         </table>
+        </div>
+    </div>
+
+    </div> <!-- role tabpanel -->
+  {% endfor %}
   </div>
-</div>
+</div> <!-- fin div antes del tabs -->
+
 </div>
 <br><br>
 {% include "menu_indicadores.html" %}

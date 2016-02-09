@@ -383,99 +383,118 @@ def indicadores1(request, template='indicadores1.html'):
 #FUNCIONES PARA LAS DEMAS SALIDAS DEL SISTEMA
 
 def sexo_duenos(request, template="indicadores/sexo_duenos.html"):
-    si_dueno = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], dueno=1).count()
-    no_dueno = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], dueno=2).count()
 
-    a_nombre = {}
-    for obj in CHOICE_DUENO_SI:
-        conteos = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], duenosi__si=obj[0]).count()
-        a_nombre[obj[1]] = conteos
+    years = []
+    for en in Encuesta.objects.order_by('year').values_list('year', flat=True):
+        years.append((en,en))
+    list(set(years))
 
-    situacion = {}
-    for obj in CHOICE_DUENO_NO:
-        conteos = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], duenono__no=obj[0]).count()
-        situacion[obj[1]] = conteos
+    dicc_sexo_dueno = OrderedDict()
+    for year in years:
 
-    sexo_jefe_hogar = {}
-    for obj in CHOICE_SEXO:
-        conteos = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], sexomiembros__sexo=obj[0]).count()
-        sexo_jefe_hogar[obj[1]] = conteos
+        si_dueno = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], dueno=1).count()
+        no_dueno = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], dueno=2).count()
 
-    personas_habitan = {}
-    for obj in CHOICE_SEXO:
-        conteos = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], sexomiembros__sexo=obj[0]).aggregate(t=Sum('sexomiembros__cantidad'))['t']
-        personas_habitan[obj[1]] = conteos
+        a_nombre = {}
+        for obj in CHOICE_DUENO_SI:
+            conteos = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], duenosi__si=obj[0]).count()
+            a_nombre[obj[1]] = conteos
 
-    detalle_edad = {}
-    for obj in CHOICE_EDAD:
-        conteos = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], detallemiembros__edad=obj[0]).aggregate(t=Sum('detallemiembros__cantidad'))['t']
-        detalle_edad[obj[1]] = conteos
+        situacion = {}
+        for obj in CHOICE_DUENO_NO:
+            conteos = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], duenono__no=obj[0]).count()
+            situacion[obj[1]] = conteos
 
+        sexo_jefe_hogar = {}
+        for obj in CHOICE_SEXO:
+            conteos = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], sexomiembros__sexo=obj[0]).count()
+            sexo_jefe_hogar[obj[1]] = conteos
+
+        personas_habitan = {}
+        for obj in CHOICE_SEXO:
+            conteos = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], sexomiembros__sexo=obj[0]).aggregate(t=Sum('sexomiembros__cantidad'))['t']
+            personas_habitan[obj[1]] = conteos
+
+        detalle_edad = {}
+        for obj in CHOICE_EDAD:
+            conteos = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], detallemiembros__edad=obj[0]).aggregate(t=Sum('detallemiembros__cantidad'))['t']
+            detalle_edad[obj[1]] = conteos
+
+        dicc_sexo_dueno[year[1]] = (si_dueno,no_dueno,a_nombre,situacion,sexo_jefe_hogar,personas_habitan,detalle_edad)
 
     return render(request, template, locals())
 
 def escolaridad(request, template="indicadores/escolaridad.html"):
     #filtro = _queryset_filtrado(request)
 
-    tabla_educacion_hombre = []
-    grafo_hombre = []
-    suma_hombre = 0
-    for e in CHOICE_ESCOLARIDAD:
-        objeto = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], escolaridad__sexo = e[0], entrevistado__sexo=2, entrevistado__jefe=1).aggregate(num_total = Sum('escolaridad__total'),
-                no_leer = Sum('escolaridad__no_leer'),
-                p_incompleta = Sum('escolaridad__pri_incompleta'),
-                p_completa = Sum('escolaridad__pri_completa'),
-                s_incompleta = Sum('escolaridad__secu_incompleta'),
-                bachiller = Sum('escolaridad__bachiller'),
-                universitario = Sum('escolaridad__uni_tecnico'),
+    years = []
+    for en in Encuesta.objects.order_by('year').values_list('year', flat=True):
+        years.append((en,en))
+    list(set(years))
 
-                )
-        try:
-            suma_hombre = int(objeto['p_completa'] or 0) + int(objeto['s_incompleta'] or 0) + int(objeto['bachiller'] or 0) + int(objeto['universitario'] or 0)
-        except:
-            pass
-        variable = round(saca_porcentajes(suma_hombre,objeto['num_total']))
-        grafo_hombre.append([e[1],variable])
-        fila = [e[1], objeto['num_total'],
-                saca_porcentajes(objeto['no_leer'], objeto['num_total'], False),
-                saca_porcentajes(objeto['p_incompleta'], objeto['num_total'], False),
-                saca_porcentajes(objeto['p_completa'], objeto['num_total'], False),
-                saca_porcentajes(objeto['s_incompleta'], objeto['num_total'], False),
-                saca_porcentajes(objeto['bachiller'], objeto['num_total'], False),
-                saca_porcentajes(objeto['universitario'], objeto['num_total'], False),
-                ]
-        tabla_educacion_hombre.append(fila)
+    dicc_escolaridad = OrderedDict()
+    for year in years:
 
-        #tabla para cuando la mujer es jefe
+        tabla_educacion_hombre = []
+        grafo_hombre = []
+        suma_hombre = 0
+        for e in CHOICE_ESCOLARIDAD:
+            objeto = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], escolaridad__sexo = e[0], entrevistado__sexo=2, entrevistado__jefe=1).aggregate(num_total = Sum('escolaridad__total'),
+                    no_leer = Sum('escolaridad__no_leer'),
+                    p_incompleta = Sum('escolaridad__pri_incompleta'),
+                    p_completa = Sum('escolaridad__pri_completa'),
+                    s_incompleta = Sum('escolaridad__secu_incompleta'),
+                    bachiller = Sum('escolaridad__bachiller'),
+                    universitario = Sum('escolaridad__uni_tecnico'),
 
-    tabla_educacion_mujer = []
-    grafo_mujer = []
-    suma_mujer = 0
-    for e in CHOICE_ESCOLARIDAD:
-        objeto = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], escolaridad__sexo = e[0], entrevistado__sexo=1, entrevistado__jefe=1).aggregate(num_total = Sum('escolaridad__total'),
-                no_leer = Sum('escolaridad__no_leer'),
-                p_incompleta = Sum('escolaridad__pri_incompleta'),
-                p_completa = Sum('escolaridad__pri_completa'),
-                s_incompleta = Sum('escolaridad__secu_incompleta'),
-                bachiller = Sum('escolaridad__bachiller'),
-                universitario = Sum('escolaridad__uni_tecnico'),
+                    )
+            try:
+                suma_hombre = int(objeto['p_completa'] or 0) + int(objeto['s_incompleta'] or 0) + int(objeto['bachiller'] or 0) + int(objeto['universitario'] or 0)
+            except:
+                pass
+            variable = round(saca_porcentajes(suma_hombre,objeto['num_total']))
+            grafo_hombre.append([e[1],variable])
+            fila = [e[1], objeto['num_total'],
+                    saca_porcentajes(objeto['no_leer'], objeto['num_total'], False),
+                    saca_porcentajes(objeto['p_incompleta'], objeto['num_total'], False),
+                    saca_porcentajes(objeto['p_completa'], objeto['num_total'], False),
+                    saca_porcentajes(objeto['s_incompleta'], objeto['num_total'], False),
+                    saca_porcentajes(objeto['bachiller'], objeto['num_total'], False),
+                    saca_porcentajes(objeto['universitario'], objeto['num_total'], False),
+                    ]
+            tabla_educacion_hombre.append(fila)
 
-                )
-        try:
-            suma_mujer = int(objeto['p_completa'] or 0) + int(objeto['s_incompleta'] or 0) + int(objeto['bachiller'] or 0) + int(objeto['universitario'] or 0)
-        except:
-            pass
-        variable = round(saca_porcentajes(suma_mujer,objeto['num_total']))
-        grafo_mujer.append([e[1],variable])
-        fila = [e[1], objeto['num_total'],
-                saca_porcentajes(objeto['no_leer'], objeto['num_total'], False),
-                saca_porcentajes(objeto['p_incompleta'], objeto['num_total'], False),
-                saca_porcentajes(objeto['p_completa'], objeto['num_total'], False),
-                saca_porcentajes(objeto['s_incompleta'], objeto['num_total'], False),
-                saca_porcentajes(objeto['bachiller'], objeto['num_total'], False),
-                saca_porcentajes(objeto['universitario'], objeto['num_total'], False),
-                ]
-        tabla_educacion_mujer.append(fila)
+            #tabla para cuando la mujer es jefe
+
+        tabla_educacion_mujer = []
+        grafo_mujer = []
+        suma_mujer = 0
+        for e in CHOICE_ESCOLARIDAD:
+            objeto = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], escolaridad__sexo = e[0], entrevistado__sexo=1, entrevistado__jefe=1).aggregate(num_total = Sum('escolaridad__total'),
+                    no_leer = Sum('escolaridad__no_leer'),
+                    p_incompleta = Sum('escolaridad__pri_incompleta'),
+                    p_completa = Sum('escolaridad__pri_completa'),
+                    s_incompleta = Sum('escolaridad__secu_incompleta'),
+                    bachiller = Sum('escolaridad__bachiller'),
+                    universitario = Sum('escolaridad__uni_tecnico'),
+
+                    )
+            try:
+                suma_mujer = int(objeto['p_completa'] or 0) + int(objeto['s_incompleta'] or 0) + int(objeto['bachiller'] or 0) + int(objeto['universitario'] or 0)
+            except:
+                pass
+            variable = round(saca_porcentajes(suma_mujer,objeto['num_total']))
+            grafo_mujer.append([e[1],variable])
+            fila = [e[1], objeto['num_total'],
+                    saca_porcentajes(objeto['no_leer'], objeto['num_total'], False),
+                    saca_porcentajes(objeto['p_incompleta'], objeto['num_total'], False),
+                    saca_porcentajes(objeto['p_completa'], objeto['num_total'], False),
+                    saca_porcentajes(objeto['s_incompleta'], objeto['num_total'], False),
+                    saca_porcentajes(objeto['bachiller'], objeto['num_total'], False),
+                    saca_porcentajes(objeto['universitario'], objeto['num_total'], False),
+                    ]
+            tabla_educacion_mujer.append(fila)
+        dicc_escolaridad[year[1]] = (tabla_educacion_hombre,tabla_educacion_mujer)
 
     return render(request, template, locals())
 
