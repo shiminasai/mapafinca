@@ -1,7 +1,11 @@
 {% extends "base.html" %}
 
+{% load  helpertags %}
+
 {% block extra_js %}
 <script src="http://code.highcharts.com/highcharts.js"></script>
+<script src="http://code.highcharts.com/modules/exporting.js"></script>
+
 {% for k,v in dicc_sexo_dueno.items %}
 <script type="text/javascript">
 $(function () {
@@ -175,8 +179,6 @@ $(function () {
 {% include "breadcrumb.html" %}
 <div class="container">
 <br>
-
-<div>
 <!-- Nav tabs -->
   <ul class="nav nav-tabs" role="tablist">
   {% for k,v in dicc_sexo_dueno.items %}
@@ -210,11 +212,11 @@ $(function () {
                 <th>No de personas</th>
                 <th>Porcentajes</th>
             </tr>
-            {% for k,v in v.5.items %}
+            {% for k,value in v.5.items %}
                 <tr>
                     <td>{{k}}</td>
-                    <td>{{v}}</td>
-                    <td>{{v}}</td>
+                    <td>{{value}}</td>
+                    <td>{{value|calculaperct:v.7|floatformat:2}} %</td>
             </tr>
             {% endfor %}
         </table>
@@ -222,15 +224,15 @@ $(function () {
     <div class="col-md-6">
         <table class="table">
             <tr>
-                <th>Cuando el jefe es</th>
+                <th>Tipo de personas</th>
                 <th>No de personas</th>
                 <th>Porcentajes</th>
             </tr>
-            {% for k,v in v.6.items %}
+            {% for k,value in v.6.items %}
                 <tr>
                     <td>{{k}}</td>
-                    <td>{{v}}</td>
-                    <td>{{v}}</td>
+                    <td>{{value}}</td>
+                    <td>{{value|calculaperct:v.7|floatformat:2}} %</td>
             </tr>
             {% endfor %}
         </table>
@@ -240,7 +242,6 @@ $(function () {
     </div> <!-- role tabpanel -->
   {% endfor %}
   </div>
-</div> <!-- fin div antes del tabs -->
 
 </div>
 <br><br>

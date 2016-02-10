@@ -5,18 +5,6 @@
 
 {% block extra_js %}
 <script type="text/javascript">
-$(document).ready(function () {
-    var sum = 0 
-    $('tr').each(function () {
-        $(this).find('.valor').each(function () {
-            var combat = $(this).text();
-            if (!isNaN(combat) && combat.length !== 0) {
-                sum += parseFloat(combat);
-            }
-        });
-        $('.total_ingreso', this).html(sum.toFixed(2));
-    });
-});
 
 </script>
 {% endblock extra_js %}
@@ -25,18 +13,18 @@ $(document).ready(function () {
 {% include "breadcrumb.html" %}
 <br>
 <div class="container">
-<div> <!-- fin del tabs -->
-  <!-- Nav tabs -->
+<br>
+<!-- Nav tabs -->
   <ul class="nav nav-tabs" role="tablist">
-    <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">2015</a></li>
-    <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">2016</a></li>
-    <li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">2017</a></li>
-    <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">2018</a></li>
+  {% for k,v in dicc_ingresos.items %}
+    <li role="presentation" class="{% if forloop.counter == 1 %}active{% endif %}"><a href="#home-{{k}}" aria-controls="home" role="tab" data-toggle="tab">{{k}}</a></li>
+    {% endfor %}
   </ul>
 
   <!-- Tab panes -->
   <div class="tab-content">
-  <div role="tabpanel" class="tab-pane fade in active" id="home">
+  {% for k,v in dicc_ingresos.items %}
+    <div role="tabpanel" class="tab-pane fade {% if forloop.counter == 1 %}in active{% endif %}" id="home-{{k}}">
 <div class="row">
 <div class="col-md-12">
     <table class="table">
@@ -54,7 +42,7 @@ $(document).ready(function () {
             </tr>
         </thead>
         <tbody>
-            {%for key, value in ingreso_cultivo_tradicional.items%}
+            {%for key, value in v.2.items%}
             <tr>
                 <td>{{key}}</td>
                 <td>{{value.unidad}}</td>
@@ -72,9 +60,9 @@ $(document).ready(function () {
             <th>---</th>
             <th>---</th>
             <th>---</th>
-            <th>{{total_ingreso_tradicional|floatformat:2|intcomma}}</th>
-            <th>{{total_costo_tradicional|floatformat:2|intcomma}}</th>
-            <th>{{total_utilidad_tradicional|floatformat:2|intcomma}}</th>
+            <th>{{v.4|floatformat:2|intcomma}}</th>
+            <th>{{v.5|floatformat:2|intcomma}}</th>
+            <th>C$ {{v.3|floatformat:2|intcomma}}</th>
         </tr>
         <tbody>
     </table>
@@ -95,7 +83,7 @@ $(document).ready(function () {
             </tr>
         </thead>
         <tbody>
-            {%for key, value in ingreso_huertos.items%}
+            {%for key, value in v.6.items%}
             <tr>
                 <td>{{key}}</td>
                 <td>{{value.unidad}}</td>
@@ -114,9 +102,9 @@ $(document).ready(function () {
             <th>---</th>
             <th>---</th>
             <th>---</th>
-            <th>{{ingreso_patio|floatformat:1|intcomma}}</th>
-            <th>{{costo_huerto|floatformat:1|intcomma}}</th>
-            <th>{{utilidad_huerto_patio|floatformat:2|intcomma}}</th>
+            <th>{{v.14|floatformat:1|intcomma}}</th>
+            <th>{{v.15|floatformat:1|intcomma}}</th>
+            <th>C$ {{v.7|floatformat:2|intcomma}}</th>
         </tr>
     </table>
     </div>
@@ -137,7 +125,7 @@ $(document).ready(function () {
             </tr>
         </thead>
         <tbody>
-            {%for key, value in ingreso_frutales.items%}
+            {%for key, value in v.8.items%}
             <tr>
                 <td>{{key}}</td>
                 <td>{{value.unidad}}</td>
@@ -156,9 +144,9 @@ $(document).ready(function () {
             <th>---</th>
             <th>---</th>
             <th>---</th>
-            <th>{{ingreso_fruta|floatformat:1|intcomma}}</th>
-            <th>{{costo_fruta|floatformat:1|intcomma}}</th>
-            <th>{{utilidad_frutas|floatformat:2|intcomma}}</th>
+            <th>{{v.17|floatformat:1|intcomma}}</th>
+            <th>{{v.16|floatformat:1|intcomma}}</th>
+            <th>C$ {{v.9|floatformat:2|intcomma}}</th>
         </tr>
     </table>
     </div>
@@ -175,7 +163,7 @@ $(document).ready(function () {
             </tr>
         </thead>
         <tbody>
-            {%for key, value in ingreso_ganaderia.items%}
+            {%for key, value in v.10.items%}
             <tr>
                 <td>{{key}}</td>
                 <td>{{value.cantidad|default:0|floatformat:1|intcomma}}</td>
@@ -189,7 +177,7 @@ $(document).ready(function () {
             <th>---</th>
             <th>---</th>
             <th>---</th>
-            <th>{{total_ingreso_ganado|floatformat:2|intcomma}}</th>
+            <th>C$ {{v.11|floatformat:2|intcomma}}</th>
         </tr>
         <tbody>
     </table>
@@ -209,7 +197,7 @@ $(document).ready(function () {
             </tr>
         </thead>
         <tbody>
-            {%for key, value in ingreso_procesado.items%}
+            {%for key, value in v.12.items%}
             <tr>
                 <td>{{key}}</td>
                 <td>{{value.unidad}}</td>
@@ -225,7 +213,7 @@ $(document).ready(function () {
                 <th>---</th>
                 <th>---</th>
                 <th>---</th>
-                <th>{{total_ingreso_procesado|floatformat:2|intcomma}}</th>
+                <th>C$ {{v.13|floatformat:2|intcomma}}</th>
             </tr>
         <tbody>
     </table>
@@ -244,53 +232,48 @@ $(document).ready(function () {
         <tbody>
             <tr>
                 <td>Cultivo tradicional</td>
-                <td>{{total_utilidad_tradicional|floatformat:2|intcomma}}</td>
+                <td>{{v.3|floatformat:2|intcomma}}</td>
                 <td>{{request.session.encuestados}}</td>
-                <td class="valor" >{{total_utilidad_tradicional|calcularIngresoXfamilia:request.session.encuestados|floatformat:2}}</td>
+                <td class="valor" >{{v.3|calcularIngresoXfamilia:request.session.encuestados|floatformat:2|intcomma}}</td>
             </tr>
             <tr>
                 <td>Cultivo huertos de patio</td>
-                <td>{{utilidad_huerto_patio|floatformat:2|intcomma}}</td>
+                <td>{{v.7|floatformat:2|intcomma}}</td>
                 <td>{{request.session.encuestados}}</td>
-                <td class="valor">{{utilidad_huerto_patio|calcularIngresoXfamilia:request.session.encuestados|floatformat:2}}</td>
+                <td class="valor">{{v.7|calcularIngresoXfamilia:request.session.encuestados|floatformat:2|intcomma}}</td>
             </tr>
             <tr>
                 <td>Cultivo Frutales</td>
-                <td>{{utilidad_frutas|floatformat:2|intcomma}}</td>
+                <td>{{v.9|floatformat:2|intcomma}}</td>
                 <td>{{request.session.encuestados}}</td>
-                <td class="valor">{{utilidad_frutas|calcularIngresoXfamilia:request.session.encuestados|floatformat:2}}</td>
+                <td class="valor">{{v.9|calcularIngresoXfamilia:request.session.encuestados|floatformat:2|intcomma}}</td>
             </tr>
             <tr>
                 <td>Animales en la finca</td>
-                <td>{{total_ingreso_ganado|floatformat:2|intcomma}}</td>
+                <td>{{v.11|floatformat:2|intcomma}}</td>
                 <td>{{request.session.encuestados}}</td>
-                <td class="valor">{{total_ingreso_ganado|calcularIngresoXfamilia:request.session.encuestados|floatformat:2}}</td>
+                <td class="valor">{{v.11|calcularIngresoXfamilia:request.session.encuestados|floatformat:2|intcomma}}</td>
             </tr>
             <tr>
                 <td>Productos procesados</td>
-                <td>{{total_ingreso_procesado|floatformat:2|intcomma}}</td>
+                <td>{{v.13|floatformat:2|intcomma}}</td>
                 <td>{{request.session.encuestados}}</td>
-                <td class="valor">{{total_ingreso_procesado|calcularIngresoXfamilia:request.session.encuestados|floatformat:2}}</td>
+                <td class="valor">{{v.13|calcularIngresoXfamilia:request.session.encuestados|floatformat:2|intcomma}}</td>
             </tr>
             <tr>
                 <td><strong>TOTAL</strong></td>
                 <td>---</td>
                 <td>---</td>
-                <td class="total_ingreso"></td>
+                <td class="total_ingreso">C$ {{v.18|floatformat:2|intcomma}}</td>
             </tr>
         <tbody>
     </table>
     </div>
-</div>
-
+</div><!-- fin row -->
+</div> <!-- role tabpanel -->
+  {% endfor %}
   </div>
-  <div role="tabpanel" class="tab-pane fade" id="profile">...</div>
-  <div role="tabpanel" class="tab-pane fade" id="messages">...</div>
-  <div role="tabpanel" class="tab-pane fade" id="settings">...</div>
-</div>
-</div> <!-- fin del tabs -->
-<br>
-</div>
+</div> <!-- fin caontainer -->
 <br><br>
 {% include "menu_indicadores.html" %}
 {% endblock contenido %}

@@ -1,13 +1,15 @@
 {% extends "base.html" %}
 
+{% load helpertags %}
+
 {% block extra_js %}
 <script src="http://code.highcharts.com/highcharts.js"></script>
-<script src="http://code.highcharts.com/exporting.js"></script>
+<script src="http://code.highcharts.com/modules/exporting.js"></script>
+
+{% for key,value  in dicc_seguridad.items %}
 <script type="text/javascript">
-
 $(function () {
-
-$('#container').highcharts({
+$('#container-{{key}}').highcharts({
         chart: {
             type: 'column'
         },
@@ -48,7 +50,7 @@ $('#container').highcharts({
             name: "",
             colorByPoint: true,
             data: [
-            {% for k,v in grafo_adquiere_agua.items %}
+            {% for k,v in value.11.items %}
                 {
                     name: "{{k}}",
                     y: {{v}},
@@ -59,7 +61,7 @@ $('#container').highcharts({
     });
 
 
-$('#container1').highcharts({
+$('#container1-{{key}}').highcharts({
         chart: {
             plotBackgroundColor: null,
             plotBorderWidth: null,
@@ -88,7 +90,7 @@ $('#container1').highcharts({
         series: [{
             name: "",
             colorByPoint: true,
-            data: [ {% for k,v  in  grafo_tratamiento_agua.items %}
+            data: [ {% for k,v  in  value.12.items %}
                         {
                             name: "{{k}}",
                             y: {{v}}
@@ -98,7 +100,7 @@ $('#container1').highcharts({
         }]
     });
 
-$('#container2').highcharts({
+$('#container2-{{key}}').highcharts({
         chart: {
             type: 'column'
         },
@@ -139,7 +141,7 @@ $('#container2').highcharts({
             name: "",
             colorByPoint: true,
             data: [
-            {% for k,v in grafo_tipo_tratamientos.items %}
+            {% for k,v in value.13.items %}
                 {
                     name: "{{k}}",
                     y: {{v}},
@@ -152,12 +154,24 @@ $('#container2').highcharts({
 
 });
 </script>
+{% endfor %}
 {% endblock extra_js %}
 
 {% block contenido %}
 {% include "breadcrumb.html" %}
 <div class="container">
 <br>
+<!-- Nav tabs -->
+  <ul class="nav nav-tabs" role="tablist">
+  {% for k,v in dicc_seguridad.items %}
+    <li role="presentation" class="{% if forloop.counter == 1 %}active{% endif %}"><a href="#home-{{k}}" aria-controls="home" role="tab" data-toggle="tab">{{k}}</a></li>
+    {% endfor %}
+  </ul>
+
+<!-- Tab panes -->
+  <div class="tab-content">
+  {% for k,v in dicc_seguridad.items %}
+    <div role="tabpanel" class="tab-pane fade {% if forloop.counter == 1 %}in active{% endif %}" id="home-{{k}}">
 <p class="text-center">Razones por las que no cuentan con suficientes alimentos</p>
 <div class="row">
     <div class="col-md-6">
@@ -167,11 +181,11 @@ $('#container2').highcharts({
                 <th>Frecuencias</th>
                 <th>Porcentajes</th>
             </tr>
-            {% for k,v in conteo_fenomeno.items %}
+            {% for k,v in v.7.items %}
                 <tr>
                     <td>{{k}}</td>
                     <td>{{v}}</td>
-                    <td>{{v}}</td>
+                    <td>{{v|calculaperct:request.session.encuestados|floatformat:2}} %</td>
             </tr>
             {% endfor %}
         </table>
@@ -183,11 +197,11 @@ $('#container2').highcharts({
                 <th>Frecuencias</th>
                 <th>Porcentajes</th>
             </tr>
-            {% for k,v in conteo_agricola.items %}
+            {% for k,v in v.8.items %}
                 <tr>
                     <td>{{k}}</td>
                     <td>{{v}}</td>
-                    <td>{{v}}</td>
+                    <td>{{v|calculaperct:request.session.encuestados|floatformat:2}} %</td>
             </tr>
             {% endfor %}
         </table>
@@ -202,11 +216,11 @@ $('#container2').highcharts({
                 <th>Frecuencias</th>
                 <th>Porcentajes</th>
             </tr>
-            {% for k,v in conteo_mercado.items %}
+            {% for k,v in v.9.items %}
                 <tr>
                     <td>{{k}}</td>
                     <td>{{v}}</td>
-                    <td>{{v}}</td>
+                    <td>{{v|calculaperct:request.session.encuestados|floatformat:2}} %</td>
             </tr>
             {% endfor %}
         </table>
@@ -218,11 +232,11 @@ $('#container2').highcharts({
                 <th>Frecuencias</th>
                 <th>Porcentajes</th>
             </tr>
-            {% for k,v in conteo_inversion.items %}
+            {% for k,v in v.10.items %}
                 <tr>
                     <td>{{k}}</td>
                     <td>{{v}}</td>
-                    <td>{{v}}</td>
+                    <td>{{v|calculaperct:request.session.encuestados|floatformat:2}} %</td>
             </tr>
             {% endfor %}
         </table>
@@ -230,15 +244,18 @@ $('#container2').highcharts({
 </div>
 <br><br>
 <div class="row">
-  <div class="col-md-6"><div id="container" style="height: 400px;"></div></div>
-  <div class="col-md-6"><div id="container1" style="height: 400px;"></div></div>
+  <div class="col-md-6"><div id="container-{{k}}" style="height: 400px;"></div></div>
+  <div class="col-md-6"><div id="container1-{{k}}" style="height: 400px;"></div></div>
 </div>
 <br><br>
 <div class="row">
-  <div class="col-md-6"><div id="container2" style="height: 400px;"></div></div>
-  <div class="col-md-6"><div id="container3" style="height: 400px;"></div></div>
+  <div class="col-md-6"><div id="container2-{{k}}" style="height: 400px;"></div></div>
+  <div class="col-md-6"><div id="container3-{{k}}" style="height: 400px;"></div></div>
 </div>
-</div>
+</div> <!-- role tabpanel -->
+  {% endfor %}
+  </div>
+</div> <!-- fin container -->
 <br><br>
 {% include "menu_indicadores.html" %}
 {% endblock contenido %}

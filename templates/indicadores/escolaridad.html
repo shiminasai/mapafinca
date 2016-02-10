@@ -2,9 +2,10 @@
 
 {% block extra_js %}
 <script src="http://code.highcharts.com/highcharts.js"></script>
-<script src="http://code.highcharts.com/exporting.js"></script>
-<script>
+<script src="http://code.highcharts.com/modules/exporting.js"></script>
+
 {% for k,v in dicc_escolaridad.items %}
+<script>
 $(function () {
     $('#container-{{k}}').highcharts({
         chart: {
@@ -34,7 +35,7 @@ $(function () {
                 }
             },
         series: [
-                {% for value in grafo_hombre %}
+                {% for value in v.2 %}
                 {
                     name: '{{value.0}}',
                     data: [{{value.1}}],
@@ -85,7 +86,7 @@ $(function () {
                 }
             },
         series: [
-                {% for value in grafo_mujer %}
+                {% for value in v.3 %}
                 {
                     name: '{{value.0}}',
                     data: [{{value.1}}],
@@ -107,9 +108,6 @@ $(function () {
                 {% endfor %}
                 ]
     });
-
-
-
 });
 </script>
 {% endfor %}
@@ -118,14 +116,22 @@ $(function () {
 {% block contenido %}
 {% include "breadcrumb.html" %}
 <div class="container">
+<ul class="nav nav-tabs" role="tablist">
+  {% for k,v in dicc_escolaridad.items %}
+    <li role="presentation" class="{% if forloop.counter == 1 %}active{% endif %}"><a href="#home-{{k}}" aria-controls="home" role="tab" data-toggle="tab">{{k}}</a></li>
+    {% endfor %}
+  </ul>
 
+<!-- Tab panes -->
+  <div class="tab-content">
+  {% for k,v in dicc_escolaridad.items %}
+    <div role="tabpanel" class="tab-pane fade {% if forloop.counter == 1 %}in active{% endif %}" id="home-{{k}}">
 <div class="row">
-<div class="contenido-indicadores">
-<div class="col-md-6" id="container" style="margin: 0 auto"></div>
-<div class="col-md-6" id="container1" style="margin: 0 auto"></div>
+<div class="col-md-6" id="container-{{k}}" style="margin: 0 auto"></div>
+<div class="col-md-6" id="container1-{{k}}" style="margin: 0 auto"></div>
 	<div class="col-md-12">
 		<table class="table table-bordered table-hover" cellspacing="0" width="100%">
-                        <caption>Escolaridad caundo el hombre es jefe</caption>
+                        <caption>Escolaridad cuando el hombre es jefe</caption>
                         <thead>
                             <tr>
                                 <th></th>
@@ -139,7 +145,7 @@ $(function () {
                             </tr>
                         </thead>
                         <tbody>
-                            {%for fila in tabla_educacion_hombre%}
+                            {%for fila in v.0%}
                             <tr>
                                 {%for celda in fila %}
                                 <td>{{celda|default:'0'}}</td>
@@ -152,7 +158,7 @@ $(function () {
 
         <div class="col-md-12">
         <table class="table table-bordered table-hover" cellspacing="0" width="100%">
-                        <caption>Escolaridad caundo el mujer es jefe</caption>
+                        <caption>Escolaridad cuando la mujer es jefe</caption>
                         <thead>
                             <tr>
                                 <th></th>
@@ -166,7 +172,7 @@ $(function () {
                             </tr>
                         </thead>
                         <tbody>
-                            {%for fila in tabla_educacion_mujer%}
+                            {%for fila in v.1%}
                             <tr>
                                 {%for celda in fila %}
                                 <td>{{celda|default:'0'}}</td>
@@ -176,10 +182,11 @@ $(function () {
                         </tbody>
                     </table>
     </div>
-</div>
-
-</div>
-</div>
+</div> <!-- fin el row inicial -->
+    </div> <!-- role tabpanel -->
+  {% endfor %}
+  </div>
+</div><!-- fin del container -->
 <br><br>
  {% include "menu_indicadores.html" %}
 {% endblock contenido %}

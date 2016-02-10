@@ -4,11 +4,12 @@
 
 {% block extra_js %}
 <script src="http://code.highcharts.com/highcharts.js"></script>
-<script src="http://code.highcharts.com/exporting.js"></script>
-<script type="text/javascript">
+<script src="http://code.highcharts.com/modules/exporting.js"></script>
 
+{% for key,value  in dicc_genero.items %}
+<script type="text/javascript">
 $(function () {
-$('#container').highcharts({
+$('#container-{{key}}').highcharts({
         chart: {
             plotBackgroundColor: null,
             plotBorderWidth: null,
@@ -37,7 +38,7 @@ $('#container').highcharts({
         series: [{
             name: "",
             colorByPoint: true,
-            data: [ {% for k,v  in  grafo_credito_mujer.items %}
+            data: [ {% for k,v  in  value.1.items %}
                         {
                             name: "{{k}}",
                             y: {{v}}
@@ -47,7 +48,7 @@ $('#container').highcharts({
         }]
     });
 
-$('#container2').highcharts({
+$('#container2-{{key}}').highcharts({
         chart: {
             type: 'column'
         },
@@ -88,7 +89,7 @@ $('#container2').highcharts({
             name: "",
             colorByPoint: true,
             data: [
-            {% for k,v in grafo_organizacion_mujer.items %}
+            {% for k,v in value.3.items %}
                 {
                     name: "{{k}}",
                     y: {{v}},
@@ -98,7 +99,7 @@ $('#container2').highcharts({
         }],
     });
 
-$('#container3').highcharts({
+$('#container3-{{key}}').highcharts({
             chart: {
                 plotBackgroundColor: null,
                 plotBorderWidth: null,
@@ -125,7 +126,7 @@ $('#container3').highcharts({
                 name: 'Organización',
                 colorByPoint: true,
                 data: [
-                {% for k,v in mujer_organizacion.items %}
+                {% for k,v in value.4.items %}
                     {
                     name: '{{k}}',
                     y: {{v}}
@@ -136,15 +137,26 @@ $('#container3').highcharts({
         });
 });
 </script>
+{% endfor %}
 {% endblock extra_js %}
-
 
 {% block contenido %}
 {% include "breadcrumb.html" %}
 <div class="container">
-<br><br>
+<br>
+<!-- Nav tabs -->
+  <ul class="nav nav-tabs" role="tablist">
+  {% for k,v in dicc_genero.items %}
+    <li role="presentation" class="{% if forloop.counter == 1 %}active{% endif %}"><a href="#home-{{k}}" aria-controls="home" role="tab" data-toggle="tab">{{k}}</a></li>
+    {% endfor %}
+  </ul>
+
+<!-- Tab panes -->
+  <div class="tab-content">
+  {% for k,v in dicc_genero.items %}
+    <div role="tabpanel" class="tab-pane fade {% if forloop.counter == 1 %}in active{% endif %}" id="home-{{k}}">
 <div class="row">
-  <div class="col-md-6"><div id="container" style="height: 400px;"></div></div>
+  <div class="col-md-6"><div id="container-{{k}}" style="height: 400px;"></div></div>
   <div class="col-md-6">
    <table class="table">
             <tr>
@@ -152,7 +164,7 @@ $('#container3').highcharts({
                 <th>Si</th>
                 <th>No</th>
             </tr>
-            {% for k,v in grafo_bienes_mujer.items %}
+            {% for k,v in v.2.items %}
                 <tr>
                     <td>{{k}}</td>
                     <td>{{v.0}}</td>
@@ -164,8 +176,8 @@ $('#container3').highcharts({
 </div>
 <br><br>
 <div class="row">
-  <div class="col-md-6"><div id="container2" style="height: 400px;"></div></div>
-  <div class="col-md-6"><div id="container3" style="height: 400px;"></div></div>
+  <div class="col-md-6"><div id="container2-{{k}}" style="height: 400px;"></div></div>
+  <div class="col-md-6"><div id="container3-{{k}}" style="height: 400px;"></div></div>
 </div>
 <div class="row">
     <div class="col-md-6">
@@ -179,18 +191,21 @@ $('#container3').highcharts({
             </tr>
         </thead>
         <tbody>
-            {%for key, value in nivel_educacion_mujer.items%}
+            {%for key, value in v.5.items%}
             <tr>
                 <td>{{key}}</td>
                 <td>{{value}}</td>
-                <td>{{value|calculaperct:divisor}} %</td>
+                <td>{{value|calculaperct:request.session.encuestados|floatformat:2}} %</td>
             </tr>
             {%endfor%}
         <tbody>
     </table>
   </div>
 </div>
-</div>
+</div> <!-- role tabpanel -->
+  {% endfor %}
+  </div>
+</div> <!-- fin container -->
 <br><br>
 {% include "menu_indicadores.html" %}
 {% endblock contenido %}

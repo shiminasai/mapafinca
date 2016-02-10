@@ -413,14 +413,17 @@ def sexo_duenos(request, template="indicadores/sexo_duenos.html"):
         personas_habitan = {}
         for obj in CHOICE_SEXO:
             conteos = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], sexomiembros__sexo=obj[0]).aggregate(t=Sum('sexomiembros__cantidad'))['t']
-            personas_habitan[obj[1]] = conteos
+            if conteos > 0:
+                personas_habitan[obj[1]] = conteos
+
+        total_personas = sum(list([ i for i in personas_habitan.values()]))
 
         detalle_edad = {}
         for obj in CHOICE_EDAD:
             conteos = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], detallemiembros__edad=obj[0]).aggregate(t=Sum('detallemiembros__cantidad'))['t']
             detalle_edad[obj[1]] = conteos
 
-        dicc_sexo_dueno[year[1]] = (si_dueno,no_dueno,a_nombre,situacion,sexo_jefe_hogar,personas_habitan,detalle_edad)
+        dicc_sexo_dueno[year[1]] = (si_dueno,no_dueno,a_nombre,situacion,sexo_jefe_hogar,personas_habitan,detalle_edad,total_personas)
 
     return render(request, template, locals())
 
@@ -494,274 +497,369 @@ def escolaridad(request, template="indicadores/escolaridad.html"):
                     saca_porcentajes(objeto['universitario'], objeto['num_total'], False),
                     ]
             tabla_educacion_mujer.append(fila)
-        dicc_escolaridad[year[1]] = (tabla_educacion_hombre,tabla_educacion_mujer)
+        dicc_escolaridad[year[1]] = (tabla_educacion_hombre,tabla_educacion_mujer,grafo_hombre,grafo_mujer)
 
     return render(request, template, locals())
 
 def energia(request, template="indicadores/energia.html"):
 
-    grafo_tipo_energia = {}
-    for obj in Energia.objects.all():
-        valor = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], tipoenergia__tipo=obj).count()
-        grafo_tipo_energia[obj] =  valor
+    years = []
+    for en in Encuesta.objects.order_by('year').values_list('year', flat=True):
+        years.append((en,en))
+    list(set(years))
 
-    grafo_panel_solar = {}
-    for obj in CHOICE_PANEL_SOLAR:
-        valor = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], panelsolar__panel=obj[0]).count()
-        grafo_panel_solar[obj[1]] =  valor
+    dicc_energia = OrderedDict()
+    for year in years:
 
-    grafo_fuente_energia = {}
-    for obj in FuenteEnergia.objects.all():
-        valor = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], energiasolarcocinar__fuente=obj).count()
-        grafo_fuente_energia[obj] =  valor
+        grafo_tipo_energia = {}
+        for obj in Energia.objects.all():
+            valor = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], tipoenergia__tipo=obj).count()
+            grafo_tipo_energia[obj] =  valor
 
-    grafo_tipo_cocina = {}
-    for obj in Cocinas.objects.all():
-        valor = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], tipococinas__cocina=obj).count()
-        grafo_tipo_cocina[obj] =  valor
+        grafo_panel_solar = {}
+        for obj in CHOICE_PANEL_SOLAR:
+            valor = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], panelsolar__panel=obj[0]).count()
+            grafo_panel_solar[obj[1]] =  valor
 
+        grafo_fuente_energia = {}
+        for obj in FuenteEnergia.objects.all():
+            valor = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], energiasolarcocinar__fuente=obj).count()
+            grafo_fuente_energia[obj] =  valor
+
+        grafo_tipo_cocina = {}
+        for obj in Cocinas.objects.all():
+            valor = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], tipococinas__cocina=obj).count()
+            grafo_tipo_cocina[obj] =  valor
+
+        dicc_energia[year[1]] = (grafo_tipo_energia,grafo_panel_solar,grafo_fuente_energia,grafo_tipo_cocina)
 
     return render(request, template, locals())
 
 def agua(request, template="indicadores/agua.html"):
 
-    grafo_agua_consumo = {}
-    for obj in AguaConsumo.objects.all():
-        valor = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], accesoagua__agua=obj).count()
-        grafo_agua_consumo[obj] =  valor
+    years = []
+    for en in Encuesta.objects.order_by('year').values_list('year', flat=True):
+        years.append((en,en))
+    list(set(years))
 
-    grafo_agua_disponibilidad = {}
-    for obj in CHOICE_DISPONIBILIDAD:
-        valor = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], disponibilidadagua__disponibilidad=obj[0]).count()
-        grafo_agua_disponibilidad[obj[1]] =  valor
+    dicc_agua = OrderedDict()
+    for year in years:
 
-    grafo_agua_calidad = {}
-    for obj in CHOICE_CALIDAD_AGUA:
-        valor = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], calidadagua__calidad=obj[0]).count()
-        grafo_agua_calidad[obj[1]] =  valor
+        grafo_agua_consumo = {}
+        for obj in AguaConsumo.objects.all():
+            valor = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], accesoagua__agua=obj).count()
+            grafo_agua_consumo[obj] =  valor
 
-    grafo_agua_contaminada = {}
-    for obj in TipoContamindaAgua.objects.all():
-        valor = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], contaminada__contaminada=obj).count()
-        grafo_agua_contaminada[obj] =  valor
+        grafo_agua_disponibilidad = {}
+        for obj in CHOICE_DISPONIBILIDAD:
+            valor = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], disponibilidadagua__disponibilidad=obj[0]).count()
+            grafo_agua_disponibilidad[obj[1]] =  valor
 
-    grafo_agua_tratamiento = {}
-    for obj in CHOICE_TRATAMIENTO:
-        valor = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], tratamientoagua__tratamiento=obj[0]).count()
-        grafo_agua_tratamiento[obj[1]] =  valor
+        grafo_agua_calidad = {}
+        for obj in CHOICE_CALIDAD_AGUA:
+            valor = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], calidadagua__calidad=obj[0]).count()
+            grafo_agua_calidad[obj[1]] =  valor
 
-    grafo_agua_usos = {}
-    for obj in CHOICE_OTRO_USO:
-        valor = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], usosagua__uso=obj[0]).count()
-        grafo_agua_usos[obj[1]] =  valor
+        grafo_agua_contaminada = {}
+        for obj in TipoContamindaAgua.objects.all():
+            valor = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], contaminada__contaminada=obj).count()
+            grafo_agua_contaminada[obj] =  valor
 
+        grafo_agua_tratamiento = {}
+        for obj in CHOICE_TRATAMIENTO:
+            valor = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], tratamientoagua__tratamiento=obj[0]).count()
+            grafo_agua_tratamiento[obj[1]] =  valor
+
+        grafo_agua_usos = {}
+        for obj in CHOICE_OTRO_USO:
+            valor = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], usosagua__uso=obj[0]).count()
+            grafo_agua_usos[obj[1]] =  valor
+
+        dicc_agua[year[1]] = (grafo_agua_consumo,grafo_agua_disponibilidad,grafo_agua_calidad,grafo_agua_contaminada,grafo_agua_tratamiento,grafo_agua_usos)
 
     return render(request, template, locals())
 
 def organizaciones(request, template="indicadores/organizaciones.html"):
 
-    grafo_pertenece = {}
-    for obj in CHOICE_JEFE:
-        valor = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], organizacioncomunitaria__pertenece=obj[0]).count()
-        grafo_pertenece[obj[1]] =  valor
+    years = []
+    for en in Encuesta.objects.order_by('year').values_list('year', flat=True):
+        years.append((en,en))
+    list(set(years))
 
-    grafo_org_comunitarias = {}
-    for obj in OrgComunitarias.objects.all():
-        valor = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], organizacioncomunitaria__caso_si=obj).count()
-        if valor > 0:
-            grafo_org_comunitarias[obj] =  valor
+    dicc_organizacion = OrderedDict()
+    for year in years:
 
-    grafo_beneficios = {}
-    for obj in BeneficiosOrganizados.objects.all():
-        valor = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], organizacioncomunitaria__cuales_beneficios=obj).count()
-        if valor > 0:
-            grafo_beneficios[obj] =  valor
+        grafo_pertenece = {}
+        for obj in CHOICE_JEFE:
+            valor = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], organizacioncomunitaria__pertenece=obj[0]).count()
+            grafo_pertenece[obj[1]] =  valor
+
+        grafo_org_comunitarias = {}
+        for obj in OrgComunitarias.objects.all():
+            valor = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], organizacioncomunitaria__caso_si=obj).count()
+            if valor > 0:
+                grafo_org_comunitarias[obj] =  valor
+
+        grafo_beneficios = {}
+        for obj in BeneficiosOrganizados.objects.all():
+            valor = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], organizacioncomunitaria__cuales_beneficios=obj).count()
+            if valor > 0:
+                grafo_beneficios[obj] =  valor
+
+        dicc_organizacion[year[1]] = (grafo_pertenece,grafo_org_comunitarias, grafo_beneficios)
 
     return render(request, template, locals())
 
 def tierra(request, template="indicadores/tierra.html"):
 
-    #tabla distribucion de frecuencia
-    uno_num = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], organizacionfinca__area_finca__range=(0.1,5.99)).count()
-    seis_num = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], organizacionfinca__area_finca__range=(6,10.99)).count()
-    diez_mas = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], organizacionfinca__area_finca__gt=11).count()
+    years = []
+    for en in Encuesta.objects.order_by('year').values_list('year', flat=True):
+        years.append((en,en))
+    list(set(years))
 
-    #promedio de manzanas por todas las personas
-    promedio_mz = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento']).aggregate(p=Avg('organizacionfinca__area_finca'))['p']
+    dicc_tierra = OrderedDict()
+    for year in years:
+        #tabla distribucion de frecuencia
+        uno_num = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], organizacionfinca__area_finca__range=(0.1,5.99)).count()
+        seis_num = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], organizacionfinca__area_finca__range=(6,10.99)).count()
+        diez_mas = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], organizacionfinca__area_finca__gt=11).count()
 
-    grafo_distribucion_tierra = {}
-    for obj in CHOICE_TIERRA:
-        valor = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], distribuciontierra__tierra=obj[0]).count()
-        grafo_distribucion_tierra[obj[1]] =  valor
+        #promedio de manzanas por todas las personas
+        promedio_mz = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento']).aggregate(p=Avg('organizacionfinca__area_finca'))['p']
+
+        grafo_distribucion_tierra = {}
+        for obj in CHOICE_TIERRA:
+            valor = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], distribuciontierra__tierra=obj[0]).count()
+            grafo_distribucion_tierra[obj[1]] =  valor
+
+        dicc_tierra[year[1]] = (uno_num,seis_num,diez_mas,promedio_mz,grafo_distribucion_tierra)
+
 
     return render(request, template, locals())
 
 def prestamos(request, template="indicadores/prestamo.html"):
 
-    grafo_prestamo_sino = {}
-    for obj in CHOICE_JEFE:
-        valor = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], prestamo__algun_prestamo=obj[0]).count()
-        grafo_prestamo_sino[obj[1]] =  valor
+    years = []
+    for en in Encuesta.objects.order_by('year').values_list('year', flat=True):
+        years.append((en,en))
+    list(set(years))
 
-    grafo_recibe_prestamo = {}
-    for obj in RecibePrestamo.objects.all():
-        valor = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], prestamo__recibe=obj).count()
-        if valor > 0:
-            grafo_recibe_prestamo[obj] =  valor
+    dicc_prestamos = OrderedDict()
+    for year in years:
 
-    grafo_uso_prestamo = {}
-    for obj in UsoPrestamo.objects.all():
-        valor = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], prestamo__uso=obj).count()
-        if valor > 0:
-            grafo_uso_prestamo[obj] =  valor
+        grafo_prestamo_sino = {}
+        for obj in CHOICE_JEFE:
+            valor = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], prestamo__algun_prestamo=obj[0]).count()
+            grafo_prestamo_sino[obj[1]] =  valor
+
+        grafo_recibe_prestamo = {}
+        for obj in RecibePrestamo.objects.all():
+            valor = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], prestamo__recibe=obj).count()
+            if valor > 0:
+                grafo_recibe_prestamo[obj] =  valor
+
+        grafo_uso_prestamo = {}
+        for obj in UsoPrestamo.objects.all():
+            valor = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], prestamo__uso=obj).count()
+            if valor > 0:
+                grafo_uso_prestamo[obj] =  valor
+
+        dicc_prestamos[year[1]] = (grafo_prestamo_sino,grafo_recibe_prestamo,grafo_uso_prestamo)
 
     return render(request, template, locals())
 
 def practicas(request, template="indicadores/practicas.html"):
 
-    grafo_practicas_sino = {}
-    for obj in CHOICE_JEFE:
-        valor = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], practicasagroecologicas__si_no=obj[0]).count()
-        grafo_practicas_sino[obj[1]] =  valor
+    years = []
+    for en in Encuesta.objects.order_by('year').values_list('year', flat=True):
+        years.append((en,en))
+    list(set(years))
 
-    grafo_manejo = {}
-    for obj in CHOICE_MANEJO:
-        valor = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], practicasagroecologicas__manejo=obj[0]).count()
-        grafo_manejo[obj[1]] =  valor
+    dicc_practicas = OrderedDict()
+    for year in years:
 
-    grafo_traccion = {}
-    for obj in CHOICE_TRACCION:
-        valor = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], practicasagroecologicas__traccion=obj[0]).count()
-        grafo_traccion[obj[1]] =  valor
+        grafo_practicas_sino = {}
+        for obj in CHOICE_JEFE:
+            valor = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], practicasagroecologicas__si_no=obj[0]).count()
+            grafo_practicas_sino[obj[1]] =  valor
 
-    grafo_fertilidad = {}
-    for obj in CHOICE_JEFE:
-        valor = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], practicasagroecologicas__fertilidad=obj[0]).count()
-        grafo_fertilidad[obj[1]] =  valor
+        grafo_manejo = {}
+        for obj in CHOICE_MANEJO:
+            valor = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], practicasagroecologicas__manejo=obj[0]).count()
+            grafo_manejo[obj[1]] =  valor
 
-    grafo_control = {}
-    for obj in CHOICE_JEFE:
-        valor = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], practicasagroecologicas__control=obj[0]).count()
-        grafo_control[obj[1]] =  valor
+        grafo_traccion = {}
+        for obj in CHOICE_TRACCION:
+            valor = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], practicasagroecologicas__traccion=obj[0]).count()
+            grafo_traccion[obj[1]] =  valor
+
+        grafo_fertilidad = {}
+        for obj in CHOICE_JEFE:
+            valor = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], practicasagroecologicas__fertilidad=obj[0]).count()
+            grafo_fertilidad[obj[1]] =  valor
+
+        grafo_control = {}
+        for obj in CHOICE_JEFE:
+            valor = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], practicasagroecologicas__control=obj[0]).count()
+            grafo_control[obj[1]] =  valor
+
+        dicc_practicas[year[1]] = (grafo_practicas_sino,grafo_manejo,grafo_traccion,grafo_fertilidad,grafo_control)
 
     return render(request, template, locals())
 
 def seguridad(request, template="indicadores/seguridad.html"):
 
-    grafo_economico = {}
-    for obj in CHOICE_JEFE:
-        valor = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], seguridadalimentaria__economico=obj[0]).count()
-        grafo_economico[obj[1]] =  valor
+    years = []
+    for en in Encuesta.objects.order_by('year').values_list('year', flat=True):
+        years.append((en,en))
+    list(set(years))
 
-    grafo_secado = {}
-    for obj in CHOICE_JEFE:
-        valor = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], seguridadalimentaria__secado=obj[0]).count()
-        grafo_secado[obj[1]] =  valor
+    dicc_seguridad = OrderedDict()
+    for year in years:
 
-    grafo_tipo_secado = {}
-    for obj in TipoSecado.objects.all():
-        valor = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], seguridadalimentaria__tipo_secado=obj).count()
-        grafo_tipo_secado[obj] =  valor
+        grafo_economico = {}
+        for obj in CHOICE_JEFE:
+            valor = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], seguridadalimentaria__economico=obj[0]).count()
+            grafo_economico[obj[1]] =  valor
 
-    grafo_plan_cosecha = {}
-    for obj in CHOICE_JEFE:
-        valor = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], seguridadalimentaria__plan_cosecha=obj[0]).count()
-        grafo_plan_cosecha[obj[1]] =  valor
+        grafo_secado = {}
+        for obj in CHOICE_JEFE:
+            valor = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], seguridadalimentaria__secado=obj[0]).count()
+            grafo_secado[obj[1]] =  valor
 
-    grafo_ayuda = {}
-    for obj in CHOICE_JEFE:
-        valor = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], seguridadalimentaria__ayuda=obj[0]).count()
-        grafo_ayuda[obj[1]] =  valor
+        grafo_tipo_secado = {}
+        for obj in TipoSecado.objects.all():
+            valor = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], seguridadalimentaria__tipo_secado=obj).count()
+            grafo_tipo_secado[obj] =  valor
 
-    grafo_suficiente_alimento = {}
-    for obj in CHOICE_JEFE:
-        valor = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], seguridadalimentaria__suficiente_alimento=obj[0]).count()
-        grafo_suficiente_alimento[obj[1]] =  valor
+        grafo_plan_cosecha = {}
+        for obj in CHOICE_JEFE:
+            valor = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], seguridadalimentaria__plan_cosecha=obj[0]).count()
+            grafo_plan_cosecha[obj[1]] =  valor
 
-    grafo_consumo_diario = {}
-    for obj in CHOICE_JEFE:
-        valor = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], seguridadalimentaria__consumo_diario=obj[0]).count()
-        grafo_consumo_diario[obj[1]] =  valor
+        grafo_ayuda = {}
+        for obj in CHOICE_JEFE:
+            valor = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], seguridadalimentaria__ayuda=obj[0]).count()
+            grafo_ayuda[obj[1]] =  valor
+
+        grafo_suficiente_alimento = {}
+        for obj in CHOICE_JEFE:
+            valor = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], seguridadalimentaria__suficiente_alimento=obj[0]).count()
+            grafo_suficiente_alimento[obj[1]] =  valor
+
+        grafo_consumo_diario = {}
+        for obj in CHOICE_JEFE:
+            valor = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], seguridadalimentaria__consumo_diario=obj[0]).count()
+            grafo_consumo_diario[obj[1]] =  valor
 
 
-    conteo_fenomeno = {}
-    for obj in CHOICE_FENOMENOS:
-        valor = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], respuestano41__fenomeno=obj[0]).count()
-        conteo_fenomeno[obj[1]] =  valor
+        conteo_fenomeno = {}
+        for obj in CHOICE_FENOMENOS:
+            valor = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], respuestano41__fenomeno=obj[0]).count()
+            conteo_fenomeno[obj[1]] =  valor
 
-    conteo_agricola = {}
-    for obj in CHOICE_AGRICOLA:
-        valor = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], respuestano41__agricola=obj[0]).count()
-        conteo_agricola[obj[1]] =  valor
+        conteo_agricola = {}
+        for obj in CHOICE_AGRICOLA:
+            valor = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], respuestano41__agricola=obj[0]).count()
+            conteo_agricola[obj[1]] =  valor
 
-    conteo_mercado = {}
-    for obj in CHOICE_MERCADO:
-        valor = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], respuestano41__mercado=obj[0]).count()
-        conteo_mercado[obj[1]] =  valor
+        conteo_mercado = {}
+        for obj in CHOICE_MERCADO:
+            valor = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], respuestano41__mercado=obj[0]).count()
+            conteo_mercado[obj[1]] =  valor
 
-    conteo_inversion = {}
-    for obj in CHOICE_INVERSION:
-        valor = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], respuestano41__inversion=obj[0]).count()
-        conteo_inversion[obj[1]] =  valor
+        conteo_inversion = {}
+        for obj in CHOICE_INVERSION:
+            valor = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], respuestano41__inversion=obj[0]).count()
+            conteo_inversion[obj[1]] =  valor
 
-    grafo_adquiere_agua = {}
-    for obj in AdquiereAgua.objects.all():
-        valor = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], otrasseguridad__adquiere_agua=obj).count()
-        grafo_adquiere_agua[obj] =  valor
+        grafo_adquiere_agua = {}
+        for obj in AdquiereAgua.objects.all():
+            valor = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], otrasseguridad__adquiere_agua=obj).count()
+            grafo_adquiere_agua[obj] =  valor
 
-    grafo_tratamiento_agua = {}
-    for obj in CHOICE_JEFE:
-        valor = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], otrasseguridad__tratamiento=obj[0]).count()
-        grafo_tratamiento_agua[obj[1]] =  valor
+        grafo_tratamiento_agua = {}
+        for obj in CHOICE_JEFE:
+            valor = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], otrasseguridad__tratamiento=obj[0]).count()
+            grafo_tratamiento_agua[obj[1]] =  valor
 
-    grafo_tipo_tratamientos = {}
-    for obj in TrataAgua.objects.all():
-        valor = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], otrasseguridad__tipo_tratamiento=obj).count()
-        grafo_tipo_tratamientos[obj] =  valor
+        grafo_tipo_tratamientos = {}
+        for obj in TrataAgua.objects.all():
+            valor = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], otrasseguridad__tipo_tratamiento=obj).count()
+            grafo_tipo_tratamientos[obj] =  valor
+
+        dicc_seguridad[year[1]] = (grafo_economico,
+                                                        grafo_secado,
+                                                        grafo_tipo_secado,
+                                                        grafo_plan_cosecha,
+                                                        grafo_ayuda,
+                                                        grafo_suficiente_alimento,
+                                                        grafo_consumo_diario,
+                                                        conteo_fenomeno,
+                                                        conteo_agricola,
+                                                        conteo_mercado,
+                                                        conteo_inversion,
+                                                        grafo_adquiere_agua,
+                                                        grafo_tratamiento_agua,
+                                                        grafo_tipo_tratamientos)
 
     return render(request, template, locals())
 
 def genero(request, template="indicadores/genero.html"):
 
-    porcentaje_aporta_mujer = OrderedDict()
-    for obj in CHOICER_INGRESO:
-        porcentaje_aporta_mujer[obj[1]] = OrderedDict()
-        for obj2 in CHOICE_PORCENTAJE:
-            valor = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], genero__tipo=obj[0], genero__porcentaje=obj2[0]).count()
-            if valor > 0:
-                porcentaje_aporta_mujer[obj[1]][obj2[1]] =  valor
+    years = []
+    for en in Encuesta.objects.order_by('year').values_list('year', flat=True):
+        years.append((en,en))
+    list(set(years))
+
+    dicc_genero = OrderedDict()
+    for year in years:
+
+        porcentaje_aporta_mujer = OrderedDict()
+        for obj in CHOICER_INGRESO:
+            porcentaje_aporta_mujer[obj[1]] = OrderedDict()
+            for obj2 in CHOICE_PORCENTAJE:
+                valor = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], genero__tipo=obj[0], genero__porcentaje=obj2[0]).count()
+                if valor > 0:
+                    porcentaje_aporta_mujer[obj[1]][obj2[1]] =  valor
 
 
-    grafo_credito_mujer = {}
-    for obj in CHOICE_JEFE:
-        valor = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], genero1__tipo=obj[0]).count()
-        grafo_credito_mujer[obj[1]] =  valor
+        grafo_credito_mujer = {}
+        for obj in CHOICE_JEFE:
+            valor = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], genero1__tipo=obj[0]).count()
+            grafo_credito_mujer[obj[1]] =  valor
 
-    grafo_bienes_mujer = {}
-    for obj in CHOICER_COSAS_MUJER:
-        valor_si = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], genero2__pregunta=obj[0], genero2__respuesta=1).count()
-        valor_no = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], genero2__pregunta=obj[0], genero2__respuesta=2).count()
-        grafo_bienes_mujer[obj[1]] =  (valor_si, valor_no)
+        grafo_bienes_mujer = {}
+        for obj in CHOICER_COSAS_MUJER:
+            valor_si = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], genero2__pregunta=obj[0], genero2__respuesta=1).count()
+            valor_no = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], genero2__pregunta=obj[0], genero2__respuesta=2).count()
+            grafo_bienes_mujer[obj[1]] =  (valor_si, valor_no)
 
-    grafo_organizacion_mujer = {}
-    for obj in CHOICE_JEFE:
-        valor = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], genero3__respuesta=obj[0]).count()
-        grafo_organizacion_mujer[obj[1]] =  valor
+        grafo_organizacion_mujer = {}
+        for obj in CHOICE_JEFE:
+            valor = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], genero3__respuesta=obj[0]).count()
+            grafo_organizacion_mujer[obj[1]] =  valor
 
-    mujer_organizacion = {}
-    for obj in OrgComunitarias.objects.all():
-        dato = OrganizacionComunitaria.objects.filter(encuesta__entrevistado__departamento=request.session['departamento'],
-                                                    caso_si=obj, encuesta__entrevistado__jefe=1).count()
-        mujer_organizacion[obj] = dato
+        mujer_organizacion = {}
+        for obj in OrgComunitarias.objects.all():
+            dato = OrganizacionComunitaria.objects.filter(encuesta__year=year[0],encuesta__entrevistado__departamento=request.session['departamento'],
+                                                        caso_si=obj, encuesta__entrevistado__jefe=1).count()
+            mujer_organizacion[obj] = dato
 
 
-    nivel_educacion_mujer = {}
-    for obj in CHOICER_NIVEL_MUJER:
-        valor = Genero4.objects.filter(encuesta__entrevistado__departamento=request.session['departamento'],
-                                        opcion=obj[0]).count()
-        nivel_educacion_mujer[obj[1]] =  valor
+        nivel_educacion_mujer = {}
+        for obj in CHOICER_NIVEL_MUJER:
+            valor = Genero4.objects.filter(encuesta__year=year[0],encuesta__entrevistado__departamento=request.session['departamento'],
+                                            opcion=obj[0]).count()
+            nivel_educacion_mujer[obj[1]] =  valor
 
-    divisor = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento']).distinct('entrevistado__id').count()
+        dicc_genero[year[1]] = (porcentaje_aporta_mujer,
+                                                  grafo_credito_mujer,
+                                                  grafo_bienes_mujer,
+                                                  grafo_organizacion_mujer,
+                                                  mujer_organizacion,
+                                                  nivel_educacion_mujer,
+                                                  )
 
     return render(request, template, locals())
 
@@ -769,176 +867,219 @@ def ingresos(request, template="indicadores/ingresos.html"):
 
     #años de encuestas
     years = []
-    for en in Encuesta.objects.filter(entrevistado__departamento=request.session['departamento']).order_by('year').values_list('year', flat=True):
+    for en in Encuesta.objects.order_by('year').values_list('year', flat=True):
         years.append((en,en))
     list(set(years))
 
-    percibe_ingreso = {}
-    for obj in CHOICE_JEFE:
-        valor = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], percibeingreso__si_no=obj[0]).count()
-        percibe_ingreso[obj[1]] =  valor
+    dicc_ingresos = OrderedDict()
+    for year in years:
 
-    fuente_ingresos = {}
-    for obj in TipoFuenteIngreso.objects.all():
-        valor = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], fuentes__fuente_ingreso=obj).count()
-        fuente_ingresos[obj] =  valor
+        percibe_ingreso = {}
+        for obj in CHOICE_JEFE:
+            valor = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], percibeingreso__si_no=obj[0]).count()
+            percibe_ingreso[obj[1]] =  valor
 
-    #ingreso de cultivos tracionales
+        fuente_ingresos = {}
+        for obj in TipoFuenteIngreso.objects.all():
+            valor = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], fuentes__fuente_ingreso=obj).count()
+            fuente_ingresos[obj] =  valor
 
-    ingreso_cultivo_tradicional = {}
-    for obj in Cultivos.objects.all():
-        cultivo = CultivosTradicionales.objects.filter(encuesta__entrevistado__departamento=request.session['departamento'],
-                                                        cultivo=obj)
-        cosechada = cultivo.aggregate(t=Sum('cantidad_cosechada'))['t']
-        venta = cultivo.aggregate(t=Sum('venta'))['t']
-        precio = cultivo.aggregate(t=Avg('precio'))['t']
-        try:
-            ingreso = venta * precio
-        except:
-            ingreso = 0
-        costo = cultivo.aggregate(t=Avg('costo'))['t']
-        if venta > 0:
+        #ingreso de cultivos tracionales
+
+        ingreso_cultivo_tradicional = {}
+        for obj in Cultivos.objects.all():
+            cultivo = CultivosTradicionales.objects.filter(encuesta__year=year[0],encuesta__entrevistado__departamento=request.session['departamento'],
+                                                            cultivo=obj)
+            cosechada = cultivo.aggregate(t=Sum('cantidad_cosechada'))['t']
+            venta = cultivo.aggregate(t=Sum('venta'))['t']
+            precio = cultivo.aggregate(t=Avg('precio'))['t']
             try:
-                utilidad = ingreso - costo
+                ingreso = venta * precio
             except:
-                pass
-            ingreso_cultivo_tradicional[obj] = {'unidad':obj.get_unidad_medida_display(),
-                                            'cantidad_cosechada':cosechada,
-                                            'venta':venta,
-                                            'precio':precio,
-                                            'ingreso': ingreso,
-                                            'costo':costo,
-                                            'utilidad': utilidad}
+                ingreso = 0
+            costo = cultivo.aggregate(t=Avg('costo'))['t']
+            if venta > 0:
+                try:
+                    utilidad = ingreso - costo
+                except:
+                    pass
+                ingreso_cultivo_tradicional[obj] = {'unidad':obj.get_unidad_medida_display(),
+                                                'cantidad_cosechada':cosechada,
+                                                'venta':venta,
+                                                'precio':precio,
+                                                'ingreso': ingreso,
+                                                'costo':costo,
+                                                'utilidad': utilidad}
 
-    total_utilidad_tradicional = sum(list([ i['utilidad'] for i in ingreso_cultivo_tradicional.values()]))
-    total_ingreso_tradicional = sum(list([ i['ingreso'] for i in ingreso_cultivo_tradicional.values()]))
-    total_costo_tradicional = sum(list([ i['costo'] for i in ingreso_cultivo_tradicional.values()]))
-    #cultivos huertos familiares
+        total_utilidad_tradicional = sum(list([ i['utilidad'] for i in ingreso_cultivo_tradicional.values()]))
+        total_ingreso_tradicional = sum(list([ i['ingreso'] for i in ingreso_cultivo_tradicional.values()]))
+        total_costo_tradicional = sum(list([ i['costo'] for i in ingreso_cultivo_tradicional.values()]))
+        #cultivos huertos familiares
 
-    ingreso_huertos = {}
-    ingreso_patio = 0
-    for obj in CultivosHuertos.objects.all():
-        cultivo = CultivosHuertosFamiliares.objects.filter(encuesta__entrevistado__departamento=request.session['departamento'],
-                                                        cultivo=obj)
-        cosechada = cultivo.aggregate(t=Sum('cantidad_cosechada'))['t']
-        venta = cultivo.aggregate(t=Sum('venta'))['t']
-        precio = cultivo.aggregate(t=Avg('precio'))['t']
+        ingreso_huertos = {}
+        ingreso_patio = 0
+        for obj in CultivosHuertos.objects.all():
+            cultivo = CultivosHuertosFamiliares.objects.filter(encuesta__year=year[0],encuesta__entrevistado__departamento=request.session['departamento'],
+                                                            cultivo=obj)
+            cosechada = cultivo.aggregate(t=Sum('cantidad_cosechada'))['t']
+            venta = cultivo.aggregate(t=Sum('venta'))['t']
+            precio = cultivo.aggregate(t=Avg('precio'))['t']
+            try:
+                ingreso = venta * precio
+            except:
+                ingreso = 0
+            costo_huerto = CostoHuerto.objects.filter(encuesta__year=year[0],encuesta__entrevistado__departamento=request.session['departamento']).aggregate(t=Avg('costo'))['t']
+            ingreso_patio += ingreso
+
+            if venta > 0:
+                ingreso_huertos[obj] = {'unidad':obj.get_unidad_medida_display(),
+                                                'cantidad_cosechada':cosechada,
+                                                'venta':venta,
+                                                'precio':precio,
+                                                'ingreso': ingreso,
+                                                }
         try:
-            ingreso = venta * precio
+            utilidad_huerto_patio = ingreso_patio - costo_huerto
         except:
-            ingreso = 0
-        costo_huerto = CostoHuerto.objects.filter(encuesta__entrevistado__departamento=request.session['departamento']).aggregate(t=Avg('costo'))['t']
-        ingreso_patio += ingreso
+            utilidad_huerto_patio = 0
+        # cultivos frutales
 
-        if venta > 0:
-            ingreso_huertos[obj] = {'unidad':obj.get_unidad_medida_display(),
-                                            'cantidad_cosechada':cosechada,
-                                            'venta':venta,
-                                            'precio':precio,
-                                            'ingreso': ingreso,
-                                            }
-    utilidad_huerto_patio = ingreso_patio - costo_huerto
-    # cultivos frutales
+        ingreso_frutales = {}
+        ingreso_fruta = 0
+        for obj in CultivosFrutas.objects.all():
+            cultivo = CultivosFrutasFinca.objects.filter(encuesta__year=year[0],encuesta__entrevistado__departamento=request.session['departamento'],
+                                                            cultivo=obj)
+            cosechada = cultivo.aggregate(t=Sum('cantidad_cosechada'))['t']
+            venta = cultivo.aggregate(t=Sum('venta'))['t']
+            precio = cultivo.aggregate(t=Avg('precio'))['t']
+            try:
+                ingreso = venta * precio
+            except:
+                ingreso = 0
+            costo_fruta = CostoFrutas.objects.filter(encuesta__year=year[0],encuesta__entrevistado__departamento=request.session['departamento']).aggregate(t=Avg('costo'))['t']
 
-    ingreso_frutales = {}
-    ingreso_fruta = 0
-    for obj in CultivosFrutas.objects.all():
-        cultivo = CultivosFrutasFinca.objects.filter(encuesta__entrevistado__departamento=request.session['departamento'],
-                                                        cultivo=obj)
-        cosechada = cultivo.aggregate(t=Sum('cantidad_cosechada'))['t']
-        venta = cultivo.aggregate(t=Sum('venta'))['t']
-        precio = cultivo.aggregate(t=Avg('precio'))['t']
+            ingreso_fruta += ingreso
+            if venta > 0:
+                ingreso_frutales[obj] = {'unidad':obj.get_unidad_medida_display(),
+                                                'cantidad_cosechada':cosechada,
+                                                'venta':venta,
+                                                'precio':precio,
+                                                'ingreso': ingreso,
+                                                }
         try:
-            ingreso = venta * precio
+            utilidad_frutas = ingreso_fruta - costo_fruta
         except:
-            ingreso = 0
-        costo_fruta = CostoFrutas.objects.filter(encuesta__entrevistado__departamento=request.session['departamento']).aggregate(t=Avg('costo'))['t']
+            utilidad_frutas = 0
+        # animales en la finca
 
-        ingreso_fruta += ingreso
-        if venta > 0:
-            ingreso_frutales[obj] = {'unidad':obj.get_unidad_medida_display(),
-                                            'cantidad_cosechada':cosechada,
-                                            'venta':venta,
-                                            'precio':precio,
-                                            'ingreso': ingreso,
-                                            }
-    utilidad_frutas = ingreso_fruta - costo_fruta
-    # animales en la finca
+        ingreso_ganaderia = {}
+        for obj in Animales.objects.all():
+            cultivo = Ganaderia.objects.filter(encuesta__year=year[0],encuesta__entrevistado__departamento=request.session['departamento'],
+                                                            animal=obj)
+            cantidad = cultivo.aggregate(t=Avg('cantidad'))['t']
+            venta = cultivo.aggregate(t=Sum('cantidad_vendida'))['t']
+            precio = cultivo.aggregate(t=Avg('precio'))['t']
+            try:
+                ingreso = venta * precio
+            except:
+                ingreso = 0
 
-    ingreso_ganaderia = {}
-    for obj in Animales.objects.all():
-        cultivo = Ganaderia.objects.filter(encuesta__entrevistado__departamento=request.session['departamento'],
-                                                        animal=obj)
-        cantidad = cultivo.aggregate(t=Avg('cantidad'))['t']
-        venta = cultivo.aggregate(t=Sum('cantidad_vendida'))['t']
-        precio = cultivo.aggregate(t=Avg('precio'))['t']
-        try:
-            ingreso = venta * precio
-        except:
-            ingreso = 0
+            if venta > 0:
+                ingreso_ganaderia[obj] = {'cantidad':cantidad,
+                                        'venta':venta,
+                                        'precio':precio,
+                                        'ingreso': ingreso,
+                                        }
 
-        if venta > 0:
-            ingreso_ganaderia[obj] = {'cantidad':cantidad,
-                                    'venta':venta,
-                                    'precio':precio,
-                                    'ingreso': ingreso,
-                                    }
+        total_ingreso_ganado = sum(list([ i['ingreso'] for i in ingreso_ganaderia.values()]))
 
-    total_ingreso_ganado = sum(list([ i['ingreso'] for i in ingreso_ganaderia.values()]))
+        # comercializacion de productos procesados
 
-    # comercializacion de productos procesados
+        ingreso_procesado = {}
+        for obj in ProductoProcesado.objects.all():
+            cultivo = Procesamiento.objects.filter(encuesta__year=year[0],encuesta__entrevistado__departamento=request.session['departamento'],
+                                                            producto=obj)
+            cantidad = cultivo.aggregate(t=Avg('cantidad_total'))['t']
+            venta = cultivo.aggregate(t=Sum('cantidad_vendida'))['t']
+            precio = cultivo.aggregate(t=Avg('precio'))['t']
+            try:
+                ingreso = venta * precio
+            except:
+                ingreso = 0
 
-    ingreso_procesado = {}
-    for obj in ProductoProcesado.objects.all():
-        cultivo = Procesamiento.objects.filter(encuesta__entrevistado__departamento=request.session['departamento'],
-                                                        producto=obj)
-        cantidad = cultivo.aggregate(t=Avg('cantidad_total'))['t']
-        venta = cultivo.aggregate(t=Sum('cantidad_vendida'))['t']
-        precio = cultivo.aggregate(t=Avg('precio'))['t']
-        try:
-            ingreso = venta * precio
-        except:
-            ingreso = 0
-
-        if venta > 0:
-            ingreso_procesado[obj] = {'unidad':obj.get_unidad_medida_display(),
-                                    'cantidad':cantidad,
-                                    'venta':venta,
-                                    'precio':precio,
-                                    'ingreso': ingreso,
-                                    }
-    total_ingreso_procesado = sum(list([ i['ingreso'] for i in ingreso_procesado.values()]))
-
+            if venta > 0:
+                ingreso_procesado[obj] = {'unidad':obj.get_unidad_medida_display(),
+                                        'cantidad':cantidad,
+                                        'venta':venta,
+                                        'precio':precio,
+                                        'ingreso': ingreso,
+                                        }
+        total_ingreso_procesado = sum(list([ i['ingreso'] for i in ingreso_procesado.values()]))
+        gran_total_ingresos = float(total_utilidad_tradicional + utilidad_huerto_patio + utilidad_frutas + total_ingreso_ganado + total_ingreso_procesado) / request.session['encuestados']
+        dicc_ingresos[year[1]] = (percibe_ingreso,
+                                                    fuente_ingresos,
+                                                    ingreso_cultivo_tradicional,
+                                                    total_utilidad_tradicional,
+                                                    total_ingreso_tradicional,
+                                                    total_costo_tradicional,
+                                                    ingreso_huertos,
+                                                    utilidad_huerto_patio,
+                                                    ingreso_frutales,
+                                                    utilidad_frutas,
+                                                    ingreso_ganaderia,
+                                                    total_ingreso_ganado,
+                                                    ingreso_procesado,
+                                                    total_ingreso_procesado,
+                                                    ingreso_patio,
+                                                    costo_huerto,
+                                                    costo_fruta,
+                                                    ingreso_fruta,
+                                                    gran_total_ingresos
+                                                    )
 
     return render(request, template, locals())
 
 def gastos(request, template="indicadores/gastos.html"):
 
-    introducido_tradicional = {}
-    for obj in Cultivos.objects.all():
-        valor = IntroducidosTradicionales.objects.filter(encuesta__entrevistado__departamento=request.session['departamento'],
-                                                        cultivo=obj,si_no=1).count()
-        if valor > 0:
-            introducido_tradicional[obj] =  valor
+    years = []
+    for en in Encuesta.objects.order_by('year').values_list('year', flat=True):
+        years.append((en,en))
+    list(set(years))
 
-    introducido_huerto = {}
-    for obj in CultivosHuertos.objects.all():
-        valor = IntroducidosHuertos.objects.filter(encuesta__entrevistado__departamento=request.session['departamento'],
-                                                        cultivo=obj,si_no=1).count()
-        if valor > 0:
-            introducido_huerto[obj] =  valor
+    dicc_gastos = OrderedDict()
+    for year in years:
 
-    gasto_hogar = {}
-    for obj in CHOICE_TIPO_GASTOS:
-        valor = GastoHogar.objects.filter(encuesta__entrevistado__departamento=request.session['departamento'],
-                                                    tipo=obj[0]).aggregate(t=Avg('cantidad'))['t']
-        gasto_hogar[obj[1]] =  valor
+        introducido_tradicional = {}
+        for obj in Cultivos.objects.all():
+            valor = IntroducidosTradicionales.objects.filter(encuesta__year=year[0],encuesta__entrevistado__departamento=request.session['departamento'],
+                                                            cultivo=obj,si_no=1).count()
+            if valor > 0:
+                introducido_tradicional[obj] =  valor
 
-    gasto_produccion = {}
-    for obj in TipoGasto.objects.all():
-        valor = GastoProduccion.objects.filter(encuesta__entrevistado__departamento=request.session['departamento'],
-                                                        tipo=obj).aggregate(t=Avg('cantidad'))['t']
-        gasto_produccion[obj] =  valor
+        introducido_huerto = {}
+        for obj in CultivosHuertos.objects.all():
+            valor = IntroducidosHuertos.objects.filter(encuesta__year=year[0],encuesta__entrevistado__departamento=request.session['departamento'],
+                                                            cultivo=obj,si_no=1).count()
+            if valor > 0:
+                introducido_huerto[obj] =  valor
+
+        gasto_hogar = {}
+        for obj in CHOICE_TIPO_GASTOS:
+            valor = GastoHogar.objects.filter(encuesta__year=year[0],encuesta__entrevistado__departamento=request.session['departamento'],
+                                                        tipo=obj[0]).aggregate(t=Avg('cantidad'))['t']
+            gasto_hogar[obj[1]] =  valor
+
+        gasto_produccion = {}
+        for obj in TipoGasto.objects.all():
+            valor = GastoProduccion.objects.filter(encuesta__year=year[0],encuesta__entrevistado__departamento=request.session['departamento'],
+                                                            tipo=obj).aggregate(t=Avg('cantidad'))['t']
+            gasto_produccion[obj] =  valor
+
+        dicc_gastos[year[1]] = (introducido_tradicional,
+                                                introducido_huerto,
+                                                gasto_hogar,
+                                                gasto_produccion
+                                                )
 
     return render(request, template, locals())
 

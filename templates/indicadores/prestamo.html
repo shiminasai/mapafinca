@@ -2,11 +2,14 @@
 
 {% block extra_js %}
 <script src="http://code.highcharts.com/highcharts.js"></script>
-<script src="http://code.highcharts.com/exporting.js"></script>
+<script src="http://code.highcharts.com/modules/exporting.js"></script>
+
+{% for key,value  in dicc_prestamos.items %}
+
 <script type="text/javascript">
     $(function () {
     // Create the chart
-    $('#container').highcharts({
+    $('#container-{{key}}').highcharts({
         chart: {
             plotBackgroundColor: null,
             plotBorderWidth: null,
@@ -35,7 +38,7 @@
         series: [{
             name: "",
             colorByPoint: true,
-            data: [{% for k,v in grafo_prestamo_sino.items %}
+            data: [{% for k,v in value.0.items %}
                 {
                     name: "{{k}}",
                     y: {{v}}
@@ -46,7 +49,7 @@
     });
 
     //columna
-    $('#container1').highcharts({
+    $('#container1-{{key}}').highcharts({
         chart: {
             type: 'column'
         },
@@ -87,7 +90,7 @@
             name: "",
             colorByPoint: true,
             data: [
-            {% for k,v in grafo_recibe_prestamo.items %}
+            {% for k,v in value.1.items %}
                 {
                     name: "{{k}}",
                     y: {{v}},
@@ -98,7 +101,7 @@
     });
 
         //columna
-    $('#container2').highcharts({
+    $('#container2-{{key}}').highcharts({
         chart: {
             type: 'column'
         },
@@ -139,7 +142,7 @@
             name: "",
             colorByPoint: true,
             data: [
-            {% for k,v in grafo_uso_prestamo.items %}
+            {% for k,v in value.2.items %}
                 {
                     name: "{{k}}",
                     y: {{v}},
@@ -151,22 +154,38 @@
 
 });
 </script>
+{% endfor %}
 {% endblock extra_js %}
 
 {% block contenido %}
 {% include "breadcrumb.html" %}
 <div class="container">
 <br>
+<!-- Nav tabs -->
+  <ul class="nav nav-tabs" role="tablist">
+  {% for k,v in dicc_prestamos.items %}
+    <li role="presentation" class="{% if forloop.counter == 1 %}active{% endif %}"><a href="#home-{{k}}" aria-controls="home" role="tab" data-toggle="tab">{{k}}</a></li>
+    {% endfor %}
+  </ul>
+
+  <!-- Tab panes -->
+  <div class="tab-content">
+  {% for k,v in dicc_prestamos.items %}
+    <div role="tabpanel" class="tab-pane fade {% if forloop.counter == 1 %}in active{% endif %}" id="home-{{k}}">
 <div class="row">
-    <div class="col-md-6"><div id="container" style="height: 400px;"></div></div>
-    <div class="col-md-6"><div id="container1" style="height: 400px;"></div></div>
+    <div class="col-md-6"><div id="container-{{k}}" style="height: 400px;"></div></div>
+    <div class="col-md-6"><div id="container1-{{k}}" style="height: 400px;"></div></div>
 </div>
 <br><br>
 <div class="row">
-  <div class="col-md-6"><div id="container2" style="height: 400px;"></div></div>
-  <div class="col-md-6"><div id="container3" style="height: 400px;"></div></div>
+  <div class="col-md-6"><div id="container2-{{k}}" style="height: 400px;"></div></div>
+  <div class="col-md-6"><div id="container3-{{k}}" style="height: 400px;"></div></div>
 </div>
-</div>
+</div> <!-- role tabpanel -->
+  {% endfor %}
+  </div>
+
+</div> <!-- fin container -->
 <br><br>
 {% include "menu_indicadores.html" %}
 {% endblock contenido %}

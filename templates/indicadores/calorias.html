@@ -4,7 +4,8 @@
 
 {% block extra_js %}
 <script src="http://code.highcharts.com/highcharts.js"></script>
-<script src="http://code.highcharts.com/exporting.js"></script>
+<script src="http://code.highcharts.com/modules/exporting.js"></script>
+
 <script type="text/javascript">
 $(function () {
     // Create the chart
@@ -49,7 +50,7 @@ $(function () {
             name: "",
             colorByPoint: true,
             data: [
-            
+
                 {
                     name: "Kcal Cultivos Tradicional",
                     y: {{total_calorias_tradicional}},
@@ -70,7 +71,7 @@ $(function () {
                     name: "Kcal Productos comprados",
                     y: {{total_calorias_fuera_finca}},
                 },
-            
+
             ]
         }],
     });
