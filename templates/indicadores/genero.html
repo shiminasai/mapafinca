@@ -28,11 +28,13 @@ $('#container-{{key}}').highcharts({
                 cursor: 'pointer',
                 dataLabels: {
                     enabled: true,
+                    distance: -30,
                     format: '<b>{point.name}</b>: {point.percentage:.1f} %',
                     style: {
                         color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
                     }
-                }
+                },
+                showInLegend: true
             }
         },
         series: [{
@@ -113,15 +115,20 @@ $('#container3-{{key}}').highcharts({
                 pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
             },
             plotOptions: {
-                pie: {
-                    allowPointSelect: true,
-                    cursor: 'pointer',
-                    dataLabels: {
-                        enabled: false
-                    },
-                    showInLegend: true
-                }
-            },
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: true,
+                    //distance: -30,
+                    format: '{point.percentage:.1f} %',
+                    style: {
+                        color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                    }
+                },
+                showInLegend: true
+            }
+        },
             series: [{
                 name: 'Organización',
                 colorByPoint: true,

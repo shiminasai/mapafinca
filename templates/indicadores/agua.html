@@ -7,7 +7,7 @@
 {% for key,value  in dicc_agua.items %}
 <script type="text/javascript">
 	$(function () {
-    // Create the chart
+        // Create the chart
     $('#container-{{key}}').highcharts({
         chart: {
             type: 'column'
@@ -28,14 +28,13 @@
 
         },
         legend: {
-            enabled: true
+            enabled: false
         },
         plotOptions: {
             series: {
                 borderWidth: 0,
                 dataLabels: {
                     enabled: true,
-                    rotation: 0,
                     format: '{point.y:.1f}'
                 },
                 showInLegend: true
@@ -52,10 +51,10 @@
             colorByPoint: true,
             data: [
             {% for k,v in value.0.items %}
-            	{
-                	name: "{{k}}",
-                	y: {{v}},
-            	},
+                {
+                    name: "{{k}}",
+                    y: {{v}},
+                },
             {% endfor %}
             ]
         }],
@@ -218,6 +217,9 @@
     });
 
 	// Create the chart
+
+
+$(function () {
     $('#container4-{{key}}').highcharts({
         chart: {
             type: 'column'
@@ -225,11 +227,12 @@
         title: {
             text: 'Realiza algún tratamiento al agua de consumo'
         },
-        subtitle: {
-            text: ''
-        },
         xAxis: {
-            type: 'category'
+            categories: [
+            'Tratamiento al agua de consumo',
+            
+            ],
+            crosshair: true
         },
         yAxis: {
             title: {
@@ -237,37 +240,42 @@
             }
 
         },
-        legend: {
+        credits: {
             enabled: false
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'middle',
+            borderWidth: 0
         },
         plotOptions: {
             series: {
                 borderWidth: 0,
                 dataLabels: {
                     enabled: true,
-                    format: '{point.y:.1f}'
+                    format: '{point.y:.2f}',
+                    color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'black',
+                    style: {
+                        textShadow: '0 0 3px white'
+                    }
                 }
             }
         },
-
         tooltip: {
             headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
             pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}</b> of total<br/>'
         },
-
-        series: [{
-            name: "",
-            colorByPoint: true,
-            data: [
+        series: [
             {% for k,v in value.4.items %}
-            	{
-                	name: "{{k}}",
-                	y: {{v}},
-            	},
+                {
+                    name: "{{k}}",
+                    data: [{{v}}],
+                },
             {% endfor %}
-            ]
-        }],
+          ]
     });
+});
 
 
     // Create the chart

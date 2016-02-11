@@ -26,11 +26,13 @@ $(function () {
                 cursor: 'pointer',
                 dataLabels: {
                     enabled: true,
-                    format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                    distance: -30,
+                    format: '{point.percentage:.1f} %',
                     style: {
                         color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
                     }
-                }
+                },
+                showInLegend: true
             }
         },
         series: [{
@@ -160,49 +162,6 @@ $(function () {
     });
 });
 
-$(function () {
-
-    $(document).ready(function () {
-
-        // Build the chart
-        $('#container3-{{key}}').highcharts({
-            chart: {
-                plotBackgroundColor: null,
-                plotBorderWidth: null,
-                plotShadow: false,
-                type: 'pie'
-            },
-            title: {
-                text: 'En el caso que SI, qué organización comunitaria pertenece?'
-            },
-            tooltip: {
-                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-            },
-            plotOptions: {
-                pie: {
-                    allowPointSelect: true,
-                    cursor: 'pointer',
-                    dataLabels: {
-                        enabled: false
-                    },
-                    showInLegend: true
-                }
-            },
-            series: [{
-                name: 'Organización',
-                colorByPoint: true,
-                data: [
-                {% for k,v in value.1.items %}
-                    {
-                    name: '{{k}}',
-                    y: {{v}}
-                },
-                {% endfor %}
-                ]
-            }]
-        });
-    });
-});
 
 </script>
 {% endfor %}
@@ -234,7 +193,7 @@ $(function () {
 <br><br>
 <div class="row">
   <div class="col-md-6"><div id="container2-{{k}}" style="height: 400px;"></div></div>
-  <div class="col-md-6"><div id="container3-{{k}}" style="height: 400px;"></div></div>
+  
 </div>
 </div> <!-- role tabpanel -->
   {% endfor %}
