@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block contenido %}
+{% for k,v in  dicc_productividad.items %}
+	{{k}} --> <br> {% for key, value in v.items %}
+					{{key}} --> {{value}} <br>
+				{% endfor %} <br>
+{% endfor %}
+   
+{% endblock contenido %}

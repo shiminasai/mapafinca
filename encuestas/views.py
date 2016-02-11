@@ -1232,6 +1232,41 @@ def calorias(request, template="indicadores/calorias.html"):
 
     return render(request, template, locals())
 
+def productividad(request, template="indicadores/productividad.html"):
+     #años de encuestas
+    years = []
+    for en in Encuesta.objects.order_by('year').values_list('year', flat=True):
+        years.append((en,en))
+    list(set(years))
+
+    dicc_productividad = OrderedDict()
+    for year in years:
+
+        productividad_cultivo_tradicional = {}
+        for obj in Cultivos.objects.all():
+            cultivo = CultivosTradicionales.objects.filter(encuesta__year=year[0],encuesta__entrevistado__departamento=request.session['departamento'],
+                                                            cultivo=obj)
+            total_area_sembrada = cultivo.aggregate(t=Sum('area_sembrada'))['t']
+            total_area_cosechada = cultivo.aggregate(t=Sum('area_cosechada'))['t']
+            total_cosechada = cultivo.aggregate(t=Sum('cantidad_cosechada'))['t']
+            numero_gente_produce = cultivo.count()
+            try:
+                perdida = total_area_sembrada - total_area_cosechada
+                productividad = total_cosechada / total_area_cosechada
+            except:
+                perdida = 0
+                productividad = 0
+            if numero_gente_produce > 0:
+                productividad_cultivo_tradicional[obj] = {'unidad':obj.get_unidad_medida_display(),
+                                                'total_gente':numero_gente_produce,
+                                                'total_area_cosechada':total_area_cosechada,
+                                                'perdida':perdida,
+                                                'total_produccion': total_cosechada,
+                                                'productividad':productividad,
+                                                }
+        dicc_productividad[year[1]] = productividad_cultivo_tradicional
+
+    return render(request, template, {"dicc_productividad": dicc_productividad})
 
 #FUNCIONES UTILITARIAS
 def saca_porcentajes(dato, total, formato=True):

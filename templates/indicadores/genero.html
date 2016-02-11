@@ -19,6 +19,9 @@ $('#container-{{key}}').highcharts({
         title: {
             text: '¿Tiene crédito a nombre de la mujer (compañera del jefe del hogar)? '
         },
+        credits: {
+            enabled: false
+        },
         tooltip: {
             pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
         },
@@ -59,6 +62,9 @@ $('#container2-{{key}}').highcharts({
         },
         subtitle: {
             text: ''
+        },
+        credits: {
+            enabled: false
         },
         xAxis: {
             type: 'category'
@@ -110,6 +116,9 @@ $('#container3-{{key}}').highcharts({
             },
             title: {
                 text: 'Tipo organización que participa mujer (mujer jefe de familia)'
+            },
+            credits: {
+            enabled: false
             },
             tooltip: {
                 pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'

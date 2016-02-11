@@ -17,6 +17,9 @@ $(function () {
         title: {
             text: 'Gastos familiar en el hogar'
         },
+        credits: {
+            enabled: false
+        },
         tooltip: {
             pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
         },
@@ -64,6 +67,9 @@ $(function () {
         title: {
             text: 'Gastos familiar para la producción'
         },
+        credits: {
+            enabled: false
+        },
         tooltip: {
             pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
         },
@@ -106,6 +112,9 @@ $('#container2-{{key}}').highcharts({
         },
         title: {
             text: 'Rubros tracionales promovidos por CAFOD'
+        },
+        credits: {
+            enabled: false
         },
         subtitle: {
             text: 'Rubros tracionales'
@@ -167,6 +176,9 @@ $('#container3-{{key}}').highcharts({
         },
         subtitle: {
             text: 'Rubros huerto familiares'
+        },
+        credits: {
+            enabled: false
         },
         xAxis: {
             categories: [{% for k,v in value.1.items %} '{{k}}',{% endfor %}],
