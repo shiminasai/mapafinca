@@ -265,7 +265,10 @@ $(function () {
                     </div>
                     <div class="row fila-grafico">
                         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 space">
-                            <div class="table-responsive">
+                            <div>
+                                <a href="#" onclick="exportarXLS('modalidad'); return false;">Exportar a excel</a>
+                                </div>
+                            <div class="table-responsive" id="modalidad">
                                 <table class="table table-bordered table-hover">
                                     <tr>
                                         <th>Cuando el jefe es</th>

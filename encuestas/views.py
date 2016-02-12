@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, render_to_response
 from django.http import Http404, HttpResponse
 from django.views.generic import TemplateView
 from .forms import ConsultarForm
@@ -1330,3 +1330,11 @@ def saca_porcentajes(dato, total, formato=True):
             return '%.2f' % porcentaje
     else:
         return 0
+
+def save_as_xls(request):
+    tabla = request.POST['tabla']    
+    response = render_to_response('xls.html', {'tabla': tabla, })
+    response['Content-Disposition'] = 'attachment; filename=tabla.xls'
+    response['Content-Type'] = 'application/vnd.ms-excel'
+    response['Charset'] ='UTF-8'
+    return response
