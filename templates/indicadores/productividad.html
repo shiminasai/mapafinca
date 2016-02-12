@@ -1,10 +1,119 @@
 {% extends "base.html" %}
 
 {% block contenido %}
-{% for k,v in  dicc_productividad.items %}
-	{{k}} --> <br> {% for key, value in v.items %}
-					{{key}} --> {{value}} <br>
-				{% endfor %} <br>
-{% endfor %}
-   
+{% include "breadcrumb.html" %}
+<div class="container">
+<!-- Nav tabs -->
+
+    <div class="row list-anos">
+        <div class="panel-group panel-indicadores" id="accordion" role="tablist" aria-multiselectable="true">
+            <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="headingOne">
+                    <h4 class="panel-title titulo-indicador">
+                        <ol class="breadcrumb">
+                            <li>
+                                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                Indicadores
+                                </a>
+                            </li>
+                            <li>
+                                Ciclos productivos
+                            </li>
+                        </ol>
+
+                    </h4>
+                 </div>
+                <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                    <div class="panel-body">
+                        {% include "menu_indicadores.html" %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2 titulo-anos">
+            <h5>SELECCIONAR AÑO:</h5>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10 botones-anos">
+            <ul class="nav nav-tabs row" role="detalle">
+              {% for k,v in dicc_productividad.items %}
+
+                 <li class="col-xs-6 col-sm-4 col-md-2 col-lg-2 {% if forloop.counter == 1 %}active{% endif %}" role="presentation">
+                    <a class="btn btn-anos" href="#home-{{k}}" aria-controls="home{{forloop.counter}}" role="tab" data-toggle="tab">{{k}}</a>
+                 </li>
+              {% endfor %}
+
+            </ul>
+
+        </div>
+    </div>
+<!-- Tab panes -->
+    <div class="row info-publica">
+        <div class="tab-content">
+              {% for k,v in dicc_productividad.items %}
+                <div role="tabpanel" class="tab-pane fade {% if forloop.counter == 1 %}in active{% endif %}" id="home-{{k}}">
+                <div class="container">
+                    <div class="row fila-grafico">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 space">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover">
+                                <caption>Cultivos en primera</caption>
+                                    <tr>
+                                        <th>Cultivo</th>
+                                        <th>Unidad</th>
+                                        <th>Número de productores que lo cultivan</th>
+                                        <th>Total de area cosechada (Mz)</th>
+                                        <th>Total de area perdida (Mz)</th>
+                                        <th>Total producción (qq)</th>
+                                        <th>Productividad (qq)</th>
+                                    </tr>
+                                    {% for k,value in v.0.items %}
+                                        <tr>
+                                            <td>{{k}}</td>
+                                            <td>{{value.unidad}}</td>
+                                            <td>{{value.total_gente}}</td>
+                                            <td>{{value.total_area_cosechada}}</td>
+                                            <td>{{value.perdida}}</td>
+                                            <td>{{value.total_produccion}}</td>
+                                            <td>{{value.productividad|floatformat:2}}</td>
+                                        </tr>
+                                    {% endfor %}
+                                 </table>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover">
+                                <caption>Cultivos en postrera</caption>
+                                    <tr>
+                                       <th>Cultivo</th>
+                                        <th>Unidad</th>
+                                        <th>Número de productores que lo cultivan</th>
+                                        <th>Total de area cosechada (Mz)</th>
+                                        <th>Total de area perdida (Mz)</th>
+                                        <th>Total producción (qq)</th>
+                                        <th>Productividad (qq)</th>
+                                    </tr>
+                                    {% for k,value in v.1.items %}
+                                        <tr>
+                                            <td>{{k}}</td>
+                                            <td>{{value.unidad}}</td>
+                                            <td>{{value.total_gente}}</td>
+                                            <td>{{value.total_area_cosechada}}</td>
+                                            <td>{{value.perdida}}</td>
+                                            <td>{{value.total_produccion}}</td>
+                                            <td>{{value.productividad|floatformat:2}}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                </div> <!-- role tabpanel -->
+              {% endfor %}
+        </div>
+    </div>
+</div>
+<br><br>
 {% endblock contenido %}

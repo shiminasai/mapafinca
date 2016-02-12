@@ -1161,74 +1161,98 @@ def envio_calorias(request):
     return datos
 
 def calorias(request, template="indicadores/calorias.html"):
+     #años de encuestas
+    years = []
+    for en in Encuesta.objects.order_by('year').values_list('year', flat=True):
+        years.append((en,en))
+    list(set(years))
 
-    calorias_tradicional = {}
-    for obj in Cultivos.objects.all():
-        calculo = CultivosTradicionales.objects.filter(encuesta__entrevistado__departamento=request.session['departamento'],
-                                                                                cultivo=obj).aggregate(t=Coalesce(Avg('consumo_familia'), V(0)))['t']
-        consumida = calculo * 12
-        consumida_gramos = consumida * obj.calorias
-        calorias_dia = float(consumida_gramos * obj.calorias) / 100
-        gramo_dia = float(obj.proteinas*consumida_gramos) / 100
-        if calorias_dia > 0:
-            calorias_tradicional[obj] = (consumida, obj.get_unidad_medida_display(),consumida_gramos,obj.calorias, obj.proteinas,calorias_dia,gramo_dia)
-    total_calorias_tradicional = sum(list([ i[5] for i in calorias_tradicional.values()]))
-    total_proteina_tradicional = sum(list([ i[6] for i in calorias_tradicional.values()]))
+    dicc_calorias = OrderedDict()
+    for year in years:
 
-    calorias_huerto = {}
-    for obj in CultivosHuertos.objects.all():
-        calculo = CultivosHuertosFamiliares.objects.filter(encuesta__entrevistado__departamento=request.session['departamento'],
-                                                                                cultivo=obj).aggregate(t=Coalesce(Avg('consumo_familia'), V(0)))['t']
-        consumida = calculo * 12
-        consumida_gramos = consumida * obj.calorias
-        calorias_dia = float(consumida_gramos * obj.calorias) / 100
-        gramo_dia = float(obj.proteinas*consumida_gramos) / 100
-        if calorias_dia > 0:
-            calorias_huerto[obj] = (consumida, obj.get_unidad_medida_display(),consumida_gramos,obj.calorias, obj.proteinas,calorias_dia,gramo_dia)
+        calorias_tradicional = {}
+        for obj in Cultivos.objects.all():
+            calculo = CultivosTradicionales.objects.filter(encuesta__year=year[0],encuesta__entrevistado__departamento=request.session['departamento'],
+                                                                                    cultivo=obj).aggregate(t=Coalesce(Avg('consumo_familia'), V(0)))['t']
+            consumida = calculo * 12
+            consumida_gramos = consumida * obj.calorias
+            calorias_dia = float(consumida_gramos * obj.calorias) / 100
+            gramo_dia = float(obj.proteinas*consumida_gramos) / 100
+            if calorias_dia > 0:
+                calorias_tradicional[obj] = (consumida, obj.get_unidad_medida_display(),consumida_gramos,obj.calorias, obj.proteinas,calorias_dia,gramo_dia)
+        total_calorias_tradicional = sum(list([ i[5] for i in calorias_tradicional.values()]))
+        total_proteina_tradicional = sum(list([ i[6] for i in calorias_tradicional.values()]))
 
-    total_calorias_huerto = sum(list([ i[5] for i in calorias_huerto.values()]))
-    total_proteina_huerto = sum(list([ i[6] for i in calorias_huerto.values()]))
+        calorias_huerto = {}
+        for obj in CultivosHuertos.objects.all():
+            calculo = CultivosHuertosFamiliares.objects.filter(encuesta__year=year[0],encuesta__entrevistado__departamento=request.session['departamento'],
+                                                                                    cultivo=obj).aggregate(t=Coalesce(Avg('consumo_familia'), V(0)))['t']
+            consumida = calculo * 12
+            consumida_gramos = consumida * obj.calorias
+            calorias_dia = float(consumida_gramos * obj.calorias) / 100
+            gramo_dia = float(obj.proteinas*consumida_gramos) / 100
+            if calorias_dia > 0:
+                calorias_huerto[obj] = (consumida, obj.get_unidad_medida_display(),consumida_gramos,obj.calorias, obj.proteinas,calorias_dia,gramo_dia)
 
-    calorias_fruta = {}
-    for obj in CultivosFrutas.objects.all():
-        calculo = CultivosFrutasFinca.objects.filter(encuesta__entrevistado__departamento=request.session['departamento'],
-                                                                                cultivo=obj).aggregate(t=Coalesce(Avg('consumo_familia'), V(0)))['t']
-        consumida = calculo * 12
-        consumida_gramos = consumida * obj.calorias
-        calorias_dia = float(consumida_gramos * obj.calorias) / 100
-        gramo_dia = float(obj.proteinas*consumida_gramos) / 100
-        if calorias_dia > 0:
-            calorias_fruta[obj] = (consumida, obj.get_unidad_medida_display(),consumida_gramos,obj.calorias, obj.proteinas,calorias_dia,gramo_dia)
-    total_calorias_fruta = sum(list([ i[5] for i in calorias_fruta.values()]))
-    total_proteina_fruta = sum(list([ i[6] for i in calorias_fruta.values()]))
+        total_calorias_huerto = sum(list([ i[5] for i in calorias_huerto.values()]))
+        total_proteina_huerto = sum(list([ i[6] for i in calorias_huerto.values()]))
 
-    calorias_procesado = {}
-    for obj in ProductoProcesado.objects.all():
-        calculo = Procesamiento.objects.filter(encuesta__entrevistado__departamento=request.session['departamento'],
-                                                                                producto=obj).aggregate(t=Coalesce(Avg('cantidad'), V(0)))['t']
-        consumida = calculo * 12
-        consumida_gramos = consumida * obj.calorias
-        calorias_dia = float(consumida_gramos * obj.calorias) / 100
-        gramo_dia = float(obj.proteinas*consumida_gramos) / 100
-        if calorias_dia > 0:
-            calorias_procesado[obj] = (consumida, obj.get_unidad_medida_display(),consumida_gramos,obj.calorias, obj.proteinas,calorias_dia,gramo_dia)
+        calorias_fruta = {}
+        for obj in CultivosFrutas.objects.all():
+            calculo = CultivosFrutasFinca.objects.filter(encuesta__year=year[0],encuesta__entrevistado__departamento=request.session['departamento'],
+                                                                                    cultivo=obj).aggregate(t=Coalesce(Avg('consumo_familia'), V(0)))['t']
+            consumida = calculo * 12
+            consumida_gramos = consumida * obj.calorias
+            calorias_dia = float(consumida_gramos * obj.calorias) / 100
+            gramo_dia = float(obj.proteinas*consumida_gramos) / 100
+            if calorias_dia > 0:
+                calorias_fruta[obj] = (consumida, obj.get_unidad_medida_display(),consumida_gramos,obj.calorias, obj.proteinas,calorias_dia,gramo_dia)
+        total_calorias_fruta = sum(list([ i[5] for i in calorias_fruta.values()]))
+        total_proteina_fruta = sum(list([ i[6] for i in calorias_fruta.values()]))
 
-    total_calorias_procesado = sum(list([ i[5] for i in calorias_procesado.values()]))
-    total_proteina_procesado = sum(list([ i[6] for i in calorias_procesado.values()]))
+        calorias_procesado = {}
+        for obj in ProductoProcesado.objects.all():
+            calculo = Procesamiento.objects.filter(encuesta__year=year[0],encuesta__entrevistado__departamento=request.session['departamento'],
+                                                                                    producto=obj).aggregate(t=Coalesce(Avg('cantidad'), V(0)))['t']
+            consumida = calculo * 12
+            consumida_gramos = consumida * obj.calorias
+            calorias_dia = float(consumida_gramos * obj.calorias) / 100
+            gramo_dia = float(obj.proteinas*consumida_gramos) / 100
+            if calorias_dia > 0:
+                calorias_procesado[obj] = (consumida, obj.get_unidad_medida_display(),consumida_gramos,obj.calorias, obj.proteinas,calorias_dia,gramo_dia)
 
-    calorias_fuera_finca = {}
-    for obj in ProductosFueraFinca.objects.all():
-        calculo = AlimentosFueraFinca.objects.filter(encuesta__entrevistado__departamento=request.session['departamento'],
-                                                                                producto=obj).aggregate(t=Coalesce(Avg('cantidad'), V(0)))['t']
-        consumida = calculo * 12
-        consumida_gramos = consumida * obj.calorias
-        calorias_dia = float(consumida_gramos * obj.calorias) / 100
-        gramo_dia = float(obj.proteinas*consumida_gramos) / 100
-        if calorias_dia > 0:
-            calorias_fuera_finca[obj] = (consumida, obj.unidad_medida,consumida_gramos,obj.calorias, obj.proteinas,calorias_dia,gramo_dia)
+        total_calorias_procesado = sum(list([ i[5] for i in calorias_procesado.values()]))
+        total_proteina_procesado = sum(list([ i[6] for i in calorias_procesado.values()]))
 
-    total_calorias_fuera_finca = sum(list([ i[5] for i in calorias_fuera_finca.values()]))
-    total_proteina_fuera_finca = sum(list([ i[6] for i in calorias_fuera_finca.values()]))
+        calorias_fuera_finca = {}
+        for obj in ProductosFueraFinca.objects.all():
+            calculo = AlimentosFueraFinca.objects.filter(encuesta__year=year[0],encuesta__entrevistado__departamento=request.session['departamento'],
+                                                                                    producto=obj).aggregate(t=Coalesce(Avg('cantidad'), V(0)))['t']
+            consumida = calculo * 12
+            consumida_gramos = consumida * obj.calorias
+            calorias_dia = float(consumida_gramos * obj.calorias) / 100
+            gramo_dia = float(obj.proteinas*consumida_gramos) / 100
+            if calorias_dia > 0:
+                calorias_fuera_finca[obj] = (consumida, obj.unidad_medida,consumida_gramos,obj.calorias, obj.proteinas,calorias_dia,gramo_dia)
+
+        total_calorias_fuera_finca = sum(list([ i[5] for i in calorias_fuera_finca.values()]))
+        total_proteina_fuera_finca = sum(list([ i[6] for i in calorias_fuera_finca.values()]))
+
+        dicc_calorias[year[1]] = (calorias_tradicional,
+                                                    total_calorias_tradicional,
+                                                    total_proteina_tradicional,
+                                                    calorias_huerto,
+                                                    total_calorias_huerto,
+                                                    total_proteina_huerto,
+                                                    calorias_fruta,
+                                                    total_calorias_fruta,
+                                                    total_proteina_fruta,
+                                                    calorias_procesado,
+                                                    total_calorias_procesado,
+                                                    total_proteina_procesado,
+                                                    calorias_fuera_finca,
+                                                    total_calorias_fuera_finca,
+                                                    total_proteina_fuera_finca)
 
     return render(request, template, locals())
 
@@ -1242,10 +1266,10 @@ def productividad(request, template="indicadores/productividad.html"):
     dicc_productividad = OrderedDict()
     for year in years:
 
-        productividad_cultivo_tradicional = {}
+        productividad_cultivo_tradicional_primera = {}
         for obj in Cultivos.objects.all():
             cultivo = CultivosTradicionales.objects.filter(encuesta__year=year[0],encuesta__entrevistado__departamento=request.session['departamento'],
-                                                            cultivo=obj)
+                                                            cultivo=obj,periodo=1)
             total_area_sembrada = cultivo.aggregate(t=Sum('area_sembrada'))['t']
             total_area_cosechada = cultivo.aggregate(t=Sum('area_cosechada'))['t']
             total_cosechada = cultivo.aggregate(t=Sum('cantidad_cosechada'))['t']
@@ -1257,14 +1281,39 @@ def productividad(request, template="indicadores/productividad.html"):
                 perdida = 0
                 productividad = 0
             if numero_gente_produce > 0:
-                productividad_cultivo_tradicional[obj] = {'unidad':obj.get_unidad_medida_display(),
+                productividad_cultivo_tradicional_primera[obj] = {'unidad':obj.get_unidad_medida_display(),
                                                 'total_gente':numero_gente_produce,
                                                 'total_area_cosechada':total_area_cosechada,
                                                 'perdida':perdida,
                                                 'total_produccion': total_cosechada,
                                                 'productividad':productividad,
                                                 }
-        dicc_productividad[year[1]] = productividad_cultivo_tradicional
+
+        productividad_cultivo_tradicional_postrera = {}
+        for obj in Cultivos.objects.all():
+            cultivo = CultivosTradicionales.objects.filter(encuesta__year=year[0],encuesta__entrevistado__departamento=request.session['departamento'],
+                                                            cultivo=obj,periodo=2)
+            total_area_sembrada = cultivo.aggregate(t=Sum('area_sembrada'))['t']
+            total_area_cosechada = cultivo.aggregate(t=Sum('area_cosechada'))['t']
+            total_cosechada = cultivo.aggregate(t=Sum('cantidad_cosechada'))['t']
+            numero_gente_produce = cultivo.count()
+            try:
+                perdida = total_area_sembrada - total_area_cosechada
+                productividad = total_cosechada / total_area_cosechada
+            except:
+                perdida = 0
+                productividad = 0
+            if numero_gente_produce > 0:
+                productividad_cultivo_tradicional_postrera[obj] = {'unidad':obj.get_unidad_medida_display(),
+                                                'total_gente':numero_gente_produce,
+                                                'total_area_cosechada':total_area_cosechada,
+                                                'perdida':perdida,
+                                                'total_produccion': total_cosechada,
+                                                'productividad':productividad,
+                                                }
+
+
+        dicc_productividad[year[1]] = (productividad_cultivo_tradicional_primera,productividad_cultivo_tradicional_postrera)
 
     return render(request, template, {"dicc_productividad": dicc_productividad})
 
