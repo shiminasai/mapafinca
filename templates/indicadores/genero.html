@@ -171,13 +171,13 @@ $('#container3-{{key}}').highcharts({
                             <li>
                                 <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                                 Indicadores
-                                </a> 
+                                </a>
                             </li>
                             <li>
                                 Género
                             </li>
                         </ol>
-                        
+
                     </h4>
                  </div>
                 <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
@@ -214,7 +214,10 @@ $('#container3-{{key}}').highcharts({
                         <div class="grafico-ind" id="container-{{k}}" style="min-width: 310px; height: 400px; width: 550px; margin: 0 auto"></div>
                     </div>
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6 space">
-                        <div class="table-responsive">
+                     <div>
+                                <a href="#" onclick="exportarXLS('modalidad'); return false;">Exportar a excel</a>
+                            </div>
+                        <div class="table-responsive" id="modalidad">
                             <table class="table table-bordered table-hover" cellspacing="0" width="100%">
                                 <thead>
                                     <tr>
@@ -235,7 +238,7 @@ $('#container3-{{key}}').highcharts({
                             </table>
                         </div>
                     </div>
-                    
+
                 </div>
                 <div class="row fila-grafico">
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6 space">
@@ -245,7 +248,10 @@ $('#container3-{{key}}').highcharts({
                         <div class="grafico-ind" id="container3-{{k}}" style="min-width: 310px; height: 400px; width: 550px; margin: 0 auto"></div>
                     </div>
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6 space">
-                        <div class="table-responsive">
+                     <div>
+                                <a href="#" onclick="exportarXLS('modalidad1'); return false;">Exportar a excel</a>
+                            </div>
+                        <div class="table-responsive" id="modalidad1">
                             <table class="table table-bordered table-hover" cellspacing="0" width="100%">
                                 <caption>Mujeres con nivel de escolaridad</caption>
                                 <thead>
@@ -266,11 +272,11 @@ $('#container3-{{key}}').highcharts({
                                 </tbody>
                             </table>
                         </div>
-                        
+
                     </div>
                 </div>
 
-            </div>    
+            </div>
 
         </div> <!-- role tabpanel -->
         {% endfor %}

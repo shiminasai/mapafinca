@@ -4,7 +4,7 @@
 	<script src="/static/js/classie.js"></script>
 	<script src="/static/js/uiMorphingButton_fixed.js"></script>
 	<script>
-			(function() {	
+			(function() {
 				var docElem = window.document.documentElement, didScroll, scrollPosition;
 
 				// trick to prevent scrolling when opening/closing button
@@ -72,9 +72,9 @@
 		<div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 col-md-offset-2 col-lg-offset-3">
 			<div class="row">
 				<a class='col-xs-6 col-md-6 btn btn-filtro' href="/galeria/">Visite la galeria de Mapa de Fincas</a>
-				{% if  request.user.is_authenticated %}
+				<!--{% if  request.user.is_authenticated %}
 					<a class='col-xs-6 col-md-6 btn btn-filtro' href="/primer_mapa/">Consultar Mapa de Fincas</a>
-				{% endif %}
+				{% endif %} -->
 
 			</div>
 
@@ -86,7 +86,7 @@
 			<img class="center-block" src="/static/img/mapa.png" alt="">
 		</div>
 
-		
+
 		<div class="col-md-4 col-lg-4">
 			{% for k,v in paises.items %}
 				<div class="panel">
@@ -118,7 +118,7 @@
 									<p>El Programa Medios de Vida Sostenible con enfoque en la gestión de riesgo y el cambio climático de CAFOD, implementa el sistema de monitoreo de finca que tiene como fin identificar la mejoría del bienestar de vida de familias campesinas atendidas por el programa a través de co-partes en territorio. Toda la información generada por el sistema de monitoreo de finca proviene de la aplicación de una encuesta a familias y medir avances con respecto años anteriores.</p>
 									<br>
 									<p>El Sistema de monitoreo de Finca permitirá visualizar cómo esta la finca hoy y pensar cómo se quiere ver en el futuro, de acuerdo a las posibilidades de las familias y condiciones medioambientales. Se podrá obtener datos generados a través de gráficos, tablas e imágenes y podrá verlo desde teléfonos móviles y tabletas.</p>
-									
+
 								</div>
 							</div>
 						</div>
@@ -129,7 +129,7 @@
 			</section>
 			<!--<div class="">
 				<div class="info-index">
-					
+
 					<hr>
 				</div>
 			</div>-->

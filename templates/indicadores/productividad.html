@@ -53,8 +53,11 @@
                 <div role="tabpanel" class="tab-pane fade {% if forloop.counter == 1 %}in active{% endif %}" id="home-{{k}}">
                 <div class="container">
                     <div class="row fila-grafico">
-                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 space">
-                            <div class="table-responsive">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 space">
+                         <div>
+                                <a href="#" onclick="exportarXLS('modalidad'); return false;">Exportar a excel</a>
+                            </div>
+                            <div class="table-responsive" id="modalidad">
                                 <table class="table table-bordered table-hover">
                                 <caption>Cultivos en primera</caption>
                                     <tr>
@@ -80,8 +83,11 @@
                                  </table>
                             </div>
                         </div>
-                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                            <div class="table-responsive">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                         <div>
+                                <a href="#" onclick="exportarXLS('modalidad1'); return false;">Exportar a excel</a>
+                            </div>
+                            <div class="table-responsive" id="modalidad1">
                                 <table class="table table-bordered table-hover">
                                 <caption>Cultivos en postrera</caption>
                                     <tr>

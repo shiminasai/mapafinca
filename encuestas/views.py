@@ -217,11 +217,11 @@ def principal_dashboard(request, template='dashboard.html', departamento_id=None
     capital_fisico_ambos = Encuesta.objects.filter(Q(entrevistado__departamento=departamento_id), Q(sexomiembros__sexo=3), Q(totalingreso__total__gt=1) |  Q(tipoenergia__tipo=4)).count()
     #capital humano
     capital_humano_mujer = Encuesta.objects.filter(Q(entrevistado__departamento=departamento_id), Q(sexomiembros__sexo=1),
-                                                                                    Q(escolaridad__secu_incompleta__gt=1) |  Q(escolaridad__bachiller__gt=1) |  Q(escolaridad__uni_tecnico__gt=1)).count()
+                                                                                    Q(escolaridad__pri_completa__gt=1) |  Q(escolaridad__secu_incompleta__gt=1) | Q(escolaridad__bachiller__gt=1) |  Q(escolaridad__uni_tecnico__gt=1)).count()
     capital_humano_hombre = Encuesta.objects.filter(Q(entrevistado__departamento=departamento_id), Q(sexomiembros__sexo=2),
-                                                                                    Q(escolaridad__secu_incompleta__gt=1) |  Q(escolaridad__bachiller__gt=1) |  Q(escolaridad__uni_tecnico__gt=1)).count()
+                                                                                    Q(escolaridad__pri_completa__gt=1) |  Q(escolaridad__secu_incompleta__gt=1) | Q(escolaridad__bachiller__gt=1) |  Q(escolaridad__uni_tecnico__gt=1)).count()
     capital_humano_ambos = Encuesta.objects.filter(Q(entrevistado__departamento=departamento_id), Q(sexomiembros__sexo=3),
-                                                                                    Q(escolaridad__secu_incompleta__gt=1) |  Q(escolaridad__bachiller__gt=1) |  Q(escolaridad__uni_tecnico__gt=1)).count()
+                                                                                    Q(escolaridad__pri_completa__gt=1) |  Q(escolaridad__secu_incompleta__gt=1) | Q(escolaridad__bachiller__gt=1) |  Q(escolaridad__uni_tecnico__gt=1)).count()
     kcalorias = envio_calorias(request)
 
     return render(request,template,locals())
@@ -1332,7 +1332,7 @@ def saca_porcentajes(dato, total, formato=True):
         return 0
 
 def save_as_xls(request):
-    tabla = request.POST['tabla']    
+    tabla = request.POST['tabla']
     response = render_to_response('xls.html', {'tabla': tabla, })
     response['Content-Disposition'] = 'attachment; filename=tabla.xls'
     response['Content-Type'] = 'application/vnd.ms-excel'
