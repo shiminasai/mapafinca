@@ -843,7 +843,8 @@ def genero(request, template="indicadores/genero.html"):
         for obj in OrgComunitarias.objects.all():
             dato = OrganizacionComunitaria.objects.filter(encuesta__year=year[0],encuesta__entrevistado__departamento=request.session['departamento'],
                                                         caso_si=obj, encuesta__entrevistado__jefe=1).count()
-            mujer_organizacion[obj] = dato
+            if dato > 0:
+                mujer_organizacion[obj] = dato
 
 
         nivel_educacion_mujer = {}
