@@ -71,17 +71,12 @@
 	<div class="row filtro-index">
 		<div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 col-md-offset-2 col-lg-offset-3">
 			<div class="row">
-				<a class='col-xs-6 col-md-6 btn btn-filtro' href="/galeria/">Visite la galeria de Mapa de Fincas</a>
-				<!--{% if  request.user.is_authenticated %}
-					<a class='col-xs-6 col-md-6 btn btn-filtro' href="/primer_mapa/">Consultar Mapa de Fincas</a>
-				{% endif %} -->
-
 			</div>
 
 		</div>
 	</div>
 
-	<div class="page-contenido">
+	<div class="page-contenido container">
 		<div class="map-ca col-md-8 col-lg-8">
 			<img class="center-block" src="/static/img/mapa.png" alt="">
 		</div>
@@ -91,9 +86,8 @@
 			{% for k,v in paises.items %}
 				<div class="panel">
 					<div class="panel-heading">
-						<a href="">{{k}}</a>
 						<a class="btn-ex" data-toggle="collapse" href="#{{k|slugify}}" aria-expanded="false" aria-controls="{{k|slugify}}">
-						  <span class="glyphicon glyphicon-chevron-down"></span>
+						  <span class="glyphicon glyphicon-chevron-down"> {{k}}</span>
 						</a>
 					</div>
 					<div class="collapse panel-body" id="{{k|slugify}}" >
@@ -105,34 +99,33 @@
 					</div>
 				</div>
 			{% endfor %}
-			<section>
-
-				<div class="mockup-content">
-					<div class="morph-button morph-button-modal morph-button-modal-1 morph-button-fixed">
-						<button type="button" class="btn btn-filtro">Monitoreo</button>
-						<div class="morph-content">
-							<div>
-								<div class="content-style-text">
-									<span class="icon icon-close">Close the dialog</span>
-									<h2>Monitoreo</h2>
-									<p>El Programa Medios de Vida Sostenible con enfoque en la gestión de riesgo y el cambio climático de CAFOD, implementa el sistema de monitoreo de finca que tiene como fin identificar la mejoría del bienestar de vida de familias campesinas atendidas por el programa a través de co-partes en territorio. Toda la información generada por el sistema de monitoreo de finca proviene de la aplicación de una encuesta a familias y medir avances con respecto años anteriores.</p>
-									<br>
-									<p>El Sistema de monitoreo de Finca permitirá visualizar cómo esta la finca hoy y pensar cómo se quiere ver en el futuro, de acuerdo a las posibilidades de las familias y condiciones medioambientales. Se podrá obtener datos generados a través de gráficos, tablas e imágenes y podrá verlo desde teléfonos móviles y tabletas.</p>
-
-								</div>
-							</div>
-						</div>
-					</div><!-- morph-button -->
-					<span></span>
-					<span></span>
-				</div><!-- /form-mockup -->
-			</section>
-			<!--<div class="">
-				<div class="info-index">
-
-					<hr>
+			<div class="col-lg-12">
+				<div class="row">
+					<div class="col-md-6 col-lg-6">
+							<div class="mockup-content">
+								<div class="morph-button morph-button-modal morph-button-modal-1 morph-button-fixed">
+									<button type="button" class="btn btn-filtro">Monitoreo</button>
+									<div class="morph-content">
+										<div>
+											<div class="content-style-text">
+												<span class="icon icon-close">Close the dialog</span>
+												<h2>Monitoreo</h2>
+												<p>El Programa Medios de Vida Sostenible con enfoque en la gestión de riesgo y el cambio climático de CAFOD, implementa el sistema de monitoreo de finca que tiene como fin identificar la mejoría del bienestar de vida de familias campesinas atendidas por el programa a través de co-partes en territorio. Toda la información generada por el sistema de monitoreo de finca proviene de la aplicación de una encuesta a familias y medir avances con respecto años anteriores.</p>
+												<br>
+												<p>El Sistema de monitoreo de Finca permitirá visualizar cómo esta la finca hoy y pensar cómo se quiere ver en el futuro, de acuerdo a las posibilidades de las familias y condiciones medioambientales. Se podrá obtener datos generados a través de gráficos, tablas e imágenes y podrá verlo desde teléfonos móviles y tabletas.</p>
+												
+											</div>
+										</div>
+									</div>
+								</div><!-- morph-button --> 
+							</div><!-- /form-mockup -->
+					</div>
+					<div class="col-md-6 col-lg-6">
+						<a class='btn btn-galeria' href="/galeria/">Mapas de Fincas</a>
+					</div>
 				</div>
-			</div>-->
+			</div>
+			
 		</div>
 
 
