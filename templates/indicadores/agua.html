@@ -6,8 +6,7 @@
 
 {% for key,value  in dicc_agua.items %}
 <script type="text/javascript">
-	$(function () {
-        // Create the chart
+$(function () {
     $('#container-{{key}}').highcharts({
         chart: {
             type: 'column'
@@ -15,11 +14,12 @@
         title: {
             text: 'Indique la forma que accede al agua para consumo humano'
         },
-        subtitle: {
-            text: ''
-        },
         xAxis: {
-            type: 'category'
+            categories: [
+            'Acceso al agua para consumo',
+            
+            ],
+            crosshair: true
         },
         yAxis: {
             title: {
@@ -27,38 +27,46 @@
             }
 
         },
-        legend: {
+        credits: {
             enabled: false
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'middle',
+            borderWidth: 0
         },
         plotOptions: {
             series: {
                 borderWidth: 0,
                 dataLabels: {
                     enabled: true,
-                    format: '{point.y:.1f}'
-                },
-                showInLegend: true
+                    format: '{point.y:.2f}',
+                    color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'black',
+                    style: {
+                        textShadow: '0 0 3px white'
+                    }
+                }
             }
         },
-
         tooltip: {
             headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
             pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}</b> of total<br/>'
         },
-
-        series: [{
-            name: "",
-            colorByPoint: true,
-            data: [
+        series: [
             {% for k,v in value.0.items %}
                 {
                     name: "{{k}}",
-                    y: {{v}},
+                    data: [{{v}}],
                 },
             {% endfor %}
-            ]
-        }],
+          ]
     });
+});
+
+
+	$(function () {
+     
 
 	// Create the chart
     $('#container1-{{key}}').highcharts({
