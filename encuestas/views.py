@@ -284,7 +284,6 @@ def detalle_finca(request, template='detalle_finca.html', entrevistado_id=None):
             cultivo = CultivosHuertosFamiliares.objects.filter(cultivo=obj,
                                                             encuesta__entrevistado__id=entrevistado_id,
                                                             encuesta__year=year[0])
-            print cultivo
             cosechada = cultivo.aggregate(t=Sum('cantidad_cosechada'))['t']
             venta = cultivo.aggregate(t=Sum('venta'))['t']
             precio = cultivo.aggregate(t=Avg('precio'))['t']
