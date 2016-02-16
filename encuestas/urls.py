@@ -27,4 +27,5 @@ urlpatterns = [
     url(r'^gastos/$', views.gastos, name='gastos'),
     url(r'^calorias/$', views.calorias, name='calorias'),
     url(r'^ciclos-productivos/$', views.productividad, name='ciclos_productivos'),
+    url(r'^xls/$', views.save_as_xls, name='salvar_xls'),
 ]
