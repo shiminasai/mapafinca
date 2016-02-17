@@ -863,6 +863,61 @@ def genero(request, template="indicadores/genero.html"):
 
     return render(request, template, locals())
 
+from django.views.decorators.cache import cache_page
+
+@cache_page(60 * 15)
+def ingreso_optimizado(request, template="indicadores/ingresos_opt.html"):
+    #años de encuestas
+    years = []
+    for en in Encuesta.objects.order_by('year').values_list('year', flat=True):
+        years.append((en,en))
+    list(set(years))
+
+    dicc_ingresos = OrderedDict()
+    for year in years:
+
+        #ingreso de cultivos tracionales
+
+        ingreso_cultivo_tradicional = {}
+        for obj in Cultivos.objects.all():
+            cultivo = CultivosTradicionales.objects.filter(encuesta__year=year[0],encuesta__entrevistado__departamento=request.session['departamento'],
+                                                            cultivo=obj)
+            cosechada = cultivo.aggregate(t=Sum('cantidad_cosechada'))['t']
+            venta = cultivo.aggregate(t=Sum('venta'))['t']
+            precio = cultivo.aggregate(t=Avg('precio'))['t']
+            try:
+                ingreso = venta * precio
+            except:
+                ingreso = 0
+            costo = cultivo.aggregate(t=Avg('costo'))['t']
+            if venta > 0:
+                try:
+                    utilidad = ingreso - costo
+                except:
+                    pass
+                ingreso_cultivo_tradicional[obj] = {'unidad':obj.get_unidad_medida_display(),
+                                                'cantidad_cosechada':cosechada,
+                                                'venta':venta,
+                                                'precio':precio,
+                                                'ingreso': ingreso,
+                                                'costo':costo,
+                                                'utilidad': utilidad}
+
+        total_utilidad_tradicional = sum(list([ i['utilidad'] for i in ingreso_cultivo_tradicional.values()]))
+        total_ingreso_tradicional = sum(list([ i['ingreso'] for i in ingreso_cultivo_tradicional.values()]))
+        total_costo_tradicional = sum(list([ i['costo'] for i in ingreso_cultivo_tradicional.values()]))
+        #cultivos huertos familiares
+
+        dicc_ingresos[year[1]] = (
+                            ingreso_cultivo_tradicional,
+                            total_utilidad_tradicional,
+                            total_ingreso_tradicional,
+                            total_costo_tradicional,
+                            
+                            )
+
+    return render(request, template, locals())
+
 def ingresos(request, template="indicadores/ingresos.html"):
 
     #años de encuestas
