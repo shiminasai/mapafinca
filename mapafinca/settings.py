@@ -22,6 +22,7 @@ INSTALLED_APPS = (
     'sorl.thumbnail',
     'endless_pagination',
     #'debug_toolbar',
+    'import_export',
 )
 
 MIDDLEWARE_CLASSES = (

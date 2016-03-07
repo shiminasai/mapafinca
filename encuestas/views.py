@@ -438,8 +438,6 @@ def escolaridad(request, template="indicadores/escolaridad.html"):
     for year in years:
 
         tabla_educacion_hombre = []
-        grafo_hombre = []
-        suma_hombre = 0
         for e in CHOICE_ESCOLARIDAD:
             objeto = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], escolaridad__sexo = e[0], entrevistado__sexo=2, entrevistado__jefe=1).aggregate(num_total = Sum('escolaridad__total'),
                     no_leer = Sum('escolaridad__no_leer'),
@@ -450,12 +448,7 @@ def escolaridad(request, template="indicadores/escolaridad.html"):
                     universitario = Sum('escolaridad__uni_tecnico'),
 
                     )
-            try:
-                suma_hombre = int(objeto['p_completa'] or 0) + int(objeto['s_incompleta'] or 0) + int(objeto['bachiller'] or 0) + int(objeto['universitario'] or 0)
-            except:
-                pass
-            variable = round(saca_porcentajes(suma_hombre,objeto['num_total']))
-            grafo_hombre.append([e[1],variable])
+
             fila = [e[1], objeto['num_total'],
                     saca_porcentajes(objeto['no_leer'], objeto['num_total'], False),
                     saca_porcentajes(objeto['p_incompleta'], objeto['num_total'], False),
@@ -469,8 +462,6 @@ def escolaridad(request, template="indicadores/escolaridad.html"):
             #tabla para cuando la mujer es jefe
 
         tabla_educacion_mujer = []
-        grafo_mujer = []
-        suma_mujer = 0
         for e in CHOICE_ESCOLARIDAD:
             objeto = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], escolaridad__sexo = e[0], entrevistado__sexo=1, entrevistado__jefe=1).aggregate(num_total = Sum('escolaridad__total'),
                     no_leer = Sum('escolaridad__no_leer'),
@@ -481,12 +472,6 @@ def escolaridad(request, template="indicadores/escolaridad.html"):
                     universitario = Sum('escolaridad__uni_tecnico'),
 
                     )
-            try:
-                suma_mujer = int(objeto['p_completa'] or 0) + int(objeto['s_incompleta'] or 0) + int(objeto['bachiller'] or 0) + int(objeto['universitario'] or 0)
-            except:
-                pass
-            variable = round(saca_porcentajes(suma_mujer,objeto['num_total']))
-            grafo_mujer.append([e[1],variable])
             fila = [e[1], objeto['num_total'],
                     saca_porcentajes(objeto['no_leer'], objeto['num_total'], False),
                     saca_porcentajes(objeto['p_incompleta'], objeto['num_total'], False),
@@ -496,7 +481,7 @@ def escolaridad(request, template="indicadores/escolaridad.html"):
                     saca_porcentajes(objeto['universitario'], objeto['num_total'], False),
                     ]
             tabla_educacion_mujer.append(fila)
-        dicc_escolaridad[year[1]] = (tabla_educacion_hombre,tabla_educacion_mujer,grafo_hombre,grafo_mujer)
+        dicc_escolaridad[year[1]] = (tabla_educacion_hombre,tabla_educacion_mujer)
 
     return render(request, template, locals())
 
@@ -913,7 +898,7 @@ def ingreso_optimizado(request, template="indicadores/ingresos_opt.html"):
                             total_utilidad_tradicional,
                             total_ingreso_tradicional,
                             total_costo_tradicional,
-                            
+
                             )
 
     return render(request, template, locals())

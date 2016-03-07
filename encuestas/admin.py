@@ -276,23 +276,25 @@ class EntrevistadoAdmin(admin.ModelAdmin):
     search_fields = ('nombre',)
 
 #registro de los cultivos con sus propios calorias
-class CultivosAdmin(admin.ModelAdmin):
+from import_export.admin import ImportExportModelAdmin
+
+class CultivosAdmin(ImportExportModelAdmin):
     list_display = ('codigo', 'nombre', 'unidad_medida', 'calorias', 'proteinas')
     list_display_links = ('codigo', 'nombre', )
 
-class CultivosHuertosAdmin(admin.ModelAdmin):
+class CultivosHuertosAdmin(ImportExportModelAdmin):
     list_display = ('codigo', 'nombre', 'unidad_medida', 'calorias', 'proteinas')
     list_display_links = ('codigo', 'nombre', )
 
-class CultivosFrutasAdmin(admin.ModelAdmin):
+class CultivosFrutasAdmin(ImportExportModelAdmin):
     list_display = ('codigo', 'nombre', 'unidad_medida', 'calorias', 'proteinas')
     list_display_links = ('codigo', 'nombre', )
 
-class ProductoProcesadoAdmin(admin.ModelAdmin):
+class ProductoProcesadoAdmin(ImportExportModelAdmin):
     list_display = ('codigo', 'nombre', 'unidad_medida', 'calorias', 'proteinas')
     list_display_links = ('codigo', 'nombre', )
 
-class ProductosFueraFincaAdmin(admin.ModelAdmin):
+class ProductosFueraFincaAdmin(ImportExportModelAdmin):
     list_display = ('nombre', 'unidad_medida', 'calorias', 'proteinas')
 
 # Register your models here.
