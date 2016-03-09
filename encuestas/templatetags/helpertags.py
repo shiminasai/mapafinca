@@ -33,3 +33,8 @@ def calcularIngresoXfamilia(value1, value2):
         return resultado
     except:
         return 0
+
+
+@register.filter(name='limpiarSlug')
+def limpiarSlug(value):
+    return value.replace('_', ' ')

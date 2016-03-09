@@ -14,7 +14,7 @@ $(function () {
             type: 'column'
         },
         title: {
-            text: 'Miembros del hogar con algún tipo de escolaridad(hombre jefe) total de personas({{v.2}})'
+            text: 'Miembros del hogar con algún tipo de escolaridad(jefe) total de personas({{v.2}})'
         },
         yAxis: {
             title: {
@@ -39,7 +39,7 @@ $(function () {
         series: [
                 {% for key,value in v.0.items %}
                 {
-                    name: '{{key|slugify}} ({{value}})',
+                    name: '{{key|limpiarSlug}} ({{value}})',
                     data: [{{value|calculaperct:v.2|floatformat:2}}],
                     dataLabels: {
                         enabled: true,
@@ -65,7 +65,7 @@ $(function () {
             type: 'column'
         },
         title: {
-            text: 'Miembros del hogar con algún tipo de escolaridad(mujer jefe) total de personas({{v.3}})'
+            text: 'Miembros del hogar con algún tipo de escolaridad(jefa) total de personas({{v.3}})'
         },
         yAxis: {
             title: {
@@ -90,7 +90,7 @@ $(function () {
         series: [
                 {% for key,value in v.1.items %}
                 {
-                    name: '{{key|slugify}} ({{value}})',
+                    name: '{{key|limpiarSlug}} ({{value}})',
                     data: [{{value|calculaperct:v.3|floatformat:2}}],
                     dataLabels: {
                         enabled: true,
