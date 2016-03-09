@@ -284,7 +284,6 @@ def detalle_finca(request, template='detalle_finca.html', entrevistado_id=None):
             cultivo = CultivosHuertosFamiliares.objects.filter(cultivo=obj,
                                                             encuesta__entrevistado__id=entrevistado_id,
                                                             encuesta__year=year[0])
-            print cultivo
             cosechada = cultivo.aggregate(t=Sum('cantidad_cosechada'))['t']
             venta = cultivo.aggregate(t=Sum('venta'))['t']
             precio = cultivo.aggregate(t=Avg('precio'))['t']
@@ -439,8 +438,6 @@ def escolaridad(request, template="indicadores/escolaridad.html"):
     for year in years:
 
         tabla_educacion_hombre = []
-        grafo_hombre = []
-        suma_hombre = 0
         for e in CHOICE_ESCOLARIDAD:
             objeto = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], escolaridad__sexo = e[0], entrevistado__sexo=2, entrevistado__jefe=1).aggregate(num_total = Sum('escolaridad__total'),
                     no_leer = Sum('escolaridad__no_leer'),
@@ -451,12 +448,7 @@ def escolaridad(request, template="indicadores/escolaridad.html"):
                     universitario = Sum('escolaridad__uni_tecnico'),
 
                     )
-            try:
-                suma_hombre = int(objeto['p_completa'] or 0) + int(objeto['s_incompleta'] or 0) + int(objeto['bachiller'] or 0) + int(objeto['universitario'] or 0)
-            except:
-                pass
-            variable = round(saca_porcentajes(suma_hombre,objeto['num_total']))
-            grafo_hombre.append([e[1],variable])
+
             fila = [e[1], objeto['num_total'],
                     saca_porcentajes(objeto['no_leer'], objeto['num_total'], False),
                     saca_porcentajes(objeto['p_incompleta'], objeto['num_total'], False),
@@ -470,8 +462,6 @@ def escolaridad(request, template="indicadores/escolaridad.html"):
             #tabla para cuando la mujer es jefe
 
         tabla_educacion_mujer = []
-        grafo_mujer = []
-        suma_mujer = 0
         for e in CHOICE_ESCOLARIDAD:
             objeto = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], escolaridad__sexo = e[0], entrevistado__sexo=1, entrevistado__jefe=1).aggregate(num_total = Sum('escolaridad__total'),
                     no_leer = Sum('escolaridad__no_leer'),
@@ -482,12 +472,6 @@ def escolaridad(request, template="indicadores/escolaridad.html"):
                     universitario = Sum('escolaridad__uni_tecnico'),
 
                     )
-            try:
-                suma_mujer = int(objeto['p_completa'] or 0) + int(objeto['s_incompleta'] or 0) + int(objeto['bachiller'] or 0) + int(objeto['universitario'] or 0)
-            except:
-                pass
-            variable = round(saca_porcentajes(suma_mujer,objeto['num_total']))
-            grafo_mujer.append([e[1],variable])
             fila = [e[1], objeto['num_total'],
                     saca_porcentajes(objeto['no_leer'], objeto['num_total'], False),
                     saca_porcentajes(objeto['p_incompleta'], objeto['num_total'], False),
@@ -497,7 +481,7 @@ def escolaridad(request, template="indicadores/escolaridad.html"):
                     saca_porcentajes(objeto['universitario'], objeto['num_total'], False),
                     ]
             tabla_educacion_mujer.append(fila)
-        dicc_escolaridad[year[1]] = (tabla_educacion_hombre,tabla_educacion_mujer,grafo_hombre,grafo_mujer)
+        dicc_escolaridad[year[1]] = (tabla_educacion_hombre,tabla_educacion_mujer)
 
     return render(request, template, locals())
 
@@ -844,7 +828,8 @@ def genero(request, template="indicadores/genero.html"):
         for obj in OrgComunitarias.objects.all():
             dato = OrganizacionComunitaria.objects.filter(encuesta__year=year[0],encuesta__entrevistado__departamento=request.session['departamento'],
                                                         caso_si=obj, encuesta__entrevistado__jefe=1).count()
-            mujer_organizacion[obj] = dato
+            if dato > 0:
+                mujer_organizacion[obj] = dato
 
 
         nivel_educacion_mujer = {}
@@ -860,6 +845,61 @@ def genero(request, template="indicadores/genero.html"):
                                                   mujer_organizacion,
                                                   nivel_educacion_mujer,
                                                   )
+
+    return render(request, template, locals())
+
+from django.views.decorators.cache import cache_page
+
+@cache_page(60 * 15)
+def ingreso_optimizado(request, template="indicadores/ingresos_opt.html"):
+    #años de encuestas
+    years = []
+    for en in Encuesta.objects.order_by('year').values_list('year', flat=True):
+        years.append((en,en))
+    list(set(years))
+
+    dicc_ingresos = OrderedDict()
+    for year in years:
+
+        #ingreso de cultivos tracionales
+
+        ingreso_cultivo_tradicional = {}
+        for obj in Cultivos.objects.all():
+            cultivo = CultivosTradicionales.objects.filter(encuesta__year=year[0],encuesta__entrevistado__departamento=request.session['departamento'],
+                                                            cultivo=obj)
+            cosechada = cultivo.aggregate(t=Sum('cantidad_cosechada'))['t']
+            venta = cultivo.aggregate(t=Sum('venta'))['t']
+            precio = cultivo.aggregate(t=Avg('precio'))['t']
+            try:
+                ingreso = venta * precio
+            except:
+                ingreso = 0
+            costo = cultivo.aggregate(t=Avg('costo'))['t']
+            if venta > 0:
+                try:
+                    utilidad = ingreso - costo
+                except:
+                    pass
+                ingreso_cultivo_tradicional[obj] = {'unidad':obj.get_unidad_medida_display(),
+                                                'cantidad_cosechada':cosechada,
+                                                'venta':venta,
+                                                'precio':precio,
+                                                'ingreso': ingreso,
+                                                'costo':costo,
+                                                'utilidad': utilidad}
+
+        total_utilidad_tradicional = sum(list([ i['utilidad'] for i in ingreso_cultivo_tradicional.values()]))
+        total_ingreso_tradicional = sum(list([ i['ingreso'] for i in ingreso_cultivo_tradicional.values()]))
+        total_costo_tradicional = sum(list([ i['costo'] for i in ingreso_cultivo_tradicional.values()]))
+        #cultivos huertos familiares
+
+        dicc_ingresos[year[1]] = (
+                            ingreso_cultivo_tradicional,
+                            total_utilidad_tradicional,
+                            total_ingreso_tradicional,
+                            total_costo_tradicional,
+
+                            )
 
     return render(request, template, locals())
 

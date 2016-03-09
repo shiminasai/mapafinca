@@ -21,12 +21,16 @@ INSTALLED_APPS = (
     'selectable',
     'sorl.thumbnail',
     'endless_pagination',
+    #'debug_toolbar',
+    'import_export',
 )
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    #borrar una ves usado
+    #'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -35,6 +39,10 @@ MIDDLEWARE_CLASSES = (
 )
 
 ROOT_URLCONF = 'mapafinca.urls'
+
+#SHOW_TOOLBAR_CALLBACK = True
+#INTERNAL_IPS = '127.0.0.1'
+
 
 TEMPLATES = [
     {
@@ -98,3 +106,10 @@ WPADMIN = {
 
 CKEDITOR_JQUERY_URL = 'https://code.jquery.com/jquery-2.1.3.min.js'
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
+
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+#         'LOCATION': 'my_cache_table',
+#     }
+# }

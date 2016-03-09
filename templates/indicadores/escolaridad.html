@@ -35,10 +35,10 @@ $(function () {
                 }
             },
         series: [
-                {% for value in v.2 %}
+                {% for value in v.0 %}
                 {
                     name: '{{value.0}}',
-                    data: [{{value.1}}],
+                    data: [{{value.3}}],
                     dataLabels: {
                         enabled: true,
                         rotation: 0,
@@ -86,10 +86,10 @@ $(function () {
                 }
             },
         series: [
-                {% for value in v.3 %}
+                {% for value in v.1 %}
                 {
                     name: '{{value.0}}',
-                    data: [{{value.1}}],
+                    data: [{{value.3}}],
                     dataLabels: {
                         enabled: true,
                         rotation: 0,
@@ -116,7 +116,6 @@ $(function () {
 {% block contenido %}
 {% include "breadcrumb.html" %}
 <div class="container">
-
     <div class="row list-anos">
         <div class="panel-group panel-indicadores" id="accordion" role="tablist" aria-multiselectable="true">
             <div class="panel panel-default">
