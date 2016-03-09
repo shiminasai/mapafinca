@@ -79,7 +79,7 @@
 
 	<div class="page-contenido container">
 		<div class="map-ca col-md-8 col-lg-8">
-			<img class="center-block" src="/static/img/mapa.png" alt="">
+			<img class="index-img" src="/static/img/mapa.png" alt="">
 		</div>
 
 
@@ -88,13 +88,20 @@
 				<div class="panel">
 					<div class="panel-heading">
 						<a class="btn-ex" data-toggle="collapse" href="#{{k|slugify}}" aria-expanded="false" aria-controls="{{k|slugify}}">
-						  <span class="glyphicon glyphicon-chevron-down"> {{k}}</span>
+						  <span class="glyphicon glyphicon-chevron-down"> 
+								<a class="link-pais" href="">{{k}}</a>
+						  </span>
 						</a>
 					</div>
 					<div class="collapse panel-body" id="{{k|slugify}}" >
 						 <ul>
 							{% for key,value in v.items %}
-								<li><a href="/dashboard-principal/{{value.1}}">{{key}}</a> - {{value.0}}</li>
+							<ul class="list-group">
+								<li class="list-group-item">
+									<span class="badge">{{value.0}}</span>
+									<a href="/dashboard-principal/{{value.1}}">{{key}}</a>
+								</li>
+							</ul>
 							{% endfor %}
 						 </ul>
 					</div>
