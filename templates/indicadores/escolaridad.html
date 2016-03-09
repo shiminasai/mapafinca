@@ -1,10 +1,12 @@
 {% extends "base.html" %}
 
+{% load helpertags %}
+
 {% block extra_js %}
 <script src="http://code.highcharts.com/highcharts.js"></script>
 <script src="http://code.highcharts.com/modules/exporting.js"></script>
 
-{% for k,v in dicc_escolaridad.items %}
+{% for k,v in dicc_grafo_tipo_educacion.items %}
 <script>
 $(function () {
     $('#container-{{k}}').highcharts({
@@ -12,7 +14,7 @@ $(function () {
             type: 'column'
         },
         title: {
-            text: 'Cantidad de miembros del hogar que poseen algun tipo de educación (hombre jefe)'
+            text: 'Miembros del hogar con algún tipo de escolaridad(hombre jefe) total de personas({{v.2}})'
         },
         yAxis: {
             title: {
@@ -35,10 +37,10 @@ $(function () {
                 }
             },
         series: [
-                {% for value in v.0 %}
+                {% for key,value in v.0.items %}
                 {
-                    name: '{{value.0}}',
-                    data: [{{value.3}}],
+                    name: '{{key|slugify}} ({{value}})',
+                    data: [{{value|calculaperct:v.2|floatformat:2}}],
                     dataLabels: {
                         enabled: true,
                         rotation: 0,
@@ -63,7 +65,7 @@ $(function () {
             type: 'column'
         },
         title: {
-            text: 'Cantidad de miembros del hogar que poseen algun tipo de educación (mujer jefe)'
+            text: 'Miembros del hogar con algún tipo de escolaridad(mujer jefe) total de personas({{v.3}})'
         },
         yAxis: {
             title: {
@@ -86,10 +88,10 @@ $(function () {
                 }
             },
         series: [
-                {% for value in v.1 %}
+                {% for key,value in v.1.items %}
                 {
-                    name: '{{value.0}}',
-                    data: [{{value.3}}],
+                    name: '{{key|slugify}} ({{value}})',
+                    data: [{{value|calculaperct:v.3|floatformat:2}}],
                     dataLabels: {
                         enabled: true,
                         rotation: 0,
@@ -178,7 +180,7 @@ $(function () {
                             </div>
                             <div class="table-responsive" id="modalidad">
                                 <table class="table table-bordered table-hover" cellspacing="0" width="100%">
-                                    <caption>Escolaridad cuando el hombre es jefe</caption>
+                                    <caption>Escolaridad jefe de hogar</caption>
                                     <thead>
                                         <tr>
                                             <th>Edades</th>
@@ -209,7 +211,7 @@ $(function () {
                             </div>
                             <div class="table-responsive" id="modalidad1">
                                 <table class="table table-bordered table-hover" cellspacing="0" width="100%">
-                                        <caption>Escolaridad cuando la mujer es jefe</caption>
+                                        <caption>Escolaridad jefa de hogar</caption>
                                         <thead>
                                             <tr>
                                                 <th>Edades</th>

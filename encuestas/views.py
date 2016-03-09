@@ -5,7 +5,7 @@ from django.views.generic import TemplateView
 from .forms import ConsultarForm
 from .models import *
 import json as simplejson
-from django.db.models import Sum, Avg, Value as V
+from django.db.models import Count, Sum, Avg, Value as V
 from clima.models import *
 from collections import OrderedDict
 from django.db.models import Q
@@ -435,7 +435,42 @@ def escolaridad(request, template="indicadores/escolaridad.html"):
     list(set(years))
 
     dicc_escolaridad = OrderedDict()
+    dicc_grafo_tipo_educacion = OrderedDict()
     for year in years:
+
+        cantidad_miembros_hombres = Encuesta.objects.filter(year=year[0],
+                                    entrevistado__departamento=request.session['departamento'], 
+                                    entrevistado__sexo=2, 
+                                    entrevistado__jefe=1).aggregate(num_total = Sum('escolaridad__total'))['num_total']
+        
+        cantidad_miembros_mujeres = Encuesta.objects.filter(year=year[0],
+                                    entrevistado__departamento=request.session['departamento'], 
+                                    entrevistado__sexo=1, 
+                                    entrevistado__jefe=1).aggregate(num_total = Sum('escolaridad__total'))['num_total']
+       
+        grafo_educacion_hombre = Encuesta.objects.filter(year=year[0],
+                                    entrevistado__departamento=request.session['departamento'], 
+                                    entrevistado__sexo=2, 
+                                    entrevistado__jefe=1).aggregate(
+                                    no_sabe_leer = Sum('escolaridad__no_leer'),
+                                    primaria_incompleta = Sum('escolaridad__pri_incompleta'),
+                                    primaria_completa = Sum('escolaridad__pri_completa'),
+                                    secundaria_incompleta = Sum('escolaridad__secu_incompleta'),
+                                    bachiller = Sum('escolaridad__bachiller'),
+                                    universitario = Sum('escolaridad__uni_tecnico'),
+                                )
+
+        grafo_educacion_mujer = Encuesta.objects.filter(year=year[0],
+                                    entrevistado__departamento=request.session['departamento'], 
+                                    entrevistado__sexo=1, 
+                                    entrevistado__jefe=1).aggregate(
+                                    no_sabe_leer = Sum('escolaridad__no_leer'),
+                                    primaria_incompleta = Sum('escolaridad__pri_incompleta'),
+                                    primaria_completa = Sum('escolaridad__pri_completa'),
+                                    secundaria_incompleta = Sum('escolaridad__secu_incompleta'),
+                                    bachiller = Sum('escolaridad__bachiller'),
+                                    universitario = Sum('escolaridad__uni_tecnico'),
+                                )
 
         tabla_educacion_hombre = []
         for e in CHOICE_ESCOLARIDAD:
@@ -482,6 +517,7 @@ def escolaridad(request, template="indicadores/escolaridad.html"):
                     ]
             tabla_educacion_mujer.append(fila)
         dicc_escolaridad[year[1]] = (tabla_educacion_hombre,tabla_educacion_mujer)
+        dicc_grafo_tipo_educacion[year[1]] = (grafo_educacion_hombre, grafo_educacion_mujer, cantidad_miembros_hombres, cantidad_miembros_mujeres)
 
     return render(request, template, locals())
 
