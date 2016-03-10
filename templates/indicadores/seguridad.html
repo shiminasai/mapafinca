@@ -176,16 +176,27 @@ $('#container2-{{key}}').highcharts({
             <div class="panel panel-default">
                 <div class="panel-heading" role="tab" id="headingOne">
                     <h4 class="panel-title titulo-indicador">
-                        <ol class="breadcrumb">
-                            <li>
-                                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                Indicadores
-                                </a>
-                            </li>
-                            <li>
-                                Seguridad Alimentaria
-                            </li>
-                        </ol>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-8 col-md-8 col-lg-8">
+                                <ol class="breadcrumb">
+                                    <li>
+                                        Indicador  
+                                    </li>
+                                    <li>
+                                        Seguridad Alimentaria
+                                    </li>
+                                    
+                                </ol>
+                            </div>
+                            <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                                <span class="ver-indicador" >
+                                    
+                                    <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                        Ver más indicadores <span class="fa fa-search"></span>
+                                    </a>
+                                </span>
+                            </div>
+                        </div>
 
                     </h4>
                  </div>
@@ -219,93 +230,93 @@ $('#container2-{{key}}').highcharts({
         <div role="tabpanel" class="tab-pane fade {% if forloop.counter == 1 %}in active{% endif %}" id="home-{{k}}">
             <div class="container">
                 <div class="row">
-                    <h4>Razones por las que no cuentan con suficientes alimentos</h4>
+                    <h4 class="titulo-seguridad">Razones por las que no cuentan con suficientes alimentos</h4>
                 </div>
                 <div class="row fila-grafico1">
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6 space">
-                     <div>
-                                <a href="#" onclick="exportarXLS('modalidad'); return false;">Exportar a excel</a>
-                            </div>
-                     <div class="table-responsive" id="modalidad">
-                        <table class="table table-bordered table-hover" cellspacing="0" width="100%">
-                            <thead>
-                                <tr>
-                                    <th>Fenomenos naturales</th>
-                                    <th>Frecuencias</th>
-                                    <th>Porcentajes</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for k,v in v.7.items %}
-                                <tr>
-                                    <td>{{k}}</td>
-                                    <td>{{v}}</td>
-                                    <td>{{v|calculaperct:request.session.encuestados|floatformat:2}} %</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                     </div>
+                        <div class="excel">
+                            <a href="#" onclick="exportarXLS('modalidad'); return false;"><span class="fa fa-download"> Exportar a excel</span></a>
+                        </div>
+                         <div class="table-responsive" id="modalidad">
+                            <table class="table table-bordered table-hover" cellspacing="0" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th>Fenomenos naturales</th>
+                                        <th>Frecuencias</th>
+                                        <th>Porcentajes</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for k,v in v.7.items %}
+                                    <tr>
+                                        <td>{{k}}</td>
+                                        <td>{{v}}</td>
+                                        <td>{{v|calculaperct:request.session.encuestados|floatformat:2}} %</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                         </div>
 
                     </div>
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6 space">
-                     <div>
-                                <a href="#" onclick="exportarXLS('modalidad1'); return false;">Exportar a excel</a>
-                            </div>
-                     <div class="table-responsive" id="modalidad1">
-                        <table class="table table-bordered table-hover" cellspacing="0" width="100%">
-                            <thead>
-                                <tr>
-                                    <th>Razones agrícola</th>
-                                    <th>Frecuencias</th>
-                                    <th>Porcentajes</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for k,v in v.8.items %}
-                                <tr>
-                                    <td>{{k}}</td>
-                                    <td>{{v}}</td>
-                                    <td>{{v|calculaperct:request.session.encuestados|floatformat:2}} %</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                     </div>
+                        <div class="excel">
+                            <a href="#" onclick="exportarXLS('modalidad2'); return false;"><span class="fa fa-download"> Exportar a excel</span></a>
+                        </div>
+                         <div class="table-responsive" id="modalidad2">
+                            <table class="table table-bordered table-hover" cellspacing="0" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th>Razones de mercado</th>
+                                        <th>Frecuencias</th>
+                                        <th>Porcentajes</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for k,v in v.9.items %}
+                                    <tr>
+                                        <td>{{k}}</td>
+                                        <td>{{v}}</td>
+                                        <td>{{v|calculaperct:request.session.encuestados|floatformat:2}} %</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                         </div>
 
                     </div>
+                    
                 </div>
                 <div class="row fila-grafico">
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6 space">
-                     <div>
-                                <a href="#" onclick="exportarXLS('modalidad2'); return false;">Exportar a excel</a>
-                            </div>
-                     <div class="table-responsive" id="modalidad2">
-                        <table class="table table-bordered table-hover" cellspacing="0" width="100%">
-                            <thead>
-                                <tr>
-                                    <th>Razones de mercado</th>
-                                    <th>Frecuencias</th>
-                                    <th>Porcentajes</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for k,v in v.9.items %}
-                                <tr>
-                                    <td>{{k}}</td>
-                                    <td>{{v}}</td>
-                                    <td>{{v|calculaperct:request.session.encuestados|floatformat:2}} %</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                     </div>
-
+                        <div class="excel">
+                            <a href="#" onclick="exportarXLS('modalidad1'); return false;"><span class="fa fa-download"> Exportar a excel</span></a>
+                        </div>
+                         <div class="table-responsive" id="modalidad1">
+                            <table class="table table-bordered table-hover" cellspacing="0" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th>Razones agrícola</th>
+                                        <th>Frecuencias</th>
+                                        <th>Porcentajes</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for k,v in v.8.items %}
+                                    <tr>
+                                        <td>{{k}}</td>
+                                        <td>{{v}}</td>
+                                        <td>{{v|calculaperct:request.session.encuestados|floatformat:2}} %</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                         </div>
                     </div>
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6 space">
-                     <div>
-                                <a href="#" onclick="exportarXLS('modalidad3'); return false;">Exportar a excel</a>
-                            </div>
+                    <div class="excel">
+                        <a href="#" onclick="exportarXLS('modalidad3'); return false;"><span class="fa fa-download"> Exportar a excel</span></a>
+                    </div>
                      <div class="table-responsive" id="modalidad3">
                         <table class="table table-bordered table-hover" cellspacing="0" width="100%">
                             <thead>
@@ -343,9 +354,9 @@ $('#container2-{{key}}').highcharts({
                     </div>
 
                 </div>
+            
             </div>
-
-  </div> <!-- role tabpanel -->
+        </div> <!-- role tabpanel -->
   {% endfor %}
 </div>
 </div>

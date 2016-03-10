@@ -167,16 +167,27 @@ $('#container3-{{key}}').highcharts({
             <div class="panel panel-default">
                 <div class="panel-heading" role="tab" id="headingOne">
                     <h4 class="panel-title titulo-indicador">
-                        <ol class="breadcrumb">
-                            <li>
-                                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                Indicadores
-                                </a>
-                            </li>
-                            <li>
-                                Género
-                            </li>
-                        </ol>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-8 col-md-8 col-lg-8">
+                                <ol class="breadcrumb">
+                                    <li>
+                                        Indicador  
+                                    </li>
+                                    <li>
+                                        Género
+                                    </li>
+                                    
+                                </ol>
+                            </div>
+                            <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                                <span class="ver-indicador" >
+                                    
+                                    <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                        Ver más indicadores <span class="fa fa-search"></span>
+                                    </a>
+                                </span>
+                            </div>
+                        </div>
 
                     </h4>
                  </div>
@@ -214,9 +225,9 @@ $('#container3-{{key}}').highcharts({
                         <div class="grafico-ind" id="container-{{k}}" style="min-width: 310px; height: 400px; width: 550px; margin: 0 auto"></div>
                     </div>
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6 space">
-                     <div>
-                                <a href="#" onclick="exportarXLS('modalidad'); return false;">Exportar a excel</a>
-                            </div>
+                        <div class="excel">
+                            <a href="#" onclick="exportarXLS('modalidad'); return false;"><span class="fa fa-download"> Exportar a excel</span></a>
+                        </div>
                         <div class="table-responsive" id="modalidad">
                             <table class="table table-bordered table-hover" cellspacing="0" width="100%">
                                 <thead>
@@ -248,9 +259,9 @@ $('#container3-{{key}}').highcharts({
                         <div class="grafico-ind" id="container3-{{k}}" style="min-width: 310px; height: 400px; width: 550px; margin: 0 auto"></div>
                     </div>
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6 space">
-                     <div>
-                                <a href="#" onclick="exportarXLS('modalidad1'); return false;">Exportar a excel</a>
-                            </div>
+                        <div class="excel">
+                            <a href="#" onclick="exportarXLS('modalidad1'); return false;"><span class="fa fa-download"> Exportar a excel</span></a>
+                        </div>
                         <div class="table-responsive" id="modalidad1">
                             <table class="table table-bordered table-hover" cellspacing="0" width="100%">
                                 <caption>Mujeres con nivel de escolaridad</caption>

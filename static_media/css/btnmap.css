@@ -139,9 +139,7 @@
 }
 
 /* Colors and sizes for individual modals */
-.morph-button.morph-button-modal-1 {
-	float: left;
-}
+
 
 .morph-button.morph-button-modal-2,
 .morph-button.morph-button-modal-3 {
@@ -475,4 +473,11 @@
 	.morph-button-sidebar.open .morph-content {
 		height: 100% !important;
 	}
+}
+
+.boton-1{
+	padding-left: 0px;
+}
+.boton-2{
+	padding-right: 0px;
 }
