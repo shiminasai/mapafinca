@@ -868,7 +868,7 @@ def genero(request, template="indicadores/genero.html"):
                 mujer_organizacion[obj] = dato
 
 
-        nivel_educacion_mujer = {}
+        nivel_educacion_mujer = OrderedDict()
         for obj in CHOICER_NIVEL_MUJER:
             valor = Genero4.objects.filter(encuesta__year=year[0],encuesta__entrevistado__departamento=request.session['departamento'],
                                             opcion=obj[0]).count()

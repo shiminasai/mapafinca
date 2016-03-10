@@ -935,7 +935,7 @@ CHOICE_MERCADO = (
         )
 CHOICE_INVERSION = (
             ('A','Falta de crédito'),
-            ('B','Alto interés'),
+            ('B','Intereses altos'),
         )
 
 class RespuestaNo41(models.Model):

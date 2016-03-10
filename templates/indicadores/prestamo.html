@@ -17,7 +17,7 @@
             type: 'pie'
         },
         title: {
-            text: 'En el último año ha recibido algún tipo de prestamo/crédito'
+            text: 'En el último año ha recibido algún tipo de préstamo/crédito'
         },
         credits: {
             enabled: false
@@ -31,11 +31,12 @@
                 cursor: 'pointer',
                 dataLabels: {
                     enabled: true,
-                    format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                    format: '{point.percentage:.1f} %',
                     style: {
                         color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
                     }
-                }
+                },
+                showInLegend: true
             }
         },
         series: [{
@@ -43,7 +44,7 @@
             colorByPoint: true,
             data: [{% for k,v in value.0.items %}
                 {
-                    name: "{{k}}",
+                    name: "{{k}} ({{v}})",
                     y: {{v}}
                 },
             {% endfor %}
@@ -57,7 +58,7 @@
             type: 'column'
         },
         title: {
-            text: '¿De quien recibe el prestamo/crédito'
+            text: '¿De quién recibe el préstamo/crédito?'
         },
         subtitle: {
             text: ''
@@ -112,7 +113,7 @@
             type: 'column'
         },
         title: {
-            text: '¿Cuál fue el uso del prestamo/crédito'
+            text: '¿Cuál fue el uso del préstamo/crédito'
         },
         subtitle: {
             text: ''

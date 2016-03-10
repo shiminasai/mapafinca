@@ -113,3 +113,4 @@ SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 #         'LOCATION': 'my_cache_table',
 #     }
 # }
+ENDLESS_PAGINATION_PER_PAGE = 15
