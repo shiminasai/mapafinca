@@ -29,7 +29,7 @@ $(function () {
                 cursor: 'pointer',
                 dataLabels: {
                     enabled: true,
-                    distance: -30,
+                    //distance: -30,
                     format: '{point.percentage:.1f} %',
                     style: {
                         color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
@@ -226,14 +226,14 @@ $(function () {
             <div role="tabpanel" class="tab-pane fade {% if forloop.counter == 1 %}in active{% endif %}" id="home-{{k}}">
                 <div class="container">
                     <div class="row fila-grafico1">
-                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6 space">
-                            <div class="grafico-ind"  id="container-{{k}}" style="min-width: 310px; height: 400px; width: 550px; margin: 0 auto"></div>
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 space">
+                            <div class="grafico-ind"  id="container-{{k}}" style=" margin: 0 auto"></div>
                         </div>
-                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6 space">
-                                <div class="grafico-ind" id="container1-{{k}}" style="min-width: 310px; height: 400px; width: 550px; margin: 0 auto"></div>
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 space">
+                                <div class="grafico-ind" id="container1-{{k}}" style="margin: 0 auto"></div>
                         </div>
-                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6 space">
-                                <div class="grafico-ind" id="container2-{{k}}" style="min-width: 310px; height: 400px; width: 550px; margin: 0 auto"></div>
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 space">
+                                <div class="grafico-ind" id="container2-{{k}}" style="margin: 0 auto"></div>
                         </div>
                     </div>
                 </div>
