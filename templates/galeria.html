@@ -2,7 +2,8 @@
 {% load thumbnail %}
 {% load endless %}
 {% block extra_js %}
-	<link type="text/css" rel="stylesheet" href="/static/css/lightGallery.css" />                    
+	<link type="text/css" rel="stylesheet" href="/static/css/lightGallery.css" />
+	<link type="text/css" rel="stylesheet" href="/static/css/galeria.css" />                       
 	<script src="/static/js/lightGallery.js"></script>
 	
 <script type="text/javascript">
@@ -20,30 +21,90 @@ $(document).ready(function() {
 });
 
 </script>
+<script>
+
+$(function(){
+var n=$( ".item" ).length;
+
+if (n<12) {
+	$("footer").css({"position": "absolute"});
+	};
+});
+
+</script>
 {% endblock extra_js %}
 {% block contenido %}
+<style type="text/css">
+
+@media (min-width: 768px){
+
+	footer{
+		position: relative;
+		bottom: 0px;
+		width: 100%;
+	}
+}
+@media (min-width: 992px){
+	footer{
+		position: relative;
+		bottom: 0px;
+		width: 100%;
+	}
+}
+@media (min-width: 1200px){
+	footer{
+		position: relative;
+		bottom: 0px;
+		width: 100%;
+	}
+}	
+</style>
 <div class="row contenido-galeria">
 	{% paginate object_list %}
 	<div id="lightGallery">
  	{% for obj in object_list %}
-		<div class="col-xs-6 col-sm-4 col-md-3 col-lg-2 item" 
+	  	{% if obj.mapa_finca %}
+	  		<div class="col-xs-6 col-sm-4 col-md-3 col-lg-2 item" 
 			{% thumbnail obj.mapa_finca "800x500" as im %}
                 data-src="/media/{{im}}"
             {% endthumbnail %}
 	  		data-sub-html="<div class='custom-html'><a class='ver-detalle' href='/finca/{{obj.entrevistado.id}}'>ver detalle</a></div>">
-	  		{% thumbnail obj.mapa_finca "200x125" as im %}
-                <img class="center-block" src="/media/{{im}}" />
-            {% endthumbnail %}
+		  		{% thumbnail obj.mapa_finca "200x125" as im %}
+			  		<figure class="prueba">
+		                <img class="center-block" src="/media/{{im}}" />
+		                <i class="fa fa-search"></i>
+		  				<a href="#"></a>
+		            </figure>
+	            {% endthumbnail %}
 	      
-	  	</div>
+	  		</div>
+	  	{% else %}
+	  		<div class="col-xs-6 col-sm-4 col-md-3 col-lg-2 item" 
+			{% thumbnail obj.mapa_finca "800x500" as im %}
+                data-src="http://placehold.it/800x500"
+            {% endthumbnail %}
+	  		data-sub-html="<div class='custom-html'><a class='ver-detalle' href='/finca/{{obj.entrevistado.id}}'>ver detalle</a></div>">
+		  		
+			  		<figure class="prueba">
+		                <img class="center-block" src="http://placehold.it/200x125" />
+		                <i class="fa fa-search"></i>
+		  				<a href="#"></a>
+		            </figure>
+	          
+	      
+	  		</div>
+	  	{% endif %}
+
+	  	
 	{% endfor %}
 	  
 	</div>
 
-	<nav class="col-xs-12 col-sm-12 col-md-12 col-lg-12" >
-	  <ul class="pagination">
+	
+</div>
+<div class="text-center">
+	<ul class="pagination">
 	   <li>{% show_pages %}</li>
-	  </ul>
-	</nav>
+	</ul>
 </div>
 {% endblock contenido %}
