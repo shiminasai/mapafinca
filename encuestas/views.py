@@ -251,6 +251,7 @@ def detalle_finca(request, template='detalle_finca.html', entrevistado_id=None):
     #los años del detalle del productor
     gran_dicc = {}
     for year in years:
+        detalle1 = detalle.filter(year=year[0])
         #calculo ingreso vs gasto
         gasto_total = detalle.filter(year=year[0]).aggregate(t=Sum('totalingreso__total_gasto'))['t']
         gasto_total_fuera = detalle.filter(year=year[0]).aggregate(t=Sum('totalingreso__total_gasto_fuera_finca'))['t']
@@ -303,7 +304,7 @@ def detalle_finca(request, template='detalle_finca.html', entrevistado_id=None):
                                                 'ingreso': ingreso,
                                                 }
 
-        gran_dicc[year[1]] = (ingreso_total, total_gastos,ingreso_cultivo_tradicional, ingreso_huertos)
+        gran_dicc[year[1]] = (ingreso_total, total_gastos,ingreso_cultivo_tradicional, ingreso_huertos, detalle1)
 
     return render(request, template, locals())
 
@@ -1163,7 +1164,7 @@ def gastos(request, template="indicadores/gastos.html"):
 def envio_calorias(request):
 
     numero_total_habitante = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento']).aggregate(t=Sum('sexomiembros__cantidad'))['t']
-    
+
     calorias_tradicional = {}
     for obj in Cultivos.objects.all():
         calculo = CultivosTradicionales.objects.filter(encuesta__entrevistado__departamento=request.session['departamento'],

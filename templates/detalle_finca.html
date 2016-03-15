@@ -301,7 +301,7 @@ $(function () {
 	                        {% endif %}
 							</a>
 							<div class="footer-img">
-								Área total de la finca: <span class="area-finca">616 mz</span>
+								Área total de la finca: <span class="area-finca">{% for area in obj.organizacionfinca_set.all %} {{area.area_finca}} {% endfor %} Mz</span>
 							</div>
 						</div>
 					</div>
