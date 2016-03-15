@@ -40,7 +40,7 @@
                var html = '<b><a href="#' +'" class="verde">' + elemento.finca +
                           '</a></b><br><b class="gris">Sexo →</b> ' + elemento.sexo +
                           '<br><b class="gris">comunidad →</b> ' + elemento.comunidad +
-                          '<br><a href="/finca/'+ elemento.id +'" class="btn botopococ btn-mini btn-success">Ver Productor</a>';
+                          '<br>{% if  request.user.is_authenticated %}<a href="/finca/'+ elemento.id +'" class="btn botopococ btn-mini btn-success">Ver Productor</a> {% endif %}';
                 infowindow = new google.maps.InfoWindow({
                           content: html,
                           zIndex: 999,

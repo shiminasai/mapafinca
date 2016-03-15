@@ -68,7 +68,7 @@ if (n<12) {
 			{% thumbnail obj.mapa_finca "800x500" as im %}
                 data-src="/media/{{im}}"
             {% endthumbnail %}
-	  		data-sub-html="<div class='custom-html'><a class='ver-detalle' href='/finca/{{obj.entrevistado.id}}'>ver detalle</a></div>">
+	  		data-sub-html="{% if  request.user.is_authenticated %} <div class='custom-html'><a class='ver-detalle' href='/finca/{{obj.entrevistado.id}}'>ver detalle</a></div> {% endif %}">
 		  		{% thumbnail obj.mapa_finca "200x125" as im %}
 			  		<figure class="prueba">
 		                <img class="center-block" src="/media/{{im}}" />
@@ -83,7 +83,7 @@ if (n<12) {
 			{% thumbnail obj.mapa_finca "800x500" as im %}
                 data-src="http://placehold.it/800x500"
             {% endthumbnail %}
-	  		data-sub-html="<div class='custom-html'><a class='ver-detalle' href='/finca/{{obj.entrevistado.id}}'>ver detalle</a></div>">
+	  		data-sub-html="{% if  request.user.is_authenticated %} <div class='custom-html'><a class='ver-detalle' href='/finca/{{obj.entrevistado.id}}'>ver detalle</a></div> {% endif %}">
 		  		
 			  		<figure class="prueba">
 		                <img class="center-block" src="http://placehold.it/200x125" />

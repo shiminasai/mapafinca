@@ -100,10 +100,11 @@ $(function () {
 </style>
 <div class="row filtros">
     <ol class="breadcrumb">
-        <li>SELECCIÓN DE PAÍS</li>
-        <li>SELECCIÓN DE DEPARTAMENTO</li>
-        <li>INDICADORES POR DEPARTAMENTO</li>
-        <li>DETALLE DE FINCA</li>
+        <li>PAÍS: <strong>{{request.session.pais|upper}}</strong></li>
+        <li>DEPARTAMENTO: <strong>{{request.session.departamento|upper}}</strong></li>
+        {% for obj in detalle|slice:":1" %}
+        	<li>FINCA: <strong>{{obj.entrevistado.finca|upper}}</strong></li>
+        {% endfor %}
 
     </ol>
 </div>
