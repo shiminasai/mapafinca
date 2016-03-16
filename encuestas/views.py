@@ -226,6 +226,117 @@ def principal_dashboard(request, template='dashboard.html', departamento_id=None
 
     return render(request,template,locals())
 
+def principal_dashboard_pais(request, template='dashboard.html', pais=None,):
+    #a = _queryset_filtrado(request)
+    ahora = Encuesta.objects.filter(entrevistado__departamento__pais=pais).distinct('entrevistado__id')
+    dividir_todo = len(ahora)
+    depart = Departamento.objects.get(id=departamento_id)
+    request.session['departamento'] = depart
+    request.session['pais'] = depart.pais
+    request.session['encuestados'] = dividir_todo
+
+    geolat = []
+    geolong = []
+    for obj in depart.municipio_set.all():
+        geolat.append(obj.latitud)
+        geolong.append(obj.longitud)
+
+    latitud = geolat[-1]
+    longitud = geolong[-1]
+
+    # grafico de patron de gastos
+    try:
+        gasto_finca = float(Encuesta.objects.filter(entrevistado__departamento=departamento_id,gastohogar__tipo=5).aggregate(t=Sum('gastohogar__total'))['t'] / 12) / float(dividir_todo)
+    except:
+        pass
+    try:
+        gasto_fuera_finca = float(Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('gastoproduccion__total'))['t'] / 12) / float(dividir_todo)
+    except:
+        pass
+    # grafico de ingresos
+    try:
+        tradicional = float(Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('cultivostradicionales__total'))['t'] / 12) / float(dividir_todo)
+    except:
+        pass
+
+    try:
+        huertos = float(Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('cultivoshuertosfamiliares__total'))['t'] / 12) / float(dividir_todo)
+    except:
+        pass
+
+    try:
+        frutas = float(Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('cultivosfrutasfinca__total'))['t'] / 12 ) / float(dividir_todo)
+    except:
+        pass
+
+    try:
+        fuente = float(Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('fuentes__total'))['t'] / 12) / float(dividir_todo)
+    except:
+        pass
+
+    try:
+        ganado = float(Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('ganaderia__total'))['t'] / 12) / float(dividir_todo)
+    except:
+        pass
+
+    try:
+        procesamiento = float(Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('procesamiento__total'))['t'] / 12) / float(dividir_todo)
+    except:
+        pass
+
+    #grafico de kcalorias aun esta en proceso
+
+    #grafico sobre gastos alimentarios
+    gastos_alimentarios = {}
+    for obj in ProductosFueraFinca.objects.all():
+        try:
+            cada_uno = float(Encuesta.objects.filter(entrevistado__departamento=departamento_id, alimentosfuerafinca__producto=obj).aggregate(t=Avg('alimentosfuerafinca__total'))['t'] / 12) / float(dividir_todo)
+        except:
+            pass
+        if cada_uno == None:
+            cada_uno = 0
+        gastos_alimentarios[obj] = cada_uno
+
+    #grafico sobre clima
+    lista_precipitacion = []
+    lista_temperatura = []
+    for mes in CHOICES_MESES:
+        precipitacion = Precipitacion.objects.filter(departamento=departamento_id,mes=mes[0]).aggregate(p=Avg('precipitacion'))['p']
+        temperatura = Temperatura.objects.filter(departamento=departamento_id,mes=mes[0]).aggregate(p=Avg('temperatura'))['p']
+        if precipitacion == None:
+            precipitacion = 0
+        lista_precipitacion.append(precipitacion)
+        if temperatura == None:
+            temperatura = 0
+        lista_temperatura.append(temperatura)
+
+    # grafico  de tela de araña : capital natural
+    capital_natural_mujer = Encuesta.objects.filter(entrevistado__departamento=departamento_id, sexomiembros__sexo=1, dueno=1).count()
+    capital_natural_hombre = Encuesta.objects.filter(entrevistado__departamento=departamento_id, sexomiembros__sexo=2, dueno=1).count()
+    capital_natural_ambos = Encuesta.objects.filter(entrevistado__departamento=departamento_id, sexomiembros__sexo=3, dueno=1).count()
+    #capital social
+    capital_social_mujer = Encuesta.objects.filter(entrevistado__departamento=departamento_id, sexomiembros__sexo=1, organizacioncomunitaria__pertenece=1).count()
+    capital_social_hombre = Encuesta.objects.filter(entrevistado__departamento=departamento_id, sexomiembros__sexo=2, organizacioncomunitaria__pertenece=1).count()
+    capital_social_ambos = Encuesta.objects.filter(entrevistado__departamento=departamento_id, sexomiembros__sexo=3, organizacioncomunitaria__pertenece=1).count()
+    #capital financiero
+    capital_financiero_mujer = Encuesta.objects.filter(entrevistado__departamento=departamento_id, sexomiembros__sexo=1, totalingreso__total__gt=1).count()
+    capital_financiero_hombre = Encuesta.objects.filter(entrevistado__departamento=departamento_id, sexomiembros__sexo=2, totalingreso__total__gt=1).count()
+    capital_financiero_ambos = Encuesta.objects.filter(entrevistado__departamento=departamento_id, sexomiembros__sexo=3, totalingreso__total__gt=1).count()
+    #capital fisico
+    capital_fisico_mujer = Encuesta.objects.filter(Q(entrevistado__departamento=departamento_id), Q(sexomiembros__sexo=1), Q(totalingreso__total__gt=1) |  Q(tipoenergia__tipo=4)).count()
+    capital_fisico_hombre = Encuesta.objects.filter(Q(entrevistado__departamento=departamento_id), Q(sexomiembros__sexo=2), Q(totalingreso__total__gt=1) |  Q(tipoenergia__tipo=4)).count()
+    capital_fisico_ambos = Encuesta.objects.filter(Q(entrevistado__departamento=departamento_id), Q(sexomiembros__sexo=3), Q(totalingreso__total__gt=1) |  Q(tipoenergia__tipo=4)).count()
+    #capital humano
+    capital_humano_mujer = Encuesta.objects.filter(Q(entrevistado__departamento=departamento_id), Q(sexomiembros__sexo=1),
+                                                                                    Q(escolaridad__pri_completa__gt=1) |  Q(escolaridad__secu_incompleta__gt=1) | Q(escolaridad__bachiller__gt=1) |  Q(escolaridad__uni_tecnico__gt=1)).count()
+    capital_humano_hombre = Encuesta.objects.filter(Q(entrevistado__departamento=departamento_id), Q(sexomiembros__sexo=2),
+                                                                                    Q(escolaridad__pri_completa__gt=1) |  Q(escolaridad__secu_incompleta__gt=1) | Q(escolaridad__bachiller__gt=1) |  Q(escolaridad__uni_tecnico__gt=1)).count()
+    capital_humano_ambos = Encuesta.objects.filter(Q(entrevistado__departamento=departamento_id), Q(sexomiembros__sexo=3),
+                                                                                    Q(escolaridad__pri_completa__gt=1) |  Q(escolaridad__secu_incompleta__gt=1) | Q(escolaridad__bachiller__gt=1) |  Q(escolaridad__uni_tecnico__gt=1)).count()
+    kcalorias = envio_calorias(request)
+
+    return render(request,template,locals())
+
 def detalle_finca(request, template='detalle_finca.html', entrevistado_id=None):
     detalle = Encuesta.objects.filter(entrevistado_id=entrevistado_id).order_by('year')
 
