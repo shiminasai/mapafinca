@@ -5,6 +5,7 @@ from django.db import models
 
 class Pais(models.Model):
     nombre = models.CharField(max_length=200)
+    slug = models.SlugField(unique=True, null=True, help_text="Usado como url unica(autorellenado)")
     codigo = models.CharField(max_length=2,
                 help_text='Código de 2 letras del país, ejemplo : Nicaragua (ni)')
 

@@ -5,6 +5,7 @@ from models import *
 class PaisAdmin(admin.ModelAdmin):
     list_display = ['nombre']
     list_filter = ['nombre']
+    prepopulated_fields = {"slug": ("nombre", )}
     search_fields = ['nombre']
 
 class DepartamentoAdmin(admin.ModelAdmin):
