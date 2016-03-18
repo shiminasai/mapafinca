@@ -78,6 +78,24 @@ def obtener_mapa_dashboard(request):
         serializado = simplejson.dumps(lista)
         return HttpResponse(serializado, content_type='application/json')
 
+def obtener_mapa_dashboard_pais(request):
+    if request.is_ajax():
+        lista = []
+        for objeto in Encuesta.objects.filter(entrevistado__pais__slug=request.session['pais']).distinct('entrevistado_id'):
+            if objeto.entrevistado.longitud != None and objeto.entrevistado.longitud != '':
+                dicc = dict(nombre=objeto.entrevistado.nombre,
+                            id=objeto.entrevistado.id,
+                            lon=float(objeto.entrevistado.longitud),
+                            lat=float(objeto.entrevistado.latitud),
+                            finca=objeto.entrevistado.finca,
+                            comunidad=objeto.entrevistado.comunidad.nombre,
+                            sexo=objeto.entrevistado.get_sexo_display(),
+                            )
+                lista.append(dicc)
+
+        serializado = simplejson.dumps(lista)
+        return HttpResponse(serializado, content_type='application/json')
+
 
 class GalleryView(TemplateView):
     template_name = "galeria.html"
@@ -226,7 +244,7 @@ def principal_dashboard(request, template='dashboard.html', departamento_id=None
 
     return render(request,template,locals())
 
-def principal_dashboard_pais(request, template='dashboard.html', pais=None,):
+def principal_dashboard_pais(request, template='dashboard_pais.html', pais=None,):
     #a = _queryset_filtrado(request)
     ahora = Encuesta.objects.filter(entrevistado__pais__slug=pais).distinct('entrevistado__id')
     dividir_todo = len(ahora)
@@ -235,15 +253,9 @@ def principal_dashboard_pais(request, template='dashboard.html', pais=None,):
     request.session['pais'] = pais
     request.session['encuestados'] = dividir_todo
 
-    geolat = []
-    geolong = []
-    for obj in Municipio.objects.all():
-        geolat.append(obj.latitud)
-        geolong.append(obj.longitud)
 
-    latitud = geolat[-1]
-    longitud = geolong[-1]
-
+    latitud = 12.8743
+    longitud = -86.1212
     # grafico de patron de gastos
     try:
         gasto_finca = float(Encuesta.objects.filter(entrevistado__pais__slug=pais,gastohogar__tipo=5).aggregate(t=Sum('gastohogar__total'))['t'] / 12) / float(dividir_todo)

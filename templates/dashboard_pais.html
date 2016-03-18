@@ -1,0 +1,585 @@
+{% extends "base.html" %}
+
+{% block extra_js %}
+<script src="http://code.highcharts.com/highcharts.js"></script>
+<script src="http://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js"></script>
+<script type="text/javascript" src="/static/js/markerclusterer.js"></script>
+<script type="text/javascript" src="/static/js/infobox.js"></script>
+<script src="https://code.highcharts.com/highcharts-more.js"></script>
+<script type="text/javascript">
+    var map;
+    var markers = [];
+    $(document).ready(function () {
+        var infowindow = new google.maps.InfoWindow();
+        var myLatlng = new google.maps.LatLng({{latitud}}, {{longitud}});
+        var myOptions = {
+            zoom: 8,
+            mapTypeControl: true,
+            scaleControl: false,
+            scrollwheel: false,
+            center: myLatlng,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        }
+        map = new google.maps.Map(document.getElementById("map-canvas"), myOptions);
+
+
+        $.getJSON("{% url 'obtener-lista-pais' %}", function(data){
+            $.each(data, function(i, elemento){
+                var latlng = new google.maps.LatLng(elemento.lat, elemento.lon);
+                var marker = new google.maps.Marker({
+                    position: latlng,
+                    map: map,
+                    title: elemento.nombre,
+                    item: '',
+                    id: elemento.id
+                });
+                markers.push(marker);
+
+                google.maps.event.addListener(marker, "click", function() {
+               var html = '<b><a href="#' +'" class="verde">' + elemento.finca +
+                          '</a></b><br><b class="gris">Sexo →</b> ' + elemento.sexo +
+                          '<br><b class="gris">comunidad →</b> ' + elemento.comunidad +
+                          '<br>{% if  request.user.is_authenticated %}<a href="/finca/'+ elemento.id +'" class="btn botopococ btn-mini btn-success">Ver Productor</a> {% endif %}';
+                infowindow = new google.maps.InfoWindow({
+                          content: html,
+                          zIndex: 999,
+                });
+                    infowindow.open(map, this);
+                }); // termina addListener
+
+            }); //termina each
+            var markerCluster = new MarkerClusterer(map, markers);
+        });
+
+    });
+
+</script>
+<!-- estos son los graficos de clima y indicadores-->
+<script>
+    $(function () {
+    $('#grafico5').highcharts({
+        chart: {
+            zoomType: 'xy'
+        },
+        title: {
+            text: 'CLIMA: temperatura promedio y precipitación '
+        },
+        subtitle: {
+            text: '{{request.session.departamento}}'
+        },
+        xAxis: [{
+            categories: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
+                'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+            crosshair: true
+        }],
+        yAxis: [{ // Primary yAxis
+            labels: {
+                format: '{value}°C',
+                style: {
+                    color: Highcharts.getOptions().colors[1]
+                }
+            },
+            title: {
+                text: 'Temperatura',
+                style: {
+                    color: Highcharts.getOptions().colors[1]
+                }
+            }
+        }, { // Secondary yAxis
+            title: {
+                text: 'precipitación',
+                style: {
+                    color: Highcharts.getOptions().colors[0]
+                }
+            },
+            labels: {
+                format: '{value} mm',
+                style: {
+                    color: Highcharts.getOptions().colors[0]
+                }
+            },
+            opposite: true
+        }],
+        tooltip: {
+            shared: true
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'left',
+            x: 120,
+            verticalAlign: 'top',
+            y: 100,
+            floating: true,
+            backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'
+        },
+        series: [{
+            name: 'precipitación',
+            type: 'column',
+            yAxis: 1,
+            data: [{% for obj in lista_precipitacion %} {{obj}},{% endfor %}],
+            tooltip: {
+                valueSuffix: ' mm'
+            }
+
+        }, {
+            name: 'Temperatura',
+            type: 'spline',
+            data: [{% for obj in lista_temperatura %} {{obj}},{% endfor %}],
+            tooltip: {
+                valueSuffix: '°C'
+            }
+        }]
+    });
+});
+/**********************************/
+$(function () {
+    $('#grafico1').highcharts({
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'PATRÓN DE GASTOS'
+        },
+        xAxis: {
+            categories: ['Gasto en {{request.session.departamento}}']
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: ''
+            },
+            stackLabels: {
+                enabled: true,
+                style: {
+                    fontWeight: 'bold',
+                    color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+                }
+            }
+        },
+        legend: {
+            align: 'center',
+            verticalAlign: 'bottom',
+            backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || 'white',
+            borderColor: '#CCC',
+            borderWidth: 1,
+            shadow: false
+        },
+       tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+        plotOptions: {
+            column: {
+                stacking: 'normal',
+                dataLabels: {
+                    enabled: true,
+                    color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
+                    style: {
+                        textShadow: '0 0 3px black'
+                    }
+                }
+            }
+        },
+        series: [{
+            name: 'Alimentarios',
+            data: [{% if gasto_finca == None %}0 {%else%}{{gasto_finca|floatformat:2}},{% endif %}]
+        }, {
+            name: 'No alimentarios',
+            data: [{% if gasto_fuera_finca == None %}0 {%else%}{{gasto_fuera_finca|floatformat:2}},{% endif %}]
+        }]
+    });
+});
+
+$(function () {
+    $('#grafico2').highcharts({
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'INGRESOS EN {{request.session.departamento}}'
+        },
+        xAxis: {
+            categories: ['Gasto en {{request.session.departamento}}']
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: ''
+            },
+            stackLabels: {
+                enabled: true,
+                style: {
+                    fontWeight: 'bold',
+                    color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+                }
+            }
+        },
+        legend: {
+            align: 'center',
+            verticalAlign: 'bottom',
+            backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || 'white',
+            borderColor: '#CCC',
+            borderWidth: 1,
+            shadow: false
+        },
+       tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+        plotOptions: {
+            column: {
+                stacking: 'normal',
+                dataLabels: {
+                    enabled: true,
+                    color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
+                    style: {
+                        textShadow: '0 0 3px black'
+                    }
+                }
+            }
+        },
+        series: [
+            {
+                name: "Cultivos tradicionales",
+                data: [{% if tradicional == None %}0 {%else%}{{tradicional|floatformat:2}},{% endif %}]
+            }, {
+                name: "Cultivos huertos",
+                data: [{% if huertos == None %}0 {%else%}{{huertos|floatformat:2}},{% endif %}]
+            }, {
+                name: "Frutales",
+                data: [{% if frutas == None %}0 {%else%}{{frutas|floatformat:2}},{% endif %}]
+            }, {
+                name: "Otras fuentes",
+                data: [{% if fuente == None %}0 {%else%}{{fuente|floatformat:2}},{% endif %}]
+            }, {
+                name: "Ganado",
+                data: [{% if ganado == None %}0 {%else%}{{ganado|floatformat:2}},{% endif %}]
+            }, {
+                name: "Procesamientos",
+                data: [{% if procesamiento == None %}0 {%else%}{{procesamiento|floatformat:2}}{% endif %}]
+        }]
+    });
+});
+
+
+$(function () {
+    $('#grafico3').highcharts({
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Consumo en Kilocalorias'
+        },
+        xAxis: {
+            categories: ['calorias {{request.session.departamento}}']
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: ''
+            },
+            stackLabels: {
+                enabled: true,
+                style: {
+                    fontWeight: 'bold',
+                    color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+                }
+            }
+        },
+        legend: {
+            align: 'center',
+            verticalAlign: 'bottom',
+            backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || 'white',
+            borderColor: '#CCC',
+            borderWidth: 1,
+            shadow: false
+        },
+       tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+        plotOptions: {
+            column: {
+                stacking: 'normal',
+                dataLabels: {
+                    enabled: true,
+                    color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
+                    style: {
+                        textShadow: '0 0 3px black'
+                    }
+                }
+            }
+        },
+        series: [
+        {% for k,v in kcalorias.items %}
+            {
+                name: '{{k}}',
+                data: [{% if v == None %}0 {%else%}{{v|floatformat:2}},{% endif %}]
+            },
+        {% endfor %}
+        ]
+    });
+});
+
+$(function () {
+    $('#grafico4').highcharts({
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'GASTOS ALIMENTARIOS'
+        },
+        xAxis: {
+            categories: ['Gasto alimentarios {{request.session.departamento}}']
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: ''
+            },
+            stackLabels: {
+                enabled: true,
+                style: {
+                    fontWeight: 'bold',
+                    color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+                }
+            }
+        },
+        legend: {
+            align: 'center',
+            verticalAlign: 'bottom',
+            backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || 'white',
+            borderColor: '#CCC',
+            borderWidth: 1,
+            shadow: false
+        },
+       tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+        plotOptions: {
+            column: {
+                stacking: 'normal',
+                dataLabels: {
+                    enabled: true,
+                    color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
+                    style: {
+                        textShadow: '0 0 3px black'
+                    }
+                }
+            }
+        },
+        series: [
+        {% for k,v in gastos_alimentarios.items %}
+          {
+            name: '{{k}}',
+            data: [{{v|floatformat:2}}]
+        },
+        {% endfor %}
+        ]
+    });
+});
+$(function () {
+
+    $('#arana').highcharts({
+
+        chart: {
+            polar: true,
+            type: 'line'
+        },
+
+        title: {
+            text: '',
+            x: -80
+        },
+
+        pane: {
+            size: '80%'
+        },
+
+        xAxis: {
+            categories: ['Capital natural', 'Capital social', 'Capital financiero', 'Capital fisico','Capital humano'],
+            tickmarkPlacement: 'on',
+            lineWidth: 0
+        },
+
+        yAxis: {
+            gridLineInterpolation: 'polygon',
+            lineWidth: 0,
+            min: 0
+        },
+
+        tooltip: {
+            shared: true,
+            pointFormat: '<span style="color:{series.color}">{series.name}: <b>{point.y:,.0f}</b><br/>'
+        },
+
+        legend: {
+            align: 'right',
+            verticalAlign: 'top',
+            y: 70,
+            layout: 'vertical'
+        },
+
+        series: [{
+            name: 'Jefe de hogar hombre',
+            data: [{{capital_natural_hombre}}, {{capital_social_hombre}}, {{capital_financiero_hombre}}, {{capital_fisico_hombre}}, {{capital_humano_hombre}}],
+            pointPlacement: 'on'
+        }, {
+            name: 'Jefe de hogar mujer',
+            data: [{{capital_natural_mujer}}, {{capital_social_mujer}}, {{capital_financiero_mujer}}, {{capital_fisico_mujer}}, {{capital_humano_mujer}}],
+            pointPlacement: 'on'
+        }, {
+            name: 'Ambos',
+            data: [{{capital_natural_ambos}}, {{capital_social_ambos}}, {{capital_financiero_ambos}}, {{capital_fisico_ambos}}, {{capital_humano_ambos}}],
+            pointPlacement: 'on'
+        }, {
+            name: 'Mujer no jefa de hogar',
+            data: [0, 0, 0, 0, 0],
+            pointPlacement: 'on'
+        }]
+
+    });
+});
+</script>
+{% endblock extra_js %}
+
+{% block contenido %}
+ <style>
+      #map-canvas {
+        width: 100%;
+        height: 359px;
+        margin: 0 auto;
+        background-color: #CCC;
+      }
+    </style>
+
+{% include "breadcrumb.html" %}
+<div class="contenido-general">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 ">
+            <div class="mapa-general ">
+                {# mapa #}
+                <div id="map-canvas"></div>
+
+                <!-- <a class='btn btn-tgeneral center-block' href="/indicadores1/">TABLERO DE INDICADORES</a> -->
+            </div>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6  ">
+            <div class="table-responsive graficos-general tabla-productor" >
+                <table class="table table-hover">
+
+                    <thead>
+                        <tr>
+                            <th>NOMBRE DE FINCA</th>
+                            <th>SEXO</th>
+                            {% if  request.user.is_authenticated %}
+                                <th>DETALLE</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for obj in ahora %}
+                        <tr>
+                            <td>{{obj.entrevistado.finca}}</td>
+                            <td class="sexo">
+                                {% if obj.entrevistado.sexo == 1 %}
+                                <span class="fa fa-female"> Femenino</span>
+                                {% else %}
+                                <span class="fa fa-male"> Masculino</span>
+                                {% endif %}
+                            </td>
+                            {% if  request.user.is_authenticated %}
+                                 <td>
+                                    <a class='btn center-block btn-tabla' href="{% url 'detalle-finca' obj.entrevistado.id %}">Detalle</a>
+                                </td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+<!--            <div class="row">
+                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                    <div class="grafico-indicador" >
+                        <div class="titulo-grafico text-right">
+                            <a href="#">Ver detalle</a>
+                        </div>
+                        <div id="grafico1" style="height: 270px;"></div>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                    <div class="grafico-indicador" >
+                        <div class="titulo-grafico text-right">
+                            <a href="#">Ver detalle</a>
+                        </div>
+                        <div id="grafico2" style="height: 270px;"></div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                    <div class="grafico-indicador" >
+                        <div class="titulo-grafico text-right">
+                            <a href="#">Ver detalle</a>
+                        </div>
+                        <div id="grafico3" style="height: 270px;"></div>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                    <div class="grafico-indicador" >
+                        <div class="titulo-grafico text-right">
+                            <a href="#">Ver detalle</a>
+                        </div>
+                        <div id="grafico4" style="height: 270px;"></div>
+                    </div>
+                </div>
+            </div>
+-->
+    <div class="row fila3">
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 ">
+            <div class="mapa-general ">
+                <div id="grafico1"></div>
+            </div>
+        </div>
+         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 ">
+            <div class="mapa-general ">
+                <div id="grafico2"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row fila3">
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 ">
+            <div class="mapa-general ">
+                <div id="grafico3"></div>
+            </div>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 ">
+            <div class="mapa-general ">
+                <div id="grafico4"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row fila3">
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 ">
+            <div class="mapa-general ">
+                <div id="arana"></div>
+            </div>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 ">
+            <div class="mapa-general ">
+                <div id="grafico5"></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock contenido %}

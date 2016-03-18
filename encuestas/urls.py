@@ -12,6 +12,7 @@ urlpatterns = [
     url(r'^indicadores/$', views.indicadores, name='indicadores'),
     url(r'^indicadores1/$', views.indicadores1, name='indicadores1'),
     url(r'^mapa_dash/$', views.obtener_mapa_dashboard, name='obtener-lista'),
+     url(r'^mapa_dash_pais/$', views.obtener_mapa_dashboard_pais, name='obtener-lista-pais'),
     url(r'^galeria/$', views.GalleryView.as_view(), name='galeria'),
     url(r'^detalle_indicador/$', views.DetailIndicadorView.as_view(), name='galeria'),
     #otros indicadores
