@@ -1454,6 +1454,7 @@ def envio_calorias_pais(request):
 
 def calorias(request, template="indicadores/calorias.html"):
      #años de encuestas
+     numero_total_habitante = Encuesta.objects.filter(entrevistado__pais__slug=request.session['pais']).aggregate(t=Sum('sexomiembros__cantidad'))['t']
     years = []
     for en in Encuesta.objects.order_by('year').values_list('year', flat=True):
         years.append((en,en))
@@ -1466,10 +1467,11 @@ def calorias(request, template="indicadores/calorias.html"):
         for obj in Cultivos.objects.all():
             calculo = CultivosTradicionales.objects.filter(encuesta__year=year[0],encuesta__entrevistado__departamento=request.session['departamento'],
                                                                                     cultivo=obj).aggregate(t=Coalesce(Avg('consumo_familia'), V(0)))['t']
-            consumida = calculo * 12
+            consumida = calculo / 12
             consumida_gramos = consumida * obj.calorias
-            calorias_dia = float(consumida_gramos * obj.calorias) / 100
-            gramo_dia = float(obj.proteinas*consumida_gramos) / 100
+            calorias_mes = float(consumida_gramos) / numero_total_habitante
+            calorias_dia = float(calorias_mes) / 30
+            gramo_dia = float(obj.proteinas)
             if calorias_dia > 0:
                 calorias_tradicional[obj] = (consumida, obj.get_unidad_medida_display(),consumida_gramos,obj.calorias, obj.proteinas,calorias_dia,gramo_dia)
         total_calorias_tradicional = sum(list([ i[5] for i in calorias_tradicional.values()]))
@@ -1479,10 +1481,11 @@ def calorias(request, template="indicadores/calorias.html"):
         for obj in CultivosHuertos.objects.all():
             calculo = CultivosHuertosFamiliares.objects.filter(encuesta__year=year[0],encuesta__entrevistado__departamento=request.session['departamento'],
                                                                                     cultivo=obj).aggregate(t=Coalesce(Avg('consumo_familia'), V(0)))['t']
-            consumida = calculo * 12
+            consumida = calculo / 12
             consumida_gramos = consumida * obj.calorias
-            calorias_dia = float(consumida_gramos * obj.calorias) / 100
-            gramo_dia = float(obj.proteinas*consumida_gramos) / 100
+            calorias_mes = float(consumida_gramos) / numero_total_habitante
+            calorias_dia = float(consumida_gramos) / 30
+            gramo_dia = float(obj.proteinas)
             if calorias_dia > 0:
                 calorias_huerto[obj] = (consumida, obj.get_unidad_medida_display(),consumida_gramos,obj.calorias, obj.proteinas,calorias_dia,gramo_dia)
 
@@ -1493,10 +1496,11 @@ def calorias(request, template="indicadores/calorias.html"):
         for obj in CultivosFrutas.objects.all():
             calculo = CultivosFrutasFinca.objects.filter(encuesta__year=year[0],encuesta__entrevistado__departamento=request.session['departamento'],
                                                                                     cultivo=obj).aggregate(t=Coalesce(Avg('consumo_familia'), V(0)))['t']
-            consumida = calculo * 12
+            consumida = calculo / 12
             consumida_gramos = consumida * obj.calorias
-            calorias_dia = float(consumida_gramos * obj.calorias) / 100
-            gramo_dia = float(obj.proteinas*consumida_gramos) / 100
+            calorias_mes = float(consumida_gramos) / numero_total_habitante
+            calorias_dia = float(consumida_gramos) / 30
+            gramo_dia = float(obj.proteinas)
             if calorias_dia > 0:
                 calorias_fruta[obj] = (consumida, obj.get_unidad_medida_display(),consumida_gramos,obj.calorias, obj.proteinas,calorias_dia,gramo_dia)
         total_calorias_fruta = sum(list([ i[5] for i in calorias_fruta.values()]))
@@ -1506,10 +1510,11 @@ def calorias(request, template="indicadores/calorias.html"):
         for obj in ProductoProcesado.objects.all():
             calculo = Procesamiento.objects.filter(encuesta__year=year[0],encuesta__entrevistado__departamento=request.session['departamento'],
                                                                                     producto=obj).aggregate(t=Coalesce(Avg('cantidad'), V(0)))['t']
-            consumida = calculo * 12
+            consumida = calculo / 12
             consumida_gramos = consumida * obj.calorias
-            calorias_dia = float(consumida_gramos * obj.calorias) / 100
-            gramo_dia = float(obj.proteinas*consumida_gramos) / 100
+            calorias_mes = float(consumida_gramos) / numero_total_habitante
+            calorias_dia = float(consumida_gramos) / 30
+            gramo_dia = float(obj.proteinas)
             if calorias_dia > 0:
                 calorias_procesado[obj] = (consumida, obj.get_unidad_medida_display(),consumida_gramos,obj.calorias, obj.proteinas,calorias_dia,gramo_dia)
 
@@ -1520,10 +1525,11 @@ def calorias(request, template="indicadores/calorias.html"):
         for obj in ProductosFueraFinca.objects.all():
             calculo = AlimentosFueraFinca.objects.filter(encuesta__year=year[0],encuesta__entrevistado__departamento=request.session['departamento'],
                                                                                     producto=obj).aggregate(t=Coalesce(Avg('cantidad'), V(0)))['t']
-            consumida = calculo * 12
+            consumida = calculo / 12
             consumida_gramos = consumida * obj.calorias
-            calorias_dia = float(consumida_gramos * obj.calorias) / 100
-            gramo_dia = float(obj.proteinas*consumida_gramos) / 100
+            calorias_mes = float(consumida_gramos) / numero_total_habitante
+            calorias_dia = float(consumida_gramos) / 30
+            gramo_dia = float(obj.proteinas)
             if calorias_dia > 0:
                 calorias_fuera_finca[obj] = (consumida, obj.unidad_medida,consumida_gramos,obj.calorias, obj.proteinas,calorias_dia,gramo_dia)
 
