@@ -1454,7 +1454,7 @@ def envio_calorias_pais(request):
 
 def calorias(request, template="indicadores/calorias.html"):
      #años de encuestas
-     numero_total_habitante = Encuesta.objects.filter(entrevistado__pais__slug=request.session['pais']).aggregate(t=Sum('sexomiembros__cantidad'))['t']
+    numero_total_habitante = Encuesta.objects.filter(entrevistado__pais__slug=request.session['pais']).aggregate(t=Sum('sexomiembros__cantidad'))['t']
     years = []
     for en in Encuesta.objects.order_by('year').values_list('year', flat=True):
         years.append((en,en))
