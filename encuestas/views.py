@@ -249,7 +249,7 @@ def principal_dashboard_pais(request, template='dashboard_pais.html', pais=None,
     ahora = Encuesta.objects.filter(entrevistado__pais__slug=pais).distinct('entrevistado__id')
     dividir_todo = len(ahora)
 
-
+    request.session['departamento'] = None
     request.session['pais'] = pais
     request.session['encuestados'] = dividir_todo
 
