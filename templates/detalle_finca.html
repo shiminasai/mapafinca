@@ -327,7 +327,7 @@ $(function () {
 										<img class="center-block" src="/static/img/familia.png" alt="">
 									</div>
 									<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7">
-										<p class="">10 Miembros</p>
+										<p class="">{% for gente in obj.sexomiembros_set.all %} {{gente.cantidad}} {% endfor %} Miembros</p>
 									</div>
 								</div>
 								
