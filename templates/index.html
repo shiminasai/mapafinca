@@ -3,6 +3,22 @@
 	<script src="/static/js/modernizr.custom.js"></script>
 	<script src="/static/js/classie.js"></script>
 	<script src="/static/js/uiMorphingButton_fixed.js"></script>
+	<script type="text/javascript" src="/static/js/bootstrap-multiselect.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#example-getting-started').multiselect();
+    });
+
+    
+    $('#ano').multiselect();
+     $('#pais').multiselect();
+     $('#departamento').multiselect();
+     $('#municipio').multiselect();
+     $('#comunidad').multiselect();
+
+</script>
+	
 	<script>
 			(function() {
 				var docElem = window.document.documentElement, didScroll, scrollPosition;
@@ -64,7 +80,7 @@
 					UIBtnn.toggle();
 				} );
 			})();
-		</script>
+	</script>
 {% endblock extra_js %}
 {% block contenido %}
 <div class="row contenedor-index">
@@ -83,7 +99,7 @@
 
 
 		<div class="col-md-4 col-lg-4">
-			{% for k,v in paises.items %}
+			<!-- {% for k,v in paises.items %}
 				<div class="panel">
 					<div class="panel-heading">
 						<a class="btn-ex" data-toggle="collapse" href="#{{k|slugify}}" aria-expanded="false" aria-controls="{{k|slugify}}">
@@ -103,7 +119,76 @@
 						 </ul>
 					</div>
 				</div>
-			{% endfor %}
+			{% endfor %} -->
+			<form class="index-filtro" action="">
+				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+				<div class="row">
+					<div>
+						<label for="">Años</label>
+						<select id="ano" multiple="multiple">
+						    <option value="1">Option 1</option>
+						    <option value="2">Option 2</option>
+						    <option value="3">Option 3</option>
+						    <option value="4">Option 4</option>
+						    <option value="5">Option 5</option>
+						    <option value="6">Option 6</option>
+						</select>
+					</div>
+					<div>
+						<label for="">País</label>
+						<select id="pais">
+						    <option value="1">Option 1</option>
+						    <option value="2">Option 2</option>
+						    <option value="3">Option 3</option>
+						    <option value="4">Option 4</option>
+						    <option value="5">Option 5</option>
+						    <option value="6">Option 6</option>
+						</select>
+					</div>
+					<div>
+						<label for="">Departamento</label>
+						<select id="departamento" multiple="multiple">
+						    <option value="1">Option 1</option>
+						    <option value="2">Option 2</option>
+						    <option value="3">Option 3</option>
+						    <option value="4">Option 4</option>
+						    <option value="5">Option 5</option>
+						    <option value="6">Option 6</option>
+						</select>
+					</div>
+					<div>
+						<label for="">municipio</label>
+						<select id="municipio" multiple="multiple">
+						    <option value="1">Option 1</option>
+						    <option value="2">Option 2</option>
+						    <!-- Option 3 will be selected in advance ... -->
+						    <option value="3">Option 3</option>
+						    <option value="4">Option 4</option>
+						    <option value="5">Option 5</option>
+						    <option value="6">Option 6</option>
+						</select>
+					</div>
+					<div>
+						<label for="">Comunidad</label>
+						<select id="comunidad" multiple="multiple">
+						    <option value="1">Option 1</option>
+						    <option value="2">Option 2</option>
+						    <!-- Option 3 will be selected in advance ... -->
+						    <option value="3">Option 3</option>
+						    <option value="4">Option 4</option>
+						    <option value="5">Option 5</option>
+						    <option value="6">Option 6</option>
+						</select>
+					</div>
+					
+				</div>		
+					
+					
+					
+					
+					
+				</div>
+			</form>
 			<div class="col-lg-12">
 				<div class="row">
 					<div class="col-xs-3 col-md-5 col-lg-5 boton-1">
