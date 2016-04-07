@@ -50,8 +50,16 @@ CHOICE_SEXO = (
                 (2, 'Hombre'),
               )
 
+CHOICE_FECHA  = (
+              (2015, '2015'),
+              (2016, '2016'),
+            )
+
 class ConsultarForm(forms.Form):
-    sexo = forms.ChoiceField(choices=CHOICE_SEXO, required=False)
-    organizacion = forms.ModelChoiceField(queryset=OrganizacionResp.objects.all(), required=False)
-
-
+    fecha = forms.MultipleChoiceField(choices=CHOICE_FECHA, label="Años")
+    organizacion = forms.ModelMultipleChoiceField(queryset=OrganizacionResp.objects.all(), required=False)
+    pais = forms.ModelChoiceField(queryset=Pais.objects.all(), required=True)
+    departamento = forms.ModelMultipleChoiceField(queryset=Departamento.objects.filter(entrevistados__gt=1).distinct(), required=False)
+    municipio = forms.ModelMultipleChoiceField(queryset=Municipio.objects.all(), required=False)
+    comunidad = forms.ModelMultipleChoiceField(queryset=Comunidad.objects.all(), required=False)
+    #sexo = forms.ChoiceField(choices=CHOICE_SEXO, required=False)

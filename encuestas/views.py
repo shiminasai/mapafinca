@@ -15,11 +15,27 @@ from django.db.models.functions import Coalesce
 
 def _queryset_filtrado(request):
     params = {}
-    if request.session['sexo']:
-        params['entrevistado__sexo'] = request.session['sexo']
+
+    if request.session['fecha']:
+        params['year'] = request.session['fecha']
 
     if request.session['organizacion']:
         params['org_responsable'] = request.session['organizacion']
+
+    if request.session['pais']:
+        params['entrevistado__pais'] = request.session['pais']
+
+    if request.session['departamento']:
+        params['entrevistado__departamento'] = request.session['departamento']
+
+    if request.session['municipio']:
+        params['entrevistado__municipio'] = request.session['municipio']
+
+    if request.session['comunidad']:
+        params['entrevistado__comunidad'] = request.session['comunidad']
+
+    #if request.session['sexo']:
+    #    params['entrevistado__sexo'] = request.session['sexo']
 
     return Encuesta.objects.filter(**params)
 
@@ -29,33 +45,43 @@ def IndexView(request,template="index.html"):
         mensaje = None
         form = ConsultarForm(request.POST)
         if form.is_valid():
-            request.session['sexo'] = form.cleaned_data['sexo']
+            request.session['fecha'] = form.cleaned_data['fecha']
             request.session['organizacion'] = form.cleaned_data['organizacion']
+            request.session['departamento'] = form.cleaned_data['departamento']
+            request.session['municipio'] = form.cleaned_data['municipio']
+            request.session['comunidad'] = form.cleaned_data['comunidad']
+            #request.session['sexo'] = form.cleaned_data['sexo']
+
             mensaje = "Todas las variables estan correctamente :)"
             request.session['activo'] = True
             centinela = 1
+            print mensaje
 
-            return redirect('/mapa/')
+            return HttpResponseRedirect('/dashboard-principal/')
 
         else:
             centinela = 0
+            print "fail no entro bien"
 
     else:
         form = ConsultarForm()
         mensaje = "Existen alguno errores"
         centinela = 0
         try:
-            del request.session['sexo']
+            del request.session['fecha']
             del request.session['organizacion']
+            del request.session['departamento']
+            del request.session['municipio']
+            del request.session['comunidad']
         except:
             pass
-        paises = {}
-        for pais in Pais.objects.all():
-            paises[pais] = {}
-            for mun in Departamento.objects.all():
-                m = Encuesta.objects.filter(entrevistado__departamento=mun, entrevistado__pais=pais).count()
-                if m > 0:
-                    paises[pais][mun.nombre] = (m,mun.id)
+        # paises = {}
+        # for pais in Pais.objects.all():
+        #     paises[pais] = {}
+        #     for mun in Departamento.objects.all():
+        #         m = Encuesta.objects.filter(entrevistado__departamento=mun, entrevistado__pais=pais).count()
+        #         if m > 0:
+        #             paises[pais][mun.nombre] = (m,mun.id)
 
     return render(request, template, locals())
 

@@ -11,25 +11,24 @@
 <script type="text/javascript">
     $(document).ready(function() {
         $('#example-getting-started').multiselect();
+				$('#id_fecha').multiselect();
+	 		 	$('#id_organizacion').multiselect();
+	      $('#id_pais').multiselect();
+	      $('#id_departamento').multiselect();
+	      $('#id_municipio').multiselect();
+	      $('#id_comunidad').multiselect();
     });
 
-    
-    $('#ano').multiselect();
-     $('#pais').multiselect();
-     $('#departamento').multiselect();
-     $('#municipio').multiselect();
-     $('#comunidad').multiselect();
-
 </script>
-	
+
 	<script>
-	var elems = document.getElementsByClassName('valorBadge');
-	var sum = 0;
-	for (var i = 0;i < elems.length; i++) {
-	  sum += parseInt(elems[i].innerHTML, 10);
-	}
-	document.getElementById('totalBadge').innerHTML = sum;
-	
+	// var elems = document.getElementsByClassName('valorBadge');
+	// var sum = 0;
+	// for (var i = 0;i < elems.length; i++) {
+	//   sum += parseInt(elems[i].innerHTML, 10);
+	// }
+	// document.getElementById('totalBadge').innerHTML = sum;
+
 			(function() {
 				var docElem = window.document.documentElement, didScroll, scrollPosition;
 
@@ -136,71 +135,39 @@
 			{% endfor %} -->
 			<form class="index-filtro" action="">
 				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+				<form action="." method="POST">{% csrf_token %}
 				<div class="row">
 					<div>
-						<label for="">Años</label>
-						<select id="ano" multiple="multiple">
-						    <option value="1">Option 1</option>
-						    <option value="2">Option 2</option>
-						    <option value="3">Option 3</option>
-						    <option value="4">Option 4</option>
-						    <option value="5">Option 5</option>
-						    <option value="6">Option 6</option>
-						</select>
+						<label for="">{{form.fecha.label}}</label>
+						    {{form.fecha}}
 					</div>
 					<div>
-						<label for="">País</label>
-						<select id="pais">
-						    <option value="1">Option 1</option>
-						    <option value="2">Option 2</option>
-						    <option value="3">Option 3</option>
-						    <option value="4">Option 4</option>
-						    <option value="5">Option 5</option>
-						    <option value="6">Option 6</option>
-						</select>
+						<label for="">{{form.pais.label}}</label>
+						{{form.pais}}
 					</div>
 					<div>
-						<label for="">Departamento</label>
-						<select id="departamento" multiple="multiple">
-						    <option value="1">Option 1</option>
-						    <option value="2">Option 2</option>
-						    <option value="3">Option 3</option>
-						    <option value="4">Option 4</option>
-						    <option value="5">Option 5</option>
-						    <option value="6">Option 6</option>
-						</select>
+						<label for="">{{form.organizacion.label}}</label>
+						{{form.organizacion}}
 					</div>
 					<div>
-						<label for="">municipio</label>
-						<select id="municipio" multiple="multiple">
-						    <option value="1">Option 1</option>
-						    <option value="2">Option 2</option>
-						    <!-- Option 3 will be selected in advance ... -->
-						    <option value="3">Option 3</option>
-						    <option value="4">Option 4</option>
-						    <option value="5">Option 5</option>
-						    <option value="6">Option 6</option>
-						</select>
+						<label for="">{{form.departamento.label}}</label>
+						 {{form.departamento}}
 					</div>
 					<div>
-						<label for="">Comunidad</label>
-						<select id="comunidad" multiple="multiple">
-						    <option value="1">Option 1</option>
-						    <option value="2">Option 2</option>
-						    <!-- Option 3 will be selected in advance ... -->
-						    <option value="3">Option 3</option>
-						    <option value="4">Option 4</option>
-						    <option value="5">Option 5</option>
-						    <option value="6">Option 6</option>
-						</select>
+						<label for="">{{form.municipio.label}}</label>
+						 {{form.municipio}}
 					</div>
-					
-				</div>		
-					
-					
-					
-					
-					
+					<div>
+						<label for="">{{form.comunidad.label}}</label>
+						 {{form.comunidad}}
+					</div>
+
+					<input type="submit" value="Consultar" class="btn btn-default btn-filtro" name="consulta"/>
+
+				</div>
+				</form>
+
+
 				</div>
 			</form>
 			<div class="col-lg-12">
@@ -217,11 +184,11 @@
 												<p>El Programa Medios de Vida Sostenible con enfoque en la gestión de riesgo y el cambio climático de CAFOD, implementa el sistema de monitoreo de finca que tiene como fin identificar la mejoría del bienestar de vida de familias campesinas atendidas por el programa a través de co-partes en territorio. Toda la información generada por el sistema de monitoreo de finca proviene de la aplicación de una encuesta a familias y medir avances con respecto años anteriores.</p>
 												<br>
 												<p>El Sistema de monitoreo de Finca permitirá visualizar cómo esta la finca hoy y pensar cómo se quiere ver en el futuro, de acuerdo a las posibilidades de las familias y condiciones medioambientales. Se podrá obtener datos generados a través de gráficos, tablas e imágenes y podrá verlo desde teléfonos móviles y tabletas.</p>
-												
+
 											</div>
 										</div>
 									</div>
-								</div><!-- morph-button --> 
+								</div><!-- morph-button -->
 							</div><!-- /form-mockup -->
 					</div>
 					<div class="col-xs-6 col-md-7 col-lg-7 boton-2">
