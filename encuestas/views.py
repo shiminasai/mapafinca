@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.shortcuts import render, redirect, render_to_response
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.views.generic import TemplateView
 from .forms import ConsultarForm
 from .models import *
@@ -17,26 +17,25 @@ def _queryset_filtrado(request):
     params = {}
 
     if request.session['fecha']:
-        params['year'] = request.session['fecha']
+        params['year__in'] = request.session['fecha']
 
     if request.session['organizacion']:
-        params['org_responsable'] = request.session['organizacion']
+        params['org_responsable__in'] = request.session['organizacion']
 
     if request.session['pais']:
         params['entrevistado__pais'] = request.session['pais']
 
     if request.session['departamento']:
-        params['entrevistado__departamento'] = request.session['departamento']
+        params['entrevistado__departamento__in'] = request.session['departamento']
 
     if request.session['municipio']:
-        params['entrevistado__municipio'] = request.session['municipio']
+        params['entrevistado__municipio__in'] = request.session['municipio']
 
     if request.session['comunidad']:
-        params['entrevistado__comunidad'] = request.session['comunidad']
+        params['entrevistado__comunidad__in'] = request.session['comunidad']
 
     #if request.session['sexo']:
     #    params['entrevistado__sexo'] = request.session['sexo']
-
     return Encuesta.objects.filter(**params)
 
 
@@ -47,6 +46,7 @@ def IndexView(request,template="index.html"):
         if form.is_valid():
             request.session['fecha'] = form.cleaned_data['fecha']
             request.session['organizacion'] = form.cleaned_data['organizacion']
+            request.session['pais'] = form.cleaned_data['pais']
             request.session['departamento'] = form.cleaned_data['departamento']
             request.session['municipio'] = form.cleaned_data['municipio']
             request.session['comunidad'] = form.cleaned_data['comunidad']
@@ -69,6 +69,7 @@ def IndexView(request,template="index.html"):
         centinela = 0
         try:
             del request.session['fecha']
+            del request.session['pais']
             del request.session['organizacion']
             del request.session['departamento']
             del request.session['municipio']
@@ -159,71 +160,63 @@ class MapaView(TemplateView):
         context['guatemala'] = 0#Encuesta.objects.filter(entrevistado__pais_id=4).count()
         return context
 
-def principal_dashboard(request, template='dashboard.html', departamento_id=None,):
-    #a = _queryset_filtrado(request)
-    ahora = Encuesta.objects.filter(entrevistado__departamento=departamento_id).distinct('entrevistado__id')
+def principal_dashboard(request, template='dashboard.html'):
+
+    filtro = _queryset_filtrado(request)
+
+    ahora = filtro.distinct('entrevistado__id')
     dividir_todo = len(ahora)
-    depart = Departamento.objects.get(id=departamento_id)
-    request.session['departamento'] = depart
-    request.session['pais'] = depart.pais
+    depart = Departamento.objects.filter(id__in=request.session['departamento'])
     request.session['encuestados'] = dividir_todo
 
-    geolat = []
-    geolong = []
-    for obj in depart.municipio_set.all():
-        geolat.append(obj.latitud)
-        geolong.append(obj.longitud)
-
-    latitud = geolat[-1]
-    longitud = geolong[-1]
+    latitud = 12.98
+    longitud = -86.10
 
     # grafico de patron de gastos
     try:
-        gasto_finca = float(Encuesta.objects.filter(entrevistado__departamento=departamento_id,gastohogar__tipo=5).aggregate(t=Sum('gastohogar__total'))['t'] / 12) / float(dividir_todo)
+        gasto_finca = float(filtro.filter(gastohogar__tipo=5).aggregate(t=Sum('gastohogar__total'))['t'] / 12) / float(dividir_todo)
     except:
         pass
     try:
-        gasto_fuera_finca = float(Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('gastoproduccion__total'))['t'] / 12) / float(dividir_todo)
+        gasto_fuera_finca = float(filtro.aggregate(t=Sum('gastoproduccion__total'))['t'] / 12) / float(dividir_todo)
     except:
         pass
     # grafico de ingresos
     try:
-        tradicional = float(Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('cultivostradicionales__total'))['t'] / 12) / float(dividir_todo)
+        tradicional = float(filtro.aggregate(t=Sum('cultivostradicionales__total'))['t'] / 12) / float(dividir_todo)
     except:
         pass
 
     try:
-        huertos = float(Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('cultivoshuertosfamiliares__total'))['t'] / 12) / float(dividir_todo)
+        huertos = float(filtro.aggregate(t=Sum('cultivoshuertosfamiliares__total'))['t'] / 12) / float(dividir_todo)
     except:
         pass
 
     try:
-        frutas = float(Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('cultivosfrutasfinca__total'))['t'] / 12 ) / float(dividir_todo)
+        frutas = float(filtro.aggregate(t=Sum('cultivosfrutasfinca__total'))['t'] / 12 ) / float(dividir_todo)
     except:
         pass
 
     try:
-        fuente = float(Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('fuentes__total'))['t'] / 12) / float(dividir_todo)
+        fuente = float(filtro.aggregate(t=Sum('fuentes__total'))['t'] / 12) / float(dividir_todo)
     except:
         pass
 
     try:
-        ganado = float(Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('ganaderia__total'))['t'] / 12) / float(dividir_todo)
+        ganado = float(filtro.aggregate(t=Sum('ganaderia__total'))['t'] / 12) / float(dividir_todo)
     except:
         pass
 
     try:
-        procesamiento = float(Encuesta.objects.filter(entrevistado__departamento=departamento_id).aggregate(t=Sum('procesamiento__total'))['t'] / 12) / float(dividir_todo)
+        procesamiento = float(filtro.aggregate(t=Sum('procesamiento__total'))['t'] / 12) / float(dividir_todo)
     except:
         pass
-
-    #grafico de kcalorias aun esta en proceso
 
     #grafico sobre gastos alimentarios
     gastos_alimentarios = {}
     for obj in ProductosFueraFinca.objects.all():
         try:
-            cada_uno = float(Encuesta.objects.filter(entrevistado__departamento=departamento_id, alimentosfuerafinca__producto=obj).aggregate(t=Avg('alimentosfuerafinca__total'))['t'] / 12) / float(dividir_todo)
+            cada_uno = float(filtro.filter(alimentosfuerafinca__producto=obj).aggregate(t=Avg('alimentosfuerafinca__total'))['t'] / 12) / float(dividir_todo)
         except:
             pass
         if cada_uno == None:
@@ -234,8 +227,8 @@ def principal_dashboard(request, template='dashboard.html', departamento_id=None
     lista_precipitacion = []
     lista_temperatura = []
     for mes in CHOICES_MESES:
-        precipitacion = Precipitacion.objects.filter(departamento=departamento_id,mes=mes[0]).aggregate(p=Avg('precipitacion'))['p']
-        temperatura = Temperatura.objects.filter(departamento=departamento_id,mes=mes[0]).aggregate(p=Avg('temperatura'))['p']
+        precipitacion = Precipitacion.objects.filter(departamento__in=request.session["departamento"],mes=mes[0]).aggregate(p=Avg('precipitacion'))['p']
+        temperatura = Temperatura.objects.filter(departamento__in=request.session["departamento"],mes=mes[0]).aggregate(p=Avg('temperatura'))['p']
         if precipitacion == None:
             precipitacion = 0
         lista_precipitacion.append(precipitacion)
@@ -244,28 +237,28 @@ def principal_dashboard(request, template='dashboard.html', departamento_id=None
         lista_temperatura.append(temperatura)
 
     # grafico  de tela de araña : capital natural
-    capital_natural_mujer = Encuesta.objects.filter(entrevistado__departamento=departamento_id, sexomiembros__sexo=1, dueno=1).count()
-    capital_natural_hombre = Encuesta.objects.filter(entrevistado__departamento=departamento_id, sexomiembros__sexo=2, dueno=1).count()
-    capital_natural_ambos = Encuesta.objects.filter(entrevistado__departamento=departamento_id, sexomiembros__sexo=3, dueno=1).count()
+    capital_natural_mujer = filtro.filter(sexomiembros__sexo=1, dueno=1).count()
+    capital_natural_hombre = filtro.filter(sexomiembros__sexo=2, dueno=1).count()
+    capital_natural_ambos = filtro.filter(sexomiembros__sexo=3, dueno=1).count()
     #capital social
-    capital_social_mujer = Encuesta.objects.filter(entrevistado__departamento=departamento_id, sexomiembros__sexo=1, organizacioncomunitaria__pertenece=1).count()
-    capital_social_hombre = Encuesta.objects.filter(entrevistado__departamento=departamento_id, sexomiembros__sexo=2, organizacioncomunitaria__pertenece=1).count()
-    capital_social_ambos = Encuesta.objects.filter(entrevistado__departamento=departamento_id, sexomiembros__sexo=3, organizacioncomunitaria__pertenece=1).count()
+    capital_social_mujer = filtro.filter(sexomiembros__sexo=1, organizacioncomunitaria__pertenece=1).count()
+    capital_social_hombre = filtro.filter(sexomiembros__sexo=2, organizacioncomunitaria__pertenece=1).count()
+    capital_social_ambos = filtro.filter(sexomiembros__sexo=3, organizacioncomunitaria__pertenece=1).count()
     #capital financiero
-    capital_financiero_mujer = Encuesta.objects.filter(entrevistado__departamento=departamento_id, sexomiembros__sexo=1, totalingreso__total__gt=1).count()
-    capital_financiero_hombre = Encuesta.objects.filter(entrevistado__departamento=departamento_id, sexomiembros__sexo=2, totalingreso__total__gt=1).count()
-    capital_financiero_ambos = Encuesta.objects.filter(entrevistado__departamento=departamento_id, sexomiembros__sexo=3, totalingreso__total__gt=1).count()
+    capital_financiero_mujer = filtro.filter(sexomiembros__sexo=1, totalingreso__total__gt=1).count()
+    capital_financiero_hombre = filtro.filter(sexomiembros__sexo=2, totalingreso__total__gt=1).count()
+    capital_financiero_ambos = filtro.filter(sexomiembros__sexo=3, totalingreso__total__gt=1).count()
     #capital fisico
-    capital_fisico_mujer = Encuesta.objects.filter(Q(entrevistado__departamento=departamento_id), Q(sexomiembros__sexo=1), Q(totalingreso__total__gt=1) |  Q(tipoenergia__tipo=4)).count()
-    capital_fisico_hombre = Encuesta.objects.filter(Q(entrevistado__departamento=departamento_id), Q(sexomiembros__sexo=2), Q(totalingreso__total__gt=1) |  Q(tipoenergia__tipo=4)).count()
-    capital_fisico_ambos = Encuesta.objects.filter(Q(entrevistado__departamento=departamento_id), Q(sexomiembros__sexo=3), Q(totalingreso__total__gt=1) |  Q(tipoenergia__tipo=4)).count()
+    capital_fisico_mujer = filtro.filter(Q(sexomiembros__sexo=1), Q(totalingreso__total__gt=1) |  Q(tipoenergia__tipo=4)).count()
+    capital_fisico_hombre = filtro.filter(Q(sexomiembros__sexo=2), Q(totalingreso__total__gt=1) |  Q(tipoenergia__tipo=4)).count()
+    capital_fisico_ambos = filtro.filter(Q(sexomiembros__sexo=3), Q(totalingreso__total__gt=1) |  Q(tipoenergia__tipo=4)).count()
     #capital humano
-    capital_humano_mujer = Encuesta.objects.filter(Q(entrevistado__departamento=departamento_id), Q(sexomiembros__sexo=1),
-                                                                                    Q(escolaridad__pri_completa__gt=1) |  Q(escolaridad__secu_incompleta__gt=1) | Q(escolaridad__bachiller__gt=1) |  Q(escolaridad__uni_tecnico__gt=1)).count()
-    capital_humano_hombre = Encuesta.objects.filter(Q(entrevistado__departamento=departamento_id), Q(sexomiembros__sexo=2),
-                                                                                    Q(escolaridad__pri_completa__gt=1) |  Q(escolaridad__secu_incompleta__gt=1) | Q(escolaridad__bachiller__gt=1) |  Q(escolaridad__uni_tecnico__gt=1)).count()
-    capital_humano_ambos = Encuesta.objects.filter(Q(entrevistado__departamento=departamento_id), Q(sexomiembros__sexo=3),
-                                                                                    Q(escolaridad__pri_completa__gt=1) |  Q(escolaridad__secu_incompleta__gt=1) | Q(escolaridad__bachiller__gt=1) |  Q(escolaridad__uni_tecnico__gt=1)).count()
+    capital_humano_mujer = filtro.filter(Q(sexomiembros__sexo=1),
+                                        Q(escolaridad__pri_completa__gt=1) |  Q(escolaridad__secu_incompleta__gt=1) | Q(escolaridad__bachiller__gt=1) |  Q(escolaridad__uni_tecnico__gt=1)).count()
+    capital_humano_hombre = filtro.filter(Q(sexomiembros__sexo=2),
+                                        Q(escolaridad__pri_completa__gt=1) |  Q(escolaridad__secu_incompleta__gt=1) | Q(escolaridad__bachiller__gt=1) |  Q(escolaridad__uni_tecnico__gt=1)).count()
+    capital_humano_ambos = filtro.filter(Q(sexomiembros__sexo=3),
+                                        Q(escolaridad__pri_completa__gt=1) |  Q(escolaridad__secu_incompleta__gt=1) | Q(escolaridad__bachiller__gt=1) |  Q(escolaridad__uni_tecnico__gt=1)).count()
     kcalorias = envio_calorias(request)
 
     return render(request,template,locals())
@@ -577,7 +570,7 @@ def sexo_duenos(request, template="indicadores/sexo_duenos.html"):
     return render(request, template, locals())
 
 def escolaridad(request, template="indicadores/escolaridad.html"):
-    #filtro = _queryset_filtrado(request)
+    filtro = _queryset_filtrado(request)
 
     years = []
     for en in Encuesta.objects.order_by('year').values_list('year', flat=True):
@@ -588,17 +581,17 @@ def escolaridad(request, template="indicadores/escolaridad.html"):
     dicc_grafo_tipo_educacion = OrderedDict()
     for year in years:
 
-        cantidad_miembros_hombres = Encuesta.objects.filter(year=year[0],
+        cantidad_miembros_hombres = filtro.filter(year=year[0],
                                     entrevistado__departamento=request.session['departamento'],
                                     entrevistado__sexo=2,
                                     entrevistado__jefe=1).aggregate(num_total = Sum('escolaridad__total'))['num_total']
 
-        cantidad_miembros_mujeres = Encuesta.objects.filter(year=year[0],
+        cantidad_miembros_mujeres = filtro.filter(year=year[0],
                                     entrevistado__departamento=request.session['departamento'],
                                     entrevistado__sexo=1,
                                     entrevistado__jefe=1).aggregate(num_total = Sum('escolaridad__total'))['num_total']
 
-        grafo_educacion_hombre = Encuesta.objects.filter(year=year[0],
+        grafo_educacion_hombre = filtro.filter(year=year[0],
                                     entrevistado__departamento=request.session['departamento'],
                                     entrevistado__sexo=2,
                                     entrevistado__jefe=1).aggregate(
@@ -610,7 +603,7 @@ def escolaridad(request, template="indicadores/escolaridad.html"):
                                     universitario = Sum('escolaridad__uni_tecnico'),
                                 )
 
-        grafo_educacion_mujer = Encuesta.objects.filter(year=year[0],
+        grafo_educacion_mujer = filtro.filter(year=year[0],
                                     entrevistado__departamento=request.session['departamento'],
                                     entrevistado__sexo=1,
                                     entrevistado__jefe=1).aggregate(
@@ -624,7 +617,7 @@ def escolaridad(request, template="indicadores/escolaridad.html"):
 
         tabla_educacion_hombre = []
         for e in CHOICE_ESCOLARIDAD:
-            objeto = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], escolaridad__sexo = e[0], entrevistado__sexo=2, entrevistado__jefe=1).aggregate(num_total = Sum('escolaridad__total'),
+            objeto = filtro.filter(year=year[0],entrevistado__departamento=request.session['departamento'], escolaridad__sexo = e[0], entrevistado__sexo=2, entrevistado__jefe=1).aggregate(num_total = Sum('escolaridad__total'),
                     no_leer = Sum('escolaridad__no_leer'),
                     p_incompleta = Sum('escolaridad__pri_incompleta'),
                     p_completa = Sum('escolaridad__pri_completa'),
@@ -648,7 +641,7 @@ def escolaridad(request, template="indicadores/escolaridad.html"):
 
         tabla_educacion_mujer = []
         for e in CHOICE_ESCOLARIDAD:
-            objeto = Encuesta.objects.filter(year=year[0],entrevistado__departamento=request.session['departamento'], escolaridad__sexo = e[0], entrevistado__sexo=1, entrevistado__jefe=1).aggregate(num_total = Sum('escolaridad__total'),
+            objeto = filtro.filter(year=year[0],entrevistado__departamento=request.session['departamento'], escolaridad__sexo = e[0], entrevistado__sexo=1, entrevistado__jefe=1).aggregate(num_total = Sum('escolaridad__total'),
                     no_leer = Sum('escolaridad__no_leer'),
                     p_incompleta = Sum('escolaridad__pri_incompleta'),
                     p_completa = Sum('escolaridad__pri_completa'),

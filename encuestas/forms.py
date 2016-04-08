@@ -50,16 +50,17 @@ CHOICE_SEXO = (
                 (2, 'Hombre'),
               )
 
-CHOICE_FECHA  = (
-              (2015, '2015'),
-              (2016, '2016'),
-            )
+def fecha_choice():
+    years = []
+    for en in Encuesta.objects.order_by('year').values_list('year', flat=True):
+        years.append((en,en))
+    return list(sorted(set(years)))
 
 class ConsultarForm(forms.Form):
-    fecha = forms.MultipleChoiceField(choices=CHOICE_FECHA, label="Años")
-    organizacion = forms.ModelMultipleChoiceField(queryset=OrganizacionResp.objects.all(), required=False)
+    fecha = forms.MultipleChoiceField(choices=fecha_choice(), label="Años", required=True)
     pais = forms.ModelChoiceField(queryset=Pais.objects.all(), required=True)
-    departamento = forms.ModelMultipleChoiceField(queryset=Departamento.objects.filter(entrevistados__gt=1).distinct(), required=False)
+    organizacion = forms.ModelMultipleChoiceField(queryset=OrganizacionResp.objects.all(), required=True)
+    departamento = forms.ModelMultipleChoiceField(queryset=Departamento.objects.filter(entrevistados__gt=1).distinct(), required=True)
     municipio = forms.ModelMultipleChoiceField(queryset=Municipio.objects.all(), required=False)
     comunidad = forms.ModelMultipleChoiceField(queryset=Comunidad.objects.all(), required=False)
     #sexo = forms.ChoiceField(choices=CHOICE_SEXO, required=False)
