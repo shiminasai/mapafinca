@@ -16,8 +16,8 @@ from django.db.models.functions import Coalesce
 def _queryset_filtrado(request):
     params = {}
 
-    if request.session['fecha']:
-        params['year__in'] = request.session['fecha']
+    #if request.session['fecha']:
+    #    params['year__in'] = request.session['fecha']
 
     if request.session['organizacion']:
         params['org_responsable__in'] = request.session['organizacion']
@@ -44,7 +44,7 @@ def IndexView(request,template="index.html"):
         mensaje = None
         form = ConsultarForm(request.POST)
         if form.is_valid():
-            request.session['fecha'] = form.cleaned_data['fecha']
+            #request.session['fecha'] = form.cleaned_data['fecha']
             request.session['organizacion'] = form.cleaned_data['organizacion']
             request.session['pais'] = form.cleaned_data['pais']
             request.session['departamento'] = form.cleaned_data['departamento']
@@ -218,7 +218,7 @@ def principal_dashboard(request, template='dashboard.html'):
         try:
             cada_uno = float(filtro.filter(alimentosfuerafinca__producto=obj).aggregate(t=Avg('alimentosfuerafinca__total'))['t'] / 12) / float(dividir_todo)
         except:
-            pass
+            cada_uno = 0
         if cada_uno == None:
             cada_uno = 0
         gastos_alimentarios[obj] = cada_uno
@@ -1655,3 +1655,16 @@ def save_as_xls(request):
     response['Content-Type'] = 'application/vnd.ms-excel'
     response['Charset'] ='UTF-8'
     return response
+
+
+def traer_departamento(pais=None):
+    pass
+
+def traer_municipio(departamento=None):
+    pass
+
+def traer_organizacion(departamento=None):
+    pass
+
+def traer_comunidad(municipio=None):
+    pass
