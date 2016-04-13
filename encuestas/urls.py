@@ -33,4 +33,9 @@ urlpatterns = [
     url(r'^xls/$', views.save_as_xls, name='salvar_xls'),
     #borrar
     url(r'^ingreso_optimizado/$', views.ingreso_optimizado, name='ingreso_optimizado'),
+    #filtros por ajax
+    url(r'^ajax/depart/$', 'get_organi', name='get-depart'),
+    url(r'^ajax/organi/$', 'get_organi', name='get-organi'),
+    url(r'^ajax/munis/$', 'get_munis', name='get-munis'),
+    url(r'^ajax/comunies/$', 'get_comunies', name='get-comunies'),
 ]

@@ -1658,13 +1658,36 @@ def save_as_xls(request):
 
 
 def traer_departamento(pais=None):
-    pass
+    ids = request.GET.get('ids', '')
+    if ids:
+        lista = ids.split(',')
+    results = []
+    departamento = Departamento.objects.filter(pais__pk__in=lista).order_by('nombre').values('id', 'nombre')
+
+    return HttpResponse(simplejson.dumps(list(municipios)), content_type='application/json')
 
 def traer_municipio(departamento=None):
-    pass
+    ids = request.GET.get('ids', '')
+    if ids:
+        lista = ids.split(',')
+    results = []
+    municipio = Municipio.objects.filter(departamento__pk__in=lista).order_by('nombre').values('id', 'nombre')
+
+    return HttpResponse(simplejson.dumps(list(municipio)), content_type='application/json')
 
 def traer_organizacion(departamento=None):
-    pass
+    ids = request.GET.get('ids', '')
+    if ids:
+        lista = ids.split(',')
+    organizaciones = Organizacion.objects.filter(municipio__id__in = lista).order_by('nombre').values('id', 'siglas')
+
+    return HttpResponse(simplejson.dumps(list(organizaciones)), content_type='application/json')
 
 def traer_comunidad(municipio=None):
-    pass
+    ids = request.GET.get('ids', '')
+    if ids:
+        lista = ids.split(',')
+    results = []
+    comunies = Comunidad.objects.filter(municipio__pk__in=lista).order_by('nombre').values('id', 'nombre')
+
+    return HttpResponse(simplejson.dumps(list(comunies)), content_type='application/json')
