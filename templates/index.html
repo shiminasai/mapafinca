@@ -108,7 +108,7 @@
 
 
 		<div class="col-md-4 col-lg-4">
-			<!-- {% for k,v in paises.items %}
+			{% for k,v in paises.items %}
 				<div class="panel">
 					<div class="panel-heading">
 						<a class="btn-ex" data-toggle="collapse" href="#{{k|slugify}}" aria-expanded="false" aria-controls="{{k|slugify}}">
@@ -132,38 +132,7 @@
 						 </ul>
 					</div>
 				</div>
-			{% endfor %} -->
-
-				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-					<div class="row">
-				<form action="." method="POST"> {% csrf_token %}
-					<div>
-						<label for="">{{form.pais.label}}</label>
-						{{form.pais}}
-					</div>
-					<div>
-						<label for="">{{form.organizacion.label}}</label>
-						{{form.organizacion}}
-					</div>
-					<div>
-						<label for="">{{form.departamento.label}}</label>
-						 {{form.departamento}}
-					</div>
-					<div>
-						<label for="">{{form.municipio.label}}</label>
-						 {{form.municipio}}
-					</div>
-					<div>
-						<label for="">{{form.comunidad.label}}</label>
-						 {{form.comunidad}}
-					</div>
-					<input type="submit" value="Consultar" class="btn btn-default" name="consulta"/>
-
-					</form>
-				</div>
-
-
-				</div>
+			{% endfor %}
 			<div class="col-lg-12">
 				<div class="row">
 					<div class="col-xs-3 col-md-5 col-lg-5 boton-1">
@@ -187,6 +156,9 @@
 					</div>
 					<div class="col-xs-6 col-md-7 col-lg-7 boton-2">
 						<a class='btn btn-galeria' href="/galeria/">Galerías mapas de fincas</a>
+					</div>
+					<div class="col-xs-6 col-md-7 col-lg-7 boton-2">
+						<a class='btn btn-galeria' href="/indicadores1/">Todos los indicadores</a>
 					</div>
 				</div>
 			</div>

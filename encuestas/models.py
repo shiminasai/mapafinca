@@ -78,6 +78,21 @@ class Encuestadores(models.Model):
 
 class OrganizacionResp(models.Model):
     nombre = models.CharField(max_length=250)
+    pais = models.ForeignKey(Pais)
+    departamento = ChainedForeignKey(
+        Departamento,
+        chained_field="pais",
+        chained_model_field="pais",
+        show_all=False,
+        auto_choose=True
+    )
+    municipio = ChainedForeignKey(
+        Municipio,
+        chained_field="departamento",
+        chained_model_field="departamento",
+        show_all=False,
+        auto_choose=True
+    )
 
     def __unicode__(self):
         return self.nombre

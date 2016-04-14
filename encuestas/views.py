@@ -76,13 +76,13 @@ def IndexView(request,template="index.html"):
             del request.session['comunidad']
         except:
             pass
-        # paises = {}
-        # for pais in Pais.objects.all():
-        #     paises[pais] = {}
-        #     for mun in Departamento.objects.all():
-        #         m = Encuesta.objects.filter(entrevistado__departamento=mun, entrevistado__pais=pais).count()
-        #         if m > 0:
-        #             paises[pais][mun.nombre] = (m,mun.id)
+        paises = {}
+        for pais in Pais.objects.all():
+            paises[pais] = {}
+            for mun in Departamento.objects.all():
+                m = Encuesta.objects.filter(entrevistado__departamento=mun, entrevistado__pais=pais).count()
+                if m > 0:
+                    paises[pais][mun.nombre] = (m,mun.id)
 
     return render(request, template, locals())
 
@@ -511,6 +511,7 @@ def indicadores(request, template='indicadores.html'):
 
 
 def indicadores1(request, template='indicadores1.html'):
+
     total_entrevistados = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento']).distinct('entrevistado__id').count()
     total_hombres = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], entrevistado__sexo=2).distinct('entrevistado__id').count()
     total_mujeres = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], entrevistado__sexo=1).distinct('entrevistado__id').count()
@@ -520,6 +521,50 @@ def indicadores1(request, template='indicadores1.html'):
 
     organizaciones = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento']).distinct('entrevistado__departamento').count()
     familias = Entrevistados.objects.count()
+    if request.method == 'POST':
+        mensaje = None
+        form = ConsultarForm(request.POST)
+        if form.is_valid():
+            #request.session['fecha'] = form.cleaned_data['fecha']
+            request.session['organizacion'] = form.cleaned_data['organizacion']
+            request.session['pais'] = form.cleaned_data['pais']
+            request.session['departamento'] = form.cleaned_data['departamento']
+            request.session['municipio'] = form.cleaned_data['municipio']
+            request.session['comunidad'] = form.cleaned_data['comunidad']
+            #request.session['sexo'] = form.cleaned_data['sexo']
+
+            mensaje = "Todas las variables estan correctamente :)"
+            request.session['activo'] = True
+            centinela = 1
+            print mensaje
+
+            return HttpResponseRedirect('/dashboard-principal/')
+
+        else:
+            centinela = 0
+            print "fail no entro bien"
+
+    else:
+        form = ConsultarForm()
+        mensaje = "Existen alguno errores"
+        centinela = 0
+        try:
+            del request.session['fecha']
+            del request.session['pais']
+            del request.session['organizacion']
+            del request.session['departamento']
+            del request.session['municipio']
+            del request.session['comunidad']
+        except:
+            pass
+        paises = {}
+        for pais in Pais.objects.all():
+            paises[pais] = {}
+            for mun in Departamento.objects.all():
+                m = Encuesta.objects.filter(entrevistado__departamento=mun, entrevistado__pais=pais).count()
+                if m > 0:
+                    paises[pais][mun.nombre] = (m,mun.id)
+
     return render(request, template, locals())
 
 #FUNCIONES PARA LAS DEMAS SALIDAS DEL SISTEMA

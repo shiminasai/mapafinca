@@ -34,8 +34,8 @@ urlpatterns = [
     #borrar
     url(r'^ingreso_optimizado/$', views.ingreso_optimizado, name='ingreso_optimizado'),
     #filtros por ajax
-    url(r'^ajax/depart/$', 'get_organi', name='get-depart'),
-    url(r'^ajax/organi/$', 'get_organi', name='get-organi'),
-    url(r'^ajax/munis/$', 'get_munis', name='get-munis'),
-    url(r'^ajax/comunies/$', 'get_comunies', name='get-comunies'),
+    url(r'^ajax/depart/$', views.traer_departamento, name='get-depart'),
+    url(r'^ajax/organi/$', views.traer_organizacion, name='get-organi'),
+    url(r'^ajax/munis/$', views.traer_municipio, name='get-munis'),
+    url(r'^ajax/comunies/$', views.traer_comunidad, name='get-comunies'),
 ]

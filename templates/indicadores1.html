@@ -1,8 +1,29 @@
 {% extends "base.html" %}
 
+{% block extra_js %}
+<script src="/static/js/modernizr.custom.js"></script>
+<script src="/static/js/classie.js"></script>
+<script src="/static/js/uiMorphingButton_fixed.js"></script>
+<script type="text/javascript" src="/static/js/bootstrap-multiselect.js"></script>
+<script type="text/javascript">
+		$(document).ready(function() {
+				$('#example-getting-started').multiselect();
+				$('#id_fecha').multiselect();
+				$('#id_organizacion').multiselect();
+				$('#id_pais').multiselect();
+				$('#id_departamento').multiselect();
+				$('#id_municipio').multiselect();
+				$('#id_comunidad').multiselect();
+		});
+
+</script>
+{% endblock extra_js %}
+
 {% block contenido %}
 <style type="text/css">
-
+.separador {
+	margin-left: 40px;
+}
 @media (min-width: 768px){
 	footer{
 		position: relative;
@@ -23,7 +44,7 @@
 		bottom: 0px;
 		width: 100%;
 	}
-}	
+}
 </style>
 <div class="row filtro-index">
 	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ind-tablero">
@@ -33,7 +54,7 @@
 				<div class="col-xs-12 col-sm-6 col-md-3 col-lg-3 ind-org">
 					<div class="fondo">
 						<div class="row">
-						
+
 							<div class="col-xs-6 col-sm-6 col-md-5 col-lg-5 numero">
 								{{organizaciones}}
 							</div>
@@ -84,16 +105,47 @@
 					</div>
 				</div>
 
-				
+
 		</div>
 		</div>
-		
+
 	</div>
 </div>
     <div class="row">
-    <div class="primer-indicador">
-    	{% include "menu_indicadores.html" %}
+			<div class="primer-indicador">
+			<div class="col-xs-3">
+					<div class="row">
+				<form class="separador" action="." method="POST"> {% csrf_token %}
+					<div>
+						<label for="">{{form.pais.label}}</label>
+						{{form.pais}}
+					</div>
+					<div>
+						<label for="">{{form.departamento.label}}</label>
+						 {{form.departamento}}
+					</div>
+					<div>
+						<label for="">{{form.organizacion.label}}</label>
+						{{form.organizacion}}
+					</div>
+					<div>
+						<label for="">{{form.municipio.label}}</label>
+						 {{form.municipio}}
+					</div>
+					<div>
+						<label for="">{{form.comunidad.label}}</label>
+						 {{form.comunidad}}
+					</div>
+					<input type="submit" value="Consultar" class="btn btn-default" name="consulta"/>
+
+					</form>
+				</div>
+				</div>
+			<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">
+
+		    	{% include "menu_indicadores.html" %}
+
     </div>
-    	
-    </div>
+		</div>
+		</div>
 {% endblock contenido %}
