@@ -297,9 +297,11 @@ class ProductoProcesadoAdmin(ImportExportModelAdmin):
 class ProductosFueraFincaAdmin(ImportExportModelAdmin):
     list_display = ('nombre', 'unidad_medida', 'calorias', 'proteinas')
 
+class OrganizacionAdmin(admin.ModelAdmin):
+    list_display = ('nombre', 'pais', 'departamento', 'municipio')
 # Register your models here.
 admin.site.register(Encuestadores)
-admin.site.register(OrganizacionResp)
+admin.site.register(OrganizacionResp, OrganizacionAdmin)
 admin.site.register(Entrevistados, EntrevistadoAdmin)
 admin.site.register(Encuesta, AdminEncuesta)
 admin.site.register(Energia)
