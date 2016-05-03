@@ -1134,6 +1134,7 @@ def ingreso_optimizado(request, template="indicadores/ingresos_opt.html"):
 
 def ingresos(request, template="indicadores/ingresos.html"):
     filtro = _queryset_filtrado(request)
+    request.session["encuestados"] = filtro.count()
     #años de encuestas
     years = []
     for en in Encuesta.objects.order_by('year').values_list('year', flat=True):
@@ -1284,7 +1285,7 @@ def ingresos(request, template="indicadores/ingresos.html"):
                                         'ingreso': ingreso,
                                         }
         total_ingreso_procesado = sum(list([ i['ingreso'] for i in ingreso_procesado.values()]))
-        gran_total_ingresos = float(total_utilidad_tradicional + utilidad_huerto_patio + utilidad_frutas + total_ingreso_ganado + total_ingreso_procesado) / request.session['encuestados']
+        gran_total_ingresos = float(total_utilidad_tradicional + utilidad_huerto_patio + utilidad_frutas + total_ingreso_ganado + total_ingreso_procesado) / filtro.count()
         dicc_ingresos[year[1]] = (percibe_ingreso,
                                 fuente_ingresos,
                                 ingreso_cultivo_tradicional,
@@ -1435,13 +1436,12 @@ def envio_calorias(request):
     return datos
 
 def envio_calorias_pais(request):
-
-    numero_total_habitante = Encuesta.objects.filter(entrevistado__pais__slug=request.session['pais']).aggregate(t=Sum('sexomiembros__cantidad'))['t']
+    filtro = _queryset_filtrado(request)
+    numero_total_habitante = filtro.aggregate(t=Sum('sexomiembros__cantidad'))['t']
 
     calorias_tradicional = {}
     for obj in Cultivos.objects.all():
-        calculo = CultivosTradicionales.objects.filter(encuesta__entrevistado__pais__slug=request.session['pais'],
-                                                                                cultivo=obj).aggregate(t=Coalesce(Sum('consumo_familia'), V(0)))['t']
+        calculo = filtro.filter(cultivostradicionales__cultivo=obj).aggregate(t=Coalesce(Sum('cultivostradicionales__consumo_familia'), V(0)))['t']
         consumida = calculo / 12
         consumida_gramos = consumida * obj.calorias
         calorias_mes = float(consumida_gramos) / numero_total_habitante
@@ -1454,8 +1454,7 @@ def envio_calorias_pais(request):
 
     calorias_huerto = {}
     for obj in CultivosHuertos.objects.all():
-        calculo = CultivosHuertosFamiliares.objects.filter(encuesta__entrevistado__pais__slug=request.session['pais'],
-                                                                                cultivo=obj).aggregate(t=Coalesce(Sum('consumo_familia'), V(0)))['t']
+        calculo = filtro.filter(cultivoshuertosfamiliares__cultivo=obj).aggregate(t=Coalesce(Sum('cultivoshuertosfamiliares__consumo_familia'), V(0)))['t']
         consumida = calculo / 12
         consumida_gramos = consumida * obj.calorias
         calorias_mes = float(consumida_gramos) / numero_total_habitante
@@ -1469,8 +1468,7 @@ def envio_calorias_pais(request):
 
     calorias_fruta = {}
     for obj in CultivosFrutas.objects.all():
-        calculo = CultivosFrutasFinca.objects.filter(encuesta__entrevistado__pais__slug=request.session['pais'],
-                                                                                cultivo=obj).aggregate(t=Coalesce(Sum('consumo_familia'), V(0)))['t']
+        calculo = filtro.filter(cultivosfrutasfinca__cultivo=obj).aggregate(t=Coalesce(Sum('cultivosfrutasfinca__consumo_familia'), V(0)))['t']
         consumida = calculo / 12
         consumida_gramos = consumida * obj.calorias
         try:
@@ -1486,8 +1484,7 @@ def envio_calorias_pais(request):
 
     calorias_procesado = {}
     for obj in ProductoProcesado.objects.all():
-        calculo = Procesamiento.objects.filter(encuesta__entrevistado__pais__slug=request.session['pais'],
-                                                                                producto=obj).aggregate(t=Coalesce(Sum('cantidad'), V(0)))['t']
+        calculo = filtro.filter(procesamiento__producto=obj).aggregate(t=Coalesce(Sum('procesamiento__cantidad'), V(0)))['t']
         consumida = calculo / 12
         consumida_gramos = consumida * obj.calorias
         calorias_mes = float(consumida_gramos) / numero_total_habitante
@@ -1501,8 +1498,7 @@ def envio_calorias_pais(request):
 
     calorias_fuera_finca = {}
     for obj in ProductosFueraFinca.objects.all():
-        calculo = AlimentosFueraFinca.objects.filter(encuesta__entrevistado__pais__slug=request.session['pais'],
-                                                                                producto=obj).aggregate(t=Coalesce(Sum('cantidad'), V(0)))['t']
+        calculo = filtro.filter(alimentosfuerafinca__producto=obj).aggregate(t=Coalesce(Sum('alimentosfuerafinca__cantidad'), V(0)))['t']
         consumida = calculo / 12
         consumida_gramos = consumida * obj.calorias
         calorias_mes = float(consumida_gramos) / numero_total_habitante
@@ -1522,8 +1518,9 @@ def envio_calorias_pais(request):
     return datos
 
 def calorias(request, template="indicadores/calorias.html"):
+    filtro = _queryset_filtrado(request)
      #años de encuestas
-    numero_total_habitante = Encuesta.objects.filter(entrevistado__pais__slug=request.session['pais']).aggregate(t=Sum('sexomiembros__cantidad'))['t']
+    numero_total_habitante = filtro.aggregate(t=Sum('sexomiembros__cantidad'))['t']
     years = []
     for en in Encuesta.objects.order_by('year').values_list('year', flat=True):
         years.append((en,en))
@@ -1534,8 +1531,8 @@ def calorias(request, template="indicadores/calorias.html"):
 
         calorias_tradicional = {}
         for obj in Cultivos.objects.all():
-            calculo = CultivosTradicionales.objects.filter(encuesta__year=year[0],encuesta__entrevistado__departamento=request.session['departamento'],
-                                                                                    cultivo=obj).aggregate(t=Coalesce(Avg('consumo_familia'), V(0)))['t']
+            calculo = filtro.filter(year=year[0],
+                                    cultivostradicionales__cultivo=obj).aggregate(t=Coalesce(Avg('cultivostradicionales__consumo_familia'), V(0)))['t']
             consumida = calculo / 12
             consumida_gramos = consumida * obj.calorias
             calorias_mes = float(consumida_gramos) / numero_total_habitante
@@ -1548,8 +1545,8 @@ def calorias(request, template="indicadores/calorias.html"):
 
         calorias_huerto = {}
         for obj in CultivosHuertos.objects.all():
-            calculo = CultivosHuertosFamiliares.objects.filter(encuesta__year=year[0],encuesta__entrevistado__departamento=request.session['departamento'],
-                                                                                    cultivo=obj).aggregate(t=Coalesce(Avg('consumo_familia'), V(0)))['t']
+            calculo = filtro.filter(year=year[0],
+                                    cultivoshuertosfamiliares__cultivo=obj).aggregate(t=Coalesce(Avg('cultivoshuertosfamiliares__consumo_familia'), V(0)))['t']
             consumida = calculo / 12
             consumida_gramos = consumida * obj.calorias
             calorias_mes = float(consumida_gramos) / numero_total_habitante
@@ -1563,8 +1560,8 @@ def calorias(request, template="indicadores/calorias.html"):
 
         calorias_fruta = {}
         for obj in CultivosFrutas.objects.all():
-            calculo = CultivosFrutasFinca.objects.filter(encuesta__year=year[0],encuesta__entrevistado__departamento=request.session['departamento'],
-                                                                                    cultivo=obj).aggregate(t=Coalesce(Avg('consumo_familia'), V(0)))['t']
+            calculo = filtro.filter(year=year[0],
+                                    cultivosfrutasfinca__cultivo=obj).aggregate(t=Coalesce(Avg('cultivosfrutasfinca__consumo_familia'), V(0)))['t']
             consumida = calculo / 12
             consumida_gramos = consumida * obj.calorias
             calorias_mes = float(consumida_gramos) / numero_total_habitante
@@ -1577,8 +1574,8 @@ def calorias(request, template="indicadores/calorias.html"):
 
         calorias_procesado = {}
         for obj in ProductoProcesado.objects.all():
-            calculo = Procesamiento.objects.filter(encuesta__year=year[0],encuesta__entrevistado__departamento=request.session['departamento'],
-                                                                                    producto=obj).aggregate(t=Coalesce(Avg('cantidad'), V(0)))['t']
+            calculo = filtro.filter(year=year[0],
+                                    procesamiento__producto=obj).aggregate(t=Coalesce(Avg('procesamiento__cantidad'), V(0)))['t']
             consumida = calculo / 12
             consumida_gramos = consumida * obj.calorias
             calorias_mes = float(consumida_gramos) / numero_total_habitante
@@ -1592,8 +1589,8 @@ def calorias(request, template="indicadores/calorias.html"):
 
         calorias_fuera_finca = {}
         for obj in ProductosFueraFinca.objects.all():
-            calculo = AlimentosFueraFinca.objects.filter(encuesta__year=year[0],encuesta__entrevistado__departamento=request.session['departamento'],
-                                                                                    producto=obj).aggregate(t=Coalesce(Avg('cantidad'), V(0)))['t']
+            calculo = filtro.filter(year=year[0],
+                                    alimentosfuerafinca__producto=obj).aggregate(t=Coalesce(Avg('alimentosfuerafinca__cantidad'), V(0)))['t']
             consumida = calculo / 12
             consumida_gramos = consumida * obj.calorias
             calorias_mes = float(consumida_gramos) / numero_total_habitante
@@ -1624,6 +1621,7 @@ def calorias(request, template="indicadores/calorias.html"):
     return render(request, template, locals())
 
 def productividad(request, template="indicadores/productividad.html"):
+    filtro = _queryset_filtrado(request)
      #años de encuestas
     years = []
     for en in Encuesta.objects.order_by('year').values_list('year', flat=True):
@@ -1635,11 +1633,10 @@ def productividad(request, template="indicadores/productividad.html"):
 
         productividad_cultivo_tradicional_primera = {}
         for obj in Cultivos.objects.all():
-            cultivo = CultivosTradicionales.objects.filter(encuesta__year=year[0],encuesta__entrevistado__departamento=request.session['departamento'],
-                                                            cultivo=obj,periodo=1)
-            total_area_sembrada = cultivo.aggregate(t=Sum('area_sembrada'))['t']
-            total_area_cosechada = cultivo.aggregate(t=Sum('area_cosechada'))['t']
-            total_cosechada = cultivo.aggregate(t=Sum('cantidad_cosechada'))['t']
+            cultivo = filtro.filter(year=year[0],cultivostradicionales__cultivo=obj,cultivostradicionales__periodo=1)
+            total_area_sembrada = cultivo.aggregate(t=Sum('cultivostradicionales__area_sembrada'))['t']
+            total_area_cosechada = cultivo.aggregate(t=Sum('cultivostradicionales__area_cosechada'))['t']
+            total_cosechada = cultivo.aggregate(t=Sum('cultivostradicionales__cantidad_cosechada'))['t']
             numero_gente_produce = cultivo.count()
             try:
                 perdida = total_area_sembrada - total_area_cosechada
@@ -1658,11 +1655,10 @@ def productividad(request, template="indicadores/productividad.html"):
 
         productividad_cultivo_tradicional_postrera = {}
         for obj in Cultivos.objects.all():
-            cultivo = CultivosTradicionales.objects.filter(encuesta__year=year[0],encuesta__entrevistado__departamento=request.session['departamento'],
-                                                            cultivo=obj,periodo=2)
-            total_area_sembrada = cultivo.aggregate(t=Sum('area_sembrada'))['t']
-            total_area_cosechada = cultivo.aggregate(t=Sum('area_cosechada'))['t']
-            total_cosechada = cultivo.aggregate(t=Sum('cantidad_cosechada'))['t']
+            cultivo = filtro.filter(year=year[0],cultivostradicionales__cultivo=obj,cultivostradicionales__periodo=2)
+            total_area_sembrada = cultivo.aggregate(t=Sum('cultivostradicionales__area_sembrada'))['t']
+            total_area_cosechada = cultivo.aggregate(t=Sum('cultivostradicionales__area_cosechada'))['t']
+            total_cosechada = cultivo.aggregate(t=Sum('cultivostradicionales__cantidad_cosechada'))['t']
             numero_gente_produce = cultivo.count()
             try:
                 perdida = total_area_sembrada - total_area_cosechada

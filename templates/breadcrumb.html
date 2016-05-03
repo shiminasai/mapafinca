@@ -8,6 +8,16 @@
     	                       <strong>{{depart|upper}}</strong> {% if forloop.last %}{% else %},{% endif %}
     	                    {% endfor %}</li>
     {% endif %}
+    {% if request.session.municipio %}
+    	<li>MUNICIPIO:  {% for muni in request.session.municipio %}
+    	                       <strong>{{muni|upper}}</strong> {% if forloop.last %}{% else %},{% endif %}
+    	                    {% endfor %}</li>
+    {% endif %}
+    {% if request.session.comunidad %}
+    	<li>COMUNIDAD:  {% for comu in request.session.comunidad %}
+    	                       <strong>{{comu|upper}}</strong> {% if forloop.last %}{% else %},{% endif %}
+    	                    {% endfor %}</li>
+    {% endif %}
     {% if request.session.encuestados %}
         <li>NÚMERO DE ENTREVISTADO: <strong>{{request.session.encuestados|upper}}</strong></li>
     {% endif %}
