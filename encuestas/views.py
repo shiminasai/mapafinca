@@ -265,6 +265,7 @@ def principal_dashboard(request, template='dashboard.html'):
 
 def principal_dashboard_pais(request, template='dashboard_pais.html', pais=None,):
     #a = _queryset_filtrado(request)
+    request.session["pais"] = pais
     ahora = Encuesta.objects.filter(entrevistado__pais__slug=pais).distinct('entrevistado__id')
     dividir_todo = len(ahora)
 
@@ -1436,7 +1437,7 @@ def envio_calorias(request):
     return datos
 
 def envio_calorias_pais(request):
-    filtro = _queryset_filtrado(request)
+    filtro = Encuesta.objects.filter(entrevistado__pais__slug=request.session['pais'])
     numero_total_habitante = filtro.aggregate(t=Sum('sexomiembros__cantidad'))['t']
 
     calorias_tradicional = {}
