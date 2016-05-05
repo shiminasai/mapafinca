@@ -48,40 +48,80 @@
 </style>
 {% include "breadcrumb.html" %}
     <div class="row">
-			<div class="primer-indicador">
-			<div class="col-xs-3">
+		<div class="container-fluid primer-indicador">
+			<div class="col-xs-12 col-sm-12 col-md-6 col-lg-3">
 					<div class="row">
-				<form class="separador" action="." method="POST"> {% csrf_token %}
-					<div>
-						<label for="">{{form.pais.label}}</label>
-						{{form.pais}}
-					</div>
-					<div>
-						<label for="">{{form.departamento.label}}</label>
-						 {{form.departamento}}
-					</div>
-					<div>
-						<label for="">{{form.organizacion.label}}</label>
-						{{form.organizacion}}
-					</div>
-					<div>
-						<label for="">{{form.municipio.label}}</label>
-						 {{form.municipio}}
-					</div>
-					<div>
-						<label for="">{{form.comunidad.label}}</label>
-						 {{form.comunidad}}
-					</div>
-					<input type="submit" value="Consultar" class="btn btn-default" name="consulta"/>
+						<div class="panel panel-consulta">
+							<div class="panel-heading" >
+								<p>Consulta</p>
+							</div>
+							<div class="panel-body">
+								<form  action="." method="POST"> {% csrf_token %}
 
-					</form>
-				</div>
-				</div>
-			<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">
+									<div class="row">
+										<div class="col-xs-12 col-sm-6 col-md-6 col-lg-4">
+											<label for="">{{form.pais.label}}</label>
+										</div>
+										<div class="col-xs-12 col-sm-6 col-md-6 col-lg-8">
+											{{form.pais}}
+										</div>
+										
+										
+									</div>
+									<div class="row">
+										<div class="col-xs-12 col-sm-6 col-md-6 col-lg-4">
+											<label for="">{{form.departamento.label}}</label>
+										</div>
+										<div class="col-xs-12 col-sm-6 col-md-6 col-lg-8">
+											{{form.departamento}}
+										</div>
+										
+										
+									</div>
+									<div class="row">
+										<div class="col-xs-12 col-sm-6 col-md-6 col-lg-4">
+											<label for="">{{form.organizacion.label}}</label>
+										</div>
+										<div class="col-xs-12 col-sm-6 col-md-6 col-lg-8">
+											{{form.organizacion}}
+										</div>
+										
+										
+									</div>
+									<div class="row">
+										<div class="col-xs-12 col-sm-6 col-md-6 col-lg-4">
+											<label for="">{{form.municipio.label}}</label>
+										</div>
+										<div class="col-xs-12 col-sm-6 col-md-6 col-lg-8">
+											{{form.municipio}}
+										</div>
+										
+										
+									</div>
+									<div class="row">
+										<div class="col-xs-12 col-sm-6 col-md-6 col-lg-4">
+											<label for="">{{form.comunidad.label}}</label>
+										</div>
+										<div class="col-xs-12 col-sm-6 col-md-6 col-lg-8">
+											{{form.comunidad}}
+										</div>
+										
+										
+									</div>
+
+									<input type="submit" value="Consultar" class="btn btn-form" name="consulta"/>
+
+								</form>
+							</div>
+						</div>
+						
+					</div>
+			</div>
+			<div class="col-xs-12 col-sm-12 col-md-6 col-lg-9">
 
 		    	{% include "menu_indicadores.html" %}
 
-    </div>
+    		</div>
 		</div>
 		</div>
 {% endblock contenido %}
