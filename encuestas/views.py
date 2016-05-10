@@ -260,7 +260,22 @@ def principal_dashboard(request, template='dashboard.html', departamento_id=None
                                         Q(escolaridad__pri_completa__gt=1) |  Q(escolaridad__secu_incompleta__gt=1) | Q(escolaridad__bachiller__gt=1) |  Q(escolaridad__uni_tecnico__gt=1)).count()
     capital_humano_ambos = filtro.filter(Q(sexomiembros__sexo=3),
                                         Q(escolaridad__pri_completa__gt=1) |  Q(escolaridad__secu_incompleta__gt=1) | Q(escolaridad__bachiller__gt=1) |  Q(escolaridad__uni_tecnico__gt=1)).count()
+    #Calculos de los kcalorias
     kcalorias = envio_calorias(request)
+
+    #Calculo de los rendimientos o productividad
+    total_area_cosechada_maiz = filtro.filter(cultivostradicionales__cultivo=3).aggregate(t=Sum('cultivostradicionales__area_cosechada'))['t']
+    total_cosecha_maiz = filtro.filter(cultivostradicionales__cultivo=3).aggregate(t=Sum('cultivostradicionales__cantidad_cosechada'))['t']
+    try:
+        rendimiento_maiz = total_cosecha_maiz / total_area_cosechada_maiz
+    except:
+        rendimiento_maiz = 0
+    total_area_cosechada_frijol = filtro.filter(cultivostradicionales__cultivo=2).aggregate(t=Sum('cultivostradicionales__area_cosechada'))['t']
+    total_cosecha_frijol = filtro.filter(cultivostradicionales__cultivo=2).aggregate(t=Sum('cultivostradicionales__cantidad_cosechada'))['t']
+    try:
+        rendimiento_frijol = total_cosecha_frijol / total_area_cosechada_frijol
+    except:
+        rendimiento_frijol = 0
 
     return render(request,template,locals())
 

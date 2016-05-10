@@ -66,7 +66,7 @@
             text: 'CLIMA: temperatura promedio y precipitación '
         },
         subtitle: {
-            text: '{{request.session.departamento}}'
+            text: '{{request.session.departamento.0}}'
         },
         xAxis: [{
             categories: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
@@ -142,7 +142,7 @@ $(function () {
             text: 'PATRÓN DE GASTOS'
         },
         xAxis: {
-            categories: ['Gasto en {{request.session.departamento}}']
+            categories: ['Gasto en {{request.session.departamento.0}}']
         },
         yAxis: {
             min: 0,
@@ -196,10 +196,10 @@ $(function () {
             type: 'column'
         },
         title: {
-            text: 'INGRESOS EN {{request.session.departamento}}'
+            text: 'INGRESOS EN {{request.session.departamento.0}}'
         },
         xAxis: {
-            categories: ['Gasto en {{request.session.departamento}}']
+            categories: ['Ingresos en {{request.session.departamento.0}}']
         },
         yAxis: {
             min: 0,
@@ -270,7 +270,7 @@ $(function () {
             text: 'Consumo en Kilocalorias'
         },
         xAxis: {
-            categories: ['calorias {{request.session.departamento}}']
+            categories: ['calorias {{request.session.departamento.0}}']
         },
         yAxis: {
             min: 0,
@@ -328,7 +328,7 @@ $(function () {
             text: 'GASTOS ALIMENTARIOS'
         },
         xAxis: {
-            categories: ['Gasto alimentarios {{request.session.departamento}}']
+            categories: ['Gasto alimentarios {{request.session.departamento.0}}']
         },
         yAxis: {
             min: 0,
@@ -377,7 +377,6 @@ $(function () {
     });
 });
 $(function () {
-
     $('#arana').highcharts({
 
         chart: {
@@ -436,6 +435,55 @@ $(function () {
             pointPlacement: 'on'
         }]
 
+    });
+});
+//rendimientos
+$(function () {
+    $('#rendimientos').highcharts({
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'RENDIMIENTOS'
+        },
+        subtitle: {
+            text: 'de frijol, maíz'
+        },
+        xAxis: {
+            categories: [
+                '2015',
+            ],
+            crosshair: true
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: 'Rendimiento (qq)'
+            }
+        },
+        tooltip: {
+            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                '<td style="padding:0"><b>{point.y:.1f} qq</b></td></tr>',
+            footerFormat: '</table>',
+            shared: true,
+            useHTML: true
+        },
+        plotOptions: {
+            column: {
+                pointPadding: 0.2,
+                borderWidth: 0
+            }
+        },
+        series: [{
+            name: 'frjol',
+            data: [{{rendimiento_frijol}},]
+
+        }, {
+            name: 'Maiz',
+            data: [{{rendimiento_maiz}},]
+
+        }]
     });
 });
 </script>
@@ -575,7 +623,7 @@ $(function () {
         </div>
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 ">
             <div class="mapa-general ">
-                <div id="grafico5"></div>
+                <div id="rendimientos"></div>
             </div>
         </div>
 
