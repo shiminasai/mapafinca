@@ -108,7 +108,7 @@ def obtener_mapa_dashboard(request):
 def obtener_mapa_dashboard_pais(request):
     if request.is_ajax():
         lista = []
-        for objeto in Encuesta.objects.filter(entrevistado__pais__slug=request.session['pais']).distinct('entrevistado_id'):
+        for objeto in Encuesta.objects.filter(entrevistado__pais=request.session['pais']).distinct('entrevistado_id'):
             if objeto.entrevistado.longitud != None and objeto.entrevistado.longitud != '':
                 dicc = dict(nombre=objeto.entrevistado.nombre,
                             id=objeto.entrevistado.id,
@@ -160,13 +160,14 @@ class MapaView(TemplateView):
         context['guatemala'] = 0#Encuesta.objects.filter(entrevistado__pais_id=4).count()
         return context
 
-def principal_dashboard(request, template='dashboard.html'):
+def principal_dashboard(request, template='dashboard.html', departamento_id=None,):
 
-    filtro = _queryset_filtrado(request)
+    filtro = Encuesta.objects.filter(entrevistado__departamento=departamento_id) #.distinct('entrevistado__id')
 
     ahora = filtro.distinct('entrevistado__id')
     dividir_todo = len(ahora)
-    depart = Departamento.objects.filter(id__in=request.session['departamento'])
+    depart = Departamento.objects.filter(id=departamento_id)
+    request.session["departamento"] = depart
     request.session['encuestados'] = dividir_todo
 
     latitud = 12.98
@@ -227,8 +228,8 @@ def principal_dashboard(request, template='dashboard.html'):
     lista_precipitacion = []
     lista_temperatura = []
     for mes in CHOICES_MESES:
-        precipitacion = Precipitacion.objects.filter(departamento__in=request.session["departamento"],mes=mes[0]).aggregate(p=Avg('precipitacion'))['p']
-        temperatura = Temperatura.objects.filter(departamento__in=request.session["departamento"],mes=mes[0]).aggregate(p=Avg('temperatura'))['p']
+        precipitacion = Precipitacion.objects.filter(departamento__in=departamento_id,mes=mes[0]).aggregate(p=Avg('precipitacion'))['p']
+        temperatura = Temperatura.objects.filter(departamento__in=departamento_id,mes=mes[0]).aggregate(p=Avg('temperatura'))['p']
         if precipitacion == None:
             precipitacion = 0
         lista_precipitacion.append(precipitacion)
@@ -265,11 +266,13 @@ def principal_dashboard(request, template='dashboard.html'):
 
 def principal_dashboard_pais(request, template='dashboard_pais.html', pais=None,):
     #a = _queryset_filtrado(request)
-    ahora = Encuesta.objects.filter(entrevistado__pais__slug=pais).distinct('entrevistado__id')
+    paisid = Pais.objects.get(slug = pais)
+    request.session["pais"] = paisid
+    ahora = Encuesta.objects.filter(entrevistado__pais_id=paisid).distinct('entrevistado__id')
     dividir_todo = len(ahora)
 
     request.session['departamento'] = None
-    request.session['pais'] = pais
+    request.session['pais'] = paisid
     request.session['encuestados'] = dividir_todo
 
 
@@ -1357,7 +1360,7 @@ def gastos(request, template="indicadores/gastos.html"):
 
 
 def envio_calorias(request):
-    filtro = _queryset_filtrado(request)
+    filtro = Encuesta.objects.filter(entrevistado__departamento=request.session["departamento"])#.distinct('entrevistado__id')
     numero_total_habitante = filtro.aggregate(t=Sum('sexomiembros__cantidad'))['t']
 
     calorias_tradicional = {}
@@ -1436,7 +1439,7 @@ def envio_calorias(request):
     return datos
 
 def envio_calorias_pais(request):
-    filtro = _queryset_filtrado(request)
+    filtro = Encuesta.objects.filter(entrevistado__pais=request.session['pais'])
     numero_total_habitante = filtro.aggregate(t=Sum('sexomiembros__cantidad'))['t']
 
     calorias_tradicional = {}
