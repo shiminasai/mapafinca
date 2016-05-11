@@ -1721,7 +1721,7 @@ def save_as_xls(request):
     return response
 
 
-def traer_departamento(pais=None):
+def traer_departamento(request):
     ids = request.GET.get('ids', '')
     if ids:
         lista = ids.split(',')
@@ -1730,16 +1730,47 @@ def traer_departamento(pais=None):
 
     return HttpResponse(simplejson.dumps(list(municipios)), content_type='application/json')
 
-def traer_municipio(departamento=None):
+def traer_municipio(request):
     ids = request.GET.get('ids', '')
+    dicc = {}
+    resultado = []
     if ids:
         lista = ids.split(',')
-    results = []
-    municipio = Municipio.objects.filter(departamento__pk__in=lista).order_by('nombre').values('id', 'nombre')
+        for id in lista:
+			try:
+				encuesta = Encuesta.objects.filter(entrevistado__municipio__departamento__id=id).distinct().values_list('entrevistado__municipio__id', flat=True)
+				departamento = Departamento.objects.get(pk=id)
+				municipios = Municipio.objects.filter(departamento__id=departamento.pk,id__in=encuesta).order_by('nombre')
+				lista1 = []
+				for municipio in municipios:
+					muni = {}
+					muni['id'] = municipio.pk
+					muni['nombre'] = municipio.nombre
+					lista1.append(muni)
+					dicc[departamento.nombre] = lista1
+			except:
+				pass
 
-    return HttpResponse(simplejson.dumps(list(municipio)), content_type='application/json')
+	#filtrar segun la organizacion seleccionada
+    org_ids = request.GET.get('org_ids', '')
+    if org_ids:
+		lista = org_ids.split(',')
+		municipios = [encuesta.municipio for encuesta in Encuesta.objects.filter(organizacion__id__in=lista)]
+		#crear los keys en el dicc para evitar KeyError
+		for municipio in municipios:
+			dicc[municipio.departamento.nombre] = []
 
-def traer_organizacion(departamento=None):
+		#agrupar municipios por departamento padre
+		for municipio in municipios:
+			muni = {'id': municipio.id, 'nombre': municipio.nombre}
+			if not muni in dicc[municipio.departamento.nombre]:
+				dicc[municipio.departamento.nombre].append(muni)
+
+    resultado.append(dicc)
+
+    return HttpResponse(simplejson.dumps(resultado), content_type='application/json')
+
+def traer_organizacion(request):
     ids = request.GET.get('ids', '')
     if ids:
         lista = ids.split(',')
@@ -1747,7 +1778,7 @@ def traer_organizacion(departamento=None):
 
     return HttpResponse(simplejson.dumps(list(organizaciones)), content_type='application/json')
 
-def traer_comunidad(municipio=None):
+def traer_comunidad(request):
     ids = request.GET.get('ids', '')
     if ids:
         lista = ids.split(',')
