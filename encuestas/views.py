@@ -18,20 +18,18 @@ def _queryset_filtrado(request):
 
     #if request.session['fecha']:
     #    params['year__in'] = request.session['fecha']
-
-    if request.session['organizacion']:
+    if 'organizacion' in request.session:
         params['org_responsable__in'] = request.session['organizacion']
-
-    if request.session['pais']:
+    if 'pais' in request.session:
         params['entrevistado__pais'] = request.session['pais']
 
-    if request.session['departamento']:
+    if 'departamento' in request.session:
         params['entrevistado__departamento__in'] = request.session['departamento']
 
-    if request.session['municipio']:
+    if 'municipio' in request.session:
         params['entrevistado__municipio__in'] = request.session['municipio']
 
-    if request.session['comunidad']:
+    if 'comunidad' in request.session:
         params['entrevistado__comunidad__in'] = request.session['comunidad']
 
     #if request.session['sexo']:
@@ -40,49 +38,21 @@ def _queryset_filtrado(request):
 
 
 def IndexView(request,template="index.html"):
-    if request.method == 'POST':
-        mensaje = None
-        form = ConsultarForm(request.POST)
-        if form.is_valid():
-            #request.session['fecha'] = form.cleaned_data['fecha']
-            request.session['organizacion'] = form.cleaned_data['organizacion']
-            request.session['pais'] = form.cleaned_data['pais']
-            request.session['departamento'] = form.cleaned_data['departamento']
-            request.session['municipio'] = form.cleaned_data['municipio']
-            request.session['comunidad'] = form.cleaned_data['comunidad']
-            #request.session['sexo'] = form.cleaned_data['sexo']
-
-            mensaje = "Todas las variables estan correctamente :)"
-            request.session['activo'] = True
-            centinela = 1
-            print mensaje
-
-            return HttpResponseRedirect('/dashboard-principal/')
-
-        else:
-            centinela = 0
-            print "fail no entro bien"
-
-    else:
-        form = ConsultarForm()
-        mensaje = "Existen alguno errores"
-        centinela = 0
-        try:
-            del request.session['fecha']
-            del request.session['pais']
-            del request.session['organizacion']
-            del request.session['departamento']
-            del request.session['municipio']
-            del request.session['comunidad']
-        except:
-            pass
-        paises = {}
-        for pais in Pais.objects.all():
-            paises[pais] = {}
-            for mun in Departamento.objects.all():
-                m = Encuesta.objects.filter(entrevistado__departamento=mun, entrevistado__pais=pais).count()
-                if m > 0:
-                    paises[pais][mun.nombre] = (m,mun.id)
+    try:
+        del request.session['pais']
+        del request.session['organizacion']
+        del request.session['departamento']
+        del request.session['municipio']
+        del request.session['comunidad']
+    except:
+        pass
+    paises = {}
+    for pais in Pais.objects.all():
+        paises[pais] = {}
+        for mun in Departamento.objects.all():
+            m = Encuesta.objects.filter(entrevistado__departamento=mun, entrevistado__pais=pais).count()
+            if m > 0:
+                paises[pais][mun.nombre] = (m,mun.id)
 
     return render(request, template, locals())
 
@@ -260,7 +230,50 @@ def principal_dashboard(request, template='dashboard.html', departamento_id=None
                                         Q(escolaridad__pri_completa__gt=1) |  Q(escolaridad__secu_incompleta__gt=1) | Q(escolaridad__bachiller__gt=1) |  Q(escolaridad__uni_tecnico__gt=1)).count()
     capital_humano_ambos = filtro.filter(Q(sexomiembros__sexo=3),
                                         Q(escolaridad__pri_completa__gt=1) |  Q(escolaridad__secu_incompleta__gt=1) | Q(escolaridad__bachiller__gt=1) |  Q(escolaridad__uni_tecnico__gt=1)).count()
+    #Calculos de los kcalorias
     kcalorias = envio_calorias(request)
+
+    #Calculo de los rendimientos o productividad del maiz y frijol primera
+
+    total_area_cosechada_maiz = filtro.filter(cultivostradicionales__cultivo=3,
+                                cultivostradicionales__periodo=1).aggregate(t=Sum('cultivostradicionales__area_cosechada'))['t']
+    total_cosecha_maiz = filtro.filter(cultivostradicionales__cultivo=3,
+                                cultivostradicionales__periodo=1).aggregate(t=Sum('cultivostradicionales__cantidad_cosechada'))['t']
+    try:
+        rendimiento_maiz = total_cosecha_maiz / total_area_cosechada_maiz
+    except:
+        rendimiento_maiz = 0
+
+    total_area_cosechada_frijol = filtro.filter(cultivostradicionales__cultivo=2,
+                                        cultivostradicionales__periodo=1).aggregate(t=Sum('cultivostradicionales__area_cosechada'))['t']
+    total_cosecha_frijol = filtro.filter(cultivostradicionales__cultivo=2,
+                                        cultivostradicionales__periodo=1).aggregate(t=Sum('cultivostradicionales__cantidad_cosechada'))['t']
+    try:
+        rendimiento_frijol = total_cosecha_frijol / total_area_cosechada_frijol
+    except:
+        rendimiento_frijol = 0
+
+    #Calculo de los rendimientos o productividad del frijol y maiz postrera
+    total_area_cosechada_maiz_postrera = filtro.filter(cultivostradicionales__cultivo=3,
+                                        cultivostradicionales__periodo=2).aggregate(t=Sum('cultivostradicionales__area_cosechada'))['t']
+    total_cosecha_maiz_postrera = filtro.filter(cultivostradicionales__cultivo=3,
+                                        cultivostradicionales__periodo=2).aggregate(t=Sum('cultivostradicionales__cantidad_cosechada'))['t']
+    try:
+        rendimiento_maiz_postrera = total_cosecha_maiz / total_area_cosechada_maiz
+    except:
+        rendimiento_maiz_postrera = 0
+
+    total_area_cosechada_frijol_postrera = filtro.filter(cultivostradicionales__cultivo=2,
+                                            cultivostradicionales__periodo=2).aggregate(t=Sum('cultivostradicionales__area_cosechada'))['t']
+    total_cosecha_frijol_postrera = filtro.filter(cultivostradicionales__cultivo=2,
+                                            cultivostradicionales__periodo=2).aggregate(t=Sum('cultivostradicionales__cantidad_cosechada'))['t']
+    try:
+        rendimiento_frijol_postrera = total_cosecha_frijol_postrera / total_area_cosechada_frijol_postrera
+    except:
+        rendimiento_frijol_postrera = 0
+
+
+
 
     return render(request,template,locals())
 
@@ -528,18 +541,15 @@ def indicadores1(request, template='indicadores1.html'):
         mensaje = None
         form = ConsultarForm(request.POST)
         if form.is_valid():
-            #request.session['fecha'] = form.cleaned_data['fecha']
-            request.session['organizacion'] = form.cleaned_data['organizacion']
             request.session['pais'] = form.cleaned_data['pais']
             request.session['departamento'] = form.cleaned_data['departamento']
+            request.session['organizacion'] = form.cleaned_data['organizacion']
             request.session['municipio'] = form.cleaned_data['municipio']
             request.session['comunidad'] = form.cleaned_data['comunidad']
-            #request.session['sexo'] = form.cleaned_data['sexo']
 
             mensaje = "Todas las variables estan correctamente :)"
             request.session['activo'] = True
             centinela = 1
-            print mensaje
 
             return HttpResponseRedirect('/indicadores1/')
 
@@ -552,10 +562,9 @@ def indicadores1(request, template='indicadores1.html'):
         mensaje = "Existen alguno errores"
         centinela = 0
         try:
-            del request.session['fecha']
             del request.session['pais']
-            del request.session['organizacion']
             del request.session['departamento']
+            del request.session['organizacion']
             del request.session['municipio']
             del request.session['comunidad']
         except:
@@ -1706,37 +1715,65 @@ def save_as_xls(request):
     return response
 
 
-def traer_departamento(pais=None):
+def traer_departamento(request):
     ids = request.GET.get('ids', '')
     if ids:
         lista = ids.split(',')
     results = []
-    departamento = Departamento.objects.filter(pais__pk__in=lista).order_by('nombre').values('id', 'nombre')
+    departamento = Departamento.objects.filter(pais__pk__in=lista, entrevistados__gt=1).distinct().values('id', 'nombre')
+    return HttpResponse(simplejson.dumps(list(departamento)), content_type='application/json')
 
-    return HttpResponse(simplejson.dumps(list(municipios)), content_type='application/json')
+def traer_municipio(request):
+    ids = request.GET.get('ids', '')
+    dicc = {}
+    resultado = []
+    if ids:
+        lista = ids.split(',')
+        for id in lista:
+			try:
+				encuesta = Encuesta.objects.filter(entrevistado__municipio__departamento__id=id).distinct().values_list('entrevistado__municipio__id', flat=True)
+				departamento = Departamento.objects.get(pk=id)
+				municipios = Municipio.objects.filter(departamento__id=departamento.pk,id__in=encuesta).order_by('nombre')
+				lista1 = []
+				for municipio in municipios:
+					muni = {}
+					muni['id'] = municipio.pk
+					muni['nombre'] = municipio.nombre
+					lista1.append(muni)
+					dicc[departamento.nombre] = lista1
+			except:
+				pass
 
-def traer_municipio(departamento=None):
+	#filtrar segun la organizacion seleccionada
+    org_ids = request.GET.get('org_ids', '')
+    if org_ids:
+		lista = org_ids.split(',')
+		municipios = [encuesta.municipio for encuesta in Encuesta.objects.filter(organizacion__id__in=lista)]
+		#crear los keys en el dicc para evitar KeyError
+		for municipio in municipios:
+			dicc[municipio.departamento.nombre] = []
+
+		#agrupar municipios por departamento padre
+		for municipio in municipios:
+			muni = {'id': municipio.id, 'nombre': municipio.nombre}
+			if not muni in dicc[municipio.departamento.nombre]:
+				dicc[municipio.departamento.nombre].append(muni)
+
+    resultado.append(dicc)
+
+    return HttpResponse(simplejson.dumps(resultado), content_type='application/json')
+
+def traer_organizacion(request):
     ids = request.GET.get('ids', '')
     if ids:
         lista = ids.split(',')
-    results = []
-    municipio = Municipio.objects.filter(departamento__pk__in=lista).order_by('nombre').values('id', 'nombre')
-
-    return HttpResponse(simplejson.dumps(list(municipio)), content_type='application/json')
-
-def traer_organizacion(departamento=None):
-    ids = request.GET.get('ids', '')
-    if ids:
-        lista = ids.split(',')
-    organizaciones = Organizacion.objects.filter(municipio__id__in = lista).order_by('nombre').values('id', 'siglas')
-
+        organizaciones = OrganizacionResp.objects.filter(departamento__id__in = lista).order_by('nombre').values('id', 'nombre')
     return HttpResponse(simplejson.dumps(list(organizaciones)), content_type='application/json')
 
-def traer_comunidad(municipio=None):
+def traer_comunidad(request):
     ids = request.GET.get('ids', '')
     if ids:
         lista = ids.split(',')
-    results = []
-    comunies = Comunidad.objects.filter(municipio__pk__in=lista).order_by('nombre').values('id', 'nombre')
-
+        results = []
+        comunies = Comunidad.objects.filter(municipio__pk__in=lista).order_by('nombre').values('id', 'nombre')
     return HttpResponse(simplejson.dumps(list(comunies)), content_type='application/json')
