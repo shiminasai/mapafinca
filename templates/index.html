@@ -5,10 +5,16 @@
 {% block extra_js %}
 	<script src="/static/js/modernizr.custom.js"></script>
 	<script src="/static/js/classie.js"></script>
-	
-	<script type="text/javascript" src="/static/js/bootstrap-multiselect.js"></script>
+	<script>
+		var elems = document.getElementsByClassName('valorBadge');
+		var sum = 0;
+			for (var i = 0;i < elems.length; i++) {
+			sum += parseInt(elems[i].innerHTML, 10);
+			}
+		document.getElementById('totalBadge').innerHTML = sum;
 
-	
+	</script>
+
 {% endblock extra_js %}
 {% block contenido %}
 <div class="row contenedor-index">
@@ -52,7 +58,7 @@
 					</div>
 				</div>
 			{% endfor %}
-			
+
 		</div>
 
 
