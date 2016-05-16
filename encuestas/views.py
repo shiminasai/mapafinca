@@ -551,7 +551,7 @@ def indicadores1(request, template='indicadores1.html'):
             request.session['activo'] = True
             centinela = 1
 
-            return HttpResponseRedirect('/indicadores1/')
+            #return HttpResponseRedirect('/indicadores1/')
 
         else:
             centinela = 0
@@ -561,21 +561,13 @@ def indicadores1(request, template='indicadores1.html'):
         form = ConsultarForm()
         mensaje = "Existen alguno errores"
         centinela = 0
-        try:
+        if 'pais' in request.session or 'departamento' in request.session:
             del request.session['pais']
             del request.session['departamento']
             del request.session['organizacion']
             del request.session['municipio']
             del request.session['comunidad']
-        except:
-            pass
-        paises = {}
-        for pais in Pais.objects.all():
-            paises[pais] = {}
-            for mun in Departamento.objects.all():
-                m = Encuesta.objects.filter(entrevistado__departamento=mun, entrevistado__pais=pais).count()
-                if m > 0:
-                    paises[pais][mun.nombre] = (m,mun.id)
+            request.session['activo'] = False
 
     return render(request, template, locals())
 

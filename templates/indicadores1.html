@@ -3,7 +3,6 @@
 {% block extra_js %}
 <script src="/static/js/modernizr.custom.js"></script>
 <script src="/static/js/classie.js"></script>
-<script src="/static/js/uiMorphingButton_fixed.js"></script>
 <script type="text/javascript" src="/static/js/bootstrap-multiselect.js"></script>
 <script type="text/javascript">
 		$(document).ready(function() {
@@ -308,7 +307,7 @@ $(document).on('change','#id_municipio',function(){
 					</div>
 			</div>
 			<div class="col-xs-12 col-sm-12 col-md-6 col-lg-9">
-				{% if request.session.pais or request.session.departamento %}
+				{% if centinela %}
 		    	{% include "menu_indicadores.html" %}
 				{% else %}
 					<p class="alert alert-success" role="alert">
