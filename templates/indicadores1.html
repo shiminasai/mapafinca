@@ -307,7 +307,7 @@ $(document).on('change','#id_municipio',function(){
 					</div>
 			</div>
 			<div class="col-xs-12 col-sm-12 col-md-6 col-lg-9">
-				{% if centinela %}
+				{% if request.session.departamento %}
 		    	{% include "menu_indicadores.html" %}
 				{% else %}
 					<p class="alert alert-success" role="alert">

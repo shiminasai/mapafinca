@@ -137,7 +137,9 @@ def principal_dashboard(request, template='dashboard.html', departamento_id=None
     ahora = filtro.distinct('entrevistado__id')
     dividir_todo = len(ahora)
     depart = Departamento.objects.filter(id=departamento_id)
-    request.session["departamento"] = depart
+    pais = Pais.objects.filter(departamento=departamento_id)
+    request.session['pais'] = pais[0]
+    request.session['departamento'] = depart
     request.session['encuestados'] = dividir_todo
 
     latitud = 12.98
@@ -272,9 +274,6 @@ def principal_dashboard(request, template='dashboard.html', departamento_id=None
     except:
         rendimiento_frijol_postrera = 0
 
-
-
-
     return render(request,template,locals())
 
 def principal_dashboard_pais(request, template='dashboard_pais.html', pais=None,):
@@ -381,6 +380,46 @@ def principal_dashboard_pais(request, template='dashboard_pais.html', pais=None,
     capital_humano_ambos = Encuesta.objects.filter(Q(entrevistado__pais__slug=pais), Q(sexomiembros__sexo=3),
                                                                                     Q(escolaridad__pri_completa__gt=1) |  Q(escolaridad__secu_incompleta__gt=1) | Q(escolaridad__bachiller__gt=1) |  Q(escolaridad__uni_tecnico__gt=1)).count()
     kcalorias = envio_calorias_pais(request)
+
+    #Calculo de los rendimientos o productividad del maiz y frijol primera
+    filtro = Encuesta.objects.filter(entrevistado__pais__slug=pais)
+
+    total_area_cosechada_maiz = filtro.filter(cultivostradicionales__cultivo=3,
+                                cultivostradicionales__periodo=1).aggregate(t=Sum('cultivostradicionales__area_cosechada'))['t']
+    total_cosecha_maiz = filtro.filter(cultivostradicionales__cultivo=3,
+                                cultivostradicionales__periodo=1).aggregate(t=Sum('cultivostradicionales__cantidad_cosechada'))['t']
+    try:
+        rendimiento_maiz = total_cosecha_maiz / total_area_cosechada_maiz
+    except:
+        rendimiento_maiz = 0
+
+    total_area_cosechada_frijol = filtro.filter(cultivostradicionales__cultivo=2,
+                                        cultivostradicionales__periodo=1).aggregate(t=Sum('cultivostradicionales__area_cosechada'))['t']
+    total_cosecha_frijol = filtro.filter(cultivostradicionales__cultivo=2,
+                                        cultivostradicionales__periodo=1).aggregate(t=Sum('cultivostradicionales__cantidad_cosechada'))['t']
+    try:
+        rendimiento_frijol = total_cosecha_frijol / total_area_cosechada_frijol
+    except:
+        rendimiento_frijol = 0
+
+    #Calculo de los rendimientos o productividad del frijol y maiz postrera
+    total_area_cosechada_maiz_postrera = filtro.filter(cultivostradicionales__cultivo=3,
+                                        cultivostradicionales__periodo=2).aggregate(t=Sum('cultivostradicionales__area_cosechada'))['t']
+    total_cosecha_maiz_postrera = filtro.filter(cultivostradicionales__cultivo=3,
+                                        cultivostradicionales__periodo=2).aggregate(t=Sum('cultivostradicionales__cantidad_cosechada'))['t']
+    try:
+        rendimiento_maiz_postrera = total_cosecha_maiz / total_area_cosechada_maiz
+    except:
+        rendimiento_maiz_postrera = 0
+
+    total_area_cosechada_frijol_postrera = filtro.filter(cultivostradicionales__cultivo=2,
+                                            cultivostradicionales__periodo=2).aggregate(t=Sum('cultivostradicionales__area_cosechada'))['t']
+    total_cosecha_frijol_postrera = filtro.filter(cultivostradicionales__cultivo=2,
+                                            cultivostradicionales__periodo=2).aggregate(t=Sum('cultivostradicionales__cantidad_cosechada'))['t']
+    try:
+        rendimiento_frijol_postrera = total_cosecha_frijol_postrera / total_area_cosechada_frijol_postrera
+    except:
+        rendimiento_frijol_postrera = 0
 
     return render(request,template,locals())
 
@@ -527,15 +566,6 @@ def indicadores(request, template='indicadores.html'):
 
 
 def indicadores1(request, template='indicadores1.html'):
-
-    #total_entrevistados = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento']).distinct('entrevistado__id').count()
-    #total_hombres = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], entrevistado__sexo=2).distinct('entrevistado__id').count()
-    #total_mujeres = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento'], entrevistado__sexo=1).distinct('entrevistado__id').count()
-
-    #porcentaje_hombres = float(total_hombres) / float(total_entrevistados) * 100
-    #porcentaje_mujeres = float(total_mujeres) / float(total_entrevistados) * 100
-
-    #organizaciones = Encuesta.objects.filter(entrevistado__departamento=request.session['departamento']).distinct('entrevistado__departamento').count()
     familias = Entrevistados.objects.count()
     if request.method == 'POST':
         mensaje = None
@@ -561,13 +591,16 @@ def indicadores1(request, template='indicadores1.html'):
         form = ConsultarForm()
         mensaje = "Existen alguno errores"
         centinela = 0
-        if 'pais' in request.session or 'departamento' in request.session:
+        try:
             del request.session['pais']
             del request.session['departamento']
             del request.session['organizacion']
             del request.session['municipio']
             del request.session['comunidad']
+            del request.session['encuestados']
             request.session['activo'] = False
+        except:
+            pass
 
     return render(request, template, locals())
 
