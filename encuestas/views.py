@@ -18,13 +18,14 @@ def _queryset_filtrado(request):
 
     #if request.session['fecha']:
     #    params['year__in'] = request.session['fecha']
-    if 'organizacion' in request.session:
-        params['org_responsable__in'] = request.session['organizacion']
     if 'pais' in request.session:
         params['entrevistado__pais'] = request.session['pais']
 
     if 'departamento' in request.session:
         params['entrevistado__departamento__in'] = request.session['departamento']
+
+    if 'organizacion' in request.session:
+        params['org_responsable__in'] = request.session['organizacion']
 
     if 'municipio' in request.session:
         params['entrevistado__municipio__in'] = request.session['municipio']
@@ -34,18 +35,27 @@ def _queryset_filtrado(request):
 
     #if request.session['sexo']:
     #    params['entrevistado__sexo'] = request.session['sexo']
+
+    unvalid_keys = []
+    for key in params:
+    	if not params[key]:
+    		unvalid_keys.append(key)
+
+    for key in unvalid_keys:
+    	del params[key]
+
     return Encuesta.objects.filter(**params)
 
 
 def IndexView(request,template="index.html"):
-    try:
-        del request.session['pais']
-        del request.session['organizacion']
-        del request.session['departamento']
-        del request.session['municipio']
-        del request.session['comunidad']
-    except:
-        pass
+    # try:
+    #     del request.session['pais']
+    #     del request.session['organizacion']
+    #     del request.session['departamento']
+    #     del request.session['municipio']
+    #     del request.session['comunidad']
+    # except:
+    #     pass
     paises = {}
     for pais in Pais.objects.all():
         paises[pais] = {}
@@ -591,16 +601,15 @@ def indicadores1(request, template='indicadores1.html'):
         form = ConsultarForm()
         mensaje = "Existen alguno errores"
         centinela = 0
-        try:
+        filtro = _queryset_filtrado(request)
+        if 'pais' in request.session:
             del request.session['pais']
             del request.session['departamento']
             del request.session['organizacion']
             del request.session['municipio']
             del request.session['comunidad']
-            del request.session['encuestados']
+            #del request.session['encuestados']
             request.session['activo'] = False
-        except:
-            pass
 
     return render(request, template, locals())
 
@@ -608,7 +617,6 @@ def indicadores1(request, template='indicadores1.html'):
 
 def sexo_duenos(request, template="indicadores/sexo_duenos.html"):
     filtro = _queryset_filtrado(request)
-
     years = []
     for en in Encuesta.objects.order_by('year').values_list('year', flat=True):
         years.append((en,en))
