@@ -60,7 +60,7 @@ class ConsultarForm(forms.Form):
     #fecha = forms.MultipleChoiceField(choices=fecha_choice(), label="Años", required=True)
     pais = forms.ModelChoiceField(queryset=Pais.objects.all(), required=True)
     organizacion = forms.ModelMultipleChoiceField(queryset=OrganizacionResp.objects.all(), required=False)
-    departamento = forms.ModelMultipleChoiceField(queryset=Departamento.objects.filter(entrevistados__gt=1).distinct(), required=True)
+    departamento = forms.ModelMultipleChoiceField(queryset=Departamento.objects.filter(entrevistados__gt=1).distinct(), required=False)
     municipio = forms.ModelMultipleChoiceField(queryset=Municipio.objects.all(), required=False)
     comunidad = forms.ModelMultipleChoiceField(queryset=Comunidad.objects.all(), required=False)
     #sexo = forms.ChoiceField(choices=CHOICE_SEXO, required=False)
