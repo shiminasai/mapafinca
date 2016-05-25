@@ -603,12 +603,15 @@ def indicadores1(request, template='indicadores1.html'):
         centinela = 0
         filtro = _queryset_filtrado(request)
         if 'pais' in request.session:
-            del request.session['pais']
-            del request.session['departamento']
-            del request.session['organizacion']
-            del request.session['municipio']
-            del request.session['comunidad']
-            #del request.session['encuestados']
+            try:
+                del request.session['pais']
+                del request.session['departamento']
+                del request.session['organizacion']
+                del request.session['municipio']
+                del request.session['comunidad']
+                #del request.session['encuestados']
+            except:
+                pass
             request.session['activo'] = False
 
     return render(request, template, locals())
