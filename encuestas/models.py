@@ -78,20 +78,22 @@ class Encuestadores(models.Model):
 
 class OrganizacionResp(models.Model):
     nombre = models.CharField(max_length=250)
-    pais = models.ForeignKey(Pais)
+    pais = models.ForeignKey(Pais, null=True)
     departamento = ChainedForeignKey(
         Departamento,
         chained_field="pais",
         chained_model_field="pais",
         show_all=False,
-        auto_choose=True
+        auto_choose=True,
+        null=True
     )
     municipio = ChainedForeignKey(
         Municipio,
         chained_field="departamento",
         chained_model_field="departamento",
         show_all=False,
-        auto_choose=True
+        auto_choose=True,
+        null=True
     )
 
     def __unicode__(self):
@@ -532,6 +534,11 @@ CHOICE_PERIODO = (
                 (2, 'Postrera'),
                 )
 
+CHOICE_INICIATIVAS = (
+                (1, 'Si'),
+                (2, 'No'),
+                )
+
 
 class Cultivos(models.Model):
     codigo = models.CharField(max_length=4)
@@ -565,6 +572,7 @@ class CultivosTradicionales(models.Model):
     costo = models.FloatField('Costo por Mz en C$')
     mercado = models.ForeignKey(TipoMercado)
     periodo = models.IntegerField(choices=CHOICE_PERIODO)
+    iniciativas = models.IntegerField(choices=CHOICE_INICIATIVAS, null=True, blank=True)
 
     total = models.FloatField(editable=False)
 
@@ -603,6 +611,7 @@ class CultivosHuertosFamiliares(models.Model):
     precio = models.FloatField('Precio de venta en C$')
     #costo = models.FloatField('Costo por Mz en C$')
     mercado = models.ForeignKey(TipoMercado)
+    iniciativas = models.IntegerField(choices=CHOICE_INICIATIVAS, null=True, blank=True)
 
     total = models.FloatField(editable=False)
 
@@ -650,6 +659,7 @@ class CultivosFrutasFinca(models.Model):
     precio = models.FloatField('Precio de venta en C$')
     #costo = models.FloatField('Costo por Mz en C$')
     mercado = models.ForeignKey(TipoMercado)
+    iniciativas = models.IntegerField(choices=CHOICE_INICIATIVAS, null=True, blank=True)
 
     total = models.FloatField(editable=False)
 
@@ -688,6 +698,7 @@ class Ganaderia(models.Model):
     cantidad_vendida = models.IntegerField('Cantidad vendida este año', null=True, blank=True)
     precio = models.FloatField('Precio de venta en C$', null=True, blank=True)
     mercado = models.ForeignKey(TipoMercado, null=True, blank=True)
+    iniciativas = models.IntegerField(choices=CHOICE_INICIATIVAS, null=True, blank=True)
 
     total = models.FloatField(editable=False, null=True, blank=True)
 
@@ -723,6 +734,7 @@ class Procesamiento(models.Model):
     cantidad_vendida = models.IntegerField('Cantidad vendida este año')
     precio = models.FloatField('Precio de venta en C$')
     mercado = models.ForeignKey(TipoMercado)
+    iniciativas = models.IntegerField(choices=CHOICE_INICIATIVAS, null=True, blank=True)
 
     total = models.FloatField(editable=False)
 
