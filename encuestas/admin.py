@@ -36,7 +36,7 @@ class InlinePanelSolar(admin.TabularInline):
     #form = TipoEnergiaForm
     model = PanelSolar
     extra = 1
-    max_num = 1
+    max_num = 3
 
 class InlineEnergiaSolarCocinar(admin.TabularInline):
     form = EnergiaSolarCocinarForm
