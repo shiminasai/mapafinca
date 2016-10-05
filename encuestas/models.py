@@ -1046,7 +1046,7 @@ CHOICER_INGRESO = (
 class Genero(models.Model):
     encuesta = models.ForeignKey(Encuesta)
     tipo = models.IntegerField(choices=CHOICER_INGRESO)
-    porcentaje = models.FloatField(choices=CHOICE_PORCENTAJE)
+    porcentaje = models.IntegerField(choices=CHOICE_PORCENTAJE)
 
     class Meta:
         verbose_name_plural = '43_¿Qué porcentaje de ingreso es aportado por la mujer (compañera del jefe del hogar)'
