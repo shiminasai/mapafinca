@@ -64,3 +64,8 @@ class ConsultarForm(forms.Form):
     municipio = forms.ModelMultipleChoiceField(queryset=Municipio.objects.all(), required=False)
     comunidad = forms.ModelMultipleChoiceField(queryset=Comunidad.objects.all(), required=False)
     #sexo = forms.ChoiceField(choices=CHOICE_SEXO, required=False)
+
+class ConsultarGaleriaForm(forms.Form):
+    fecha = forms.ChoiceField(choices=fecha_choice(), label="Años", required=True)
+    pais = forms.ModelChoiceField(queryset=Pais.objects.all(), required=True)
+    organizacion = forms.ModelMultipleChoiceField(queryset=OrganizacionResp.objects.all(), required=False)

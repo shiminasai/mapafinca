@@ -157,10 +157,12 @@ class Entrevistados(models.Model):
         verbose_name = 'Base de datos Productor'
         verbose_name_plural = 'Base de datos Productores'
 
+CHOICES_ESTACIONES = ((1, 'Verano'),(2, 'Invierno'),)
 
 class Encuesta(models.Model):
     entrevistado = models.ForeignKey(Entrevistados)
     fecha = models.DateField()
+    estacion = models.IntegerField(choices=CHOICES_ESTACIONES, default='1')
     encuestador = models.ForeignKey(Encuestadores)
     mapa_finca = ImageField(upload_to='mapas_fincas', null=True, blank=True)
     dueno = models.IntegerField(choices=CHOICE_JEFE,

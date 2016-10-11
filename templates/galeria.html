@@ -60,6 +60,40 @@ if (n<12) {
 }	
 </style>
 <div class="row contenido-galeria">
+<div class="panel-body">
+	<form  action="." method="POST"> {% csrf_token %}
+
+		<div class="row">
+			<div class="col-xs-12 col-sm-6 col-md-6 col-lg-4">
+				<label for="">{{form.fecha.label}}</label>
+			</div>
+			<div class="col-xs-12 col-sm-6 col-md-6 col-lg-8">
+				{{form.fecha}}
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-12 col-sm-6 col-md-6 col-lg-4">
+				<label for="">{{form.pais.label}}</label>
+			</div>
+			<div class="col-xs-12 col-sm-6 col-md-6 col-lg-8">
+				{{form.pais}}
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-12 col-sm-6 col-md-6 col-lg-4">
+				<label for="">{{form.organizacion.label}}</label>
+			</div>
+			<div class="col-xs-12 col-sm-6 col-md-6 col-lg-8">
+				{{form.organizacion}}
+			</div>
+		</div>
+
+		<input type="submit" value="Consultar" class="btn btn-form" name="consulta"/>
+
+	</form>
+</div>
 	{% paginate object_list %}
 	<div id="lightGallery">
  	{% for obj in object_list %}

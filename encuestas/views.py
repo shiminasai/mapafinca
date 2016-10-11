@@ -2,7 +2,7 @@
 from django.shortcuts import render, redirect, render_to_response
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.views.generic import TemplateView
-from .forms import ConsultarForm
+from .forms import ConsultarForm, ConsultarGaleriaForm
 from .models import *
 import json as simplejson
 from django.db.models import Count, Sum, Avg, Value as V
@@ -47,15 +47,30 @@ def _queryset_filtrado(request):
     return Encuesta.objects.filter(**params)
 
 
+def _queryset_galeria(request):
+    params = {}
+
+    if request.session['fecha']:
+       params['year'] = request.session['fecha']
+
+    if 'pais' in request.session:
+        params['entrevistado__pais'] = request.session['pais']
+
+    if 'organizacion' in request.session:
+        params['org_responsable__in'] = request.session['organizacion']
+
+    unvalid_keys = []
+    for key in params:
+        if not params[key]:
+            unvalid_keys.append(key)
+
+    for key in unvalid_keys:
+        del params[key]
+
+    return Encuesta.objects.filter(**params)
+
+
 def IndexView(request,template="index.html"):
-    # try:
-    #     del request.session['pais']
-    #     del request.session['organizacion']
-    #     del request.session['departamento']
-    #     del request.session['municipio']
-    #     del request.session['comunidad']
-    # except:
-    #     pass
     paises = {}
     for pais in Pais.objects.all():
         paises[pais] = {}
@@ -104,14 +119,30 @@ def obtener_mapa_dashboard_pais(request):
         return HttpResponse(serializado, content_type='application/json')
 
 
-class GalleryView(TemplateView):
-    template_name = "galeria.html"
+def galeria_mapas_fincas(request, template='galeria.html'):
+    centinela = 0
+    if request.method == 'POST':
+        mensaje = None
+        form = ConsultarGaleriaForm(request.POST)
+        if form.is_valid():
+            request.session['fecha'] = form.cleaned_data['fecha']
+            request.session['pais'] = form.cleaned_data['pais']
+            request.session['organizacion'] = form.cleaned_data['organizacion']
 
-    def get_context_data(self, **kwargs):
-        context = super(GalleryView, self).get_context_data(**kwargs)
-        context['object_list'] = Encuesta.objects.all()
-        return context
+            mensaje = "Todas las variables estan correctamente :)"
+            centinela = 1
 
+    else:
+        form = ConsultarGaleriaForm()
+
+    if centinela == 0:
+        object_list = Encuesta.objects.all()
+        print len(object_list)
+    else:
+        object_list = _queryset_galeria(request)
+        print len(object_list)
+    
+    return render(request, template, locals())
 
 class DetailIndicadorView(TemplateView):
     template_name = "detalle_indicador.html"
@@ -601,7 +632,7 @@ def indicadores1(request, template='indicadores1.html'):
         form = ConsultarForm()
         mensaje = "Existen alguno errores"
         centinela = 0
-        filtro = _queryset_filtrado(request)
+        #filtro = _queryset_filtrado(request)
         if 'pais' in request.session:
             try:
                 del request.session['pais']

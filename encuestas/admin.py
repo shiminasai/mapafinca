@@ -209,7 +209,7 @@ class InlineGenero4(admin.TabularInline):
 
 class AdminEncuesta(admin.ModelAdmin):
     form = ProductorAdminForm
-    fields = (('entrevistado','fecha','encuestador'),'mapa_finca', 'org_responsable','dueno',)
+    fields = (('entrevistado','fecha','estacion'),('encuestador','mapa_finca'), 'org_responsable','dueno',)
     def queryset(self, request):
         if request.user.is_superuser:
             return Encuesta.objects.all()
