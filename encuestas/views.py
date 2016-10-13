@@ -195,6 +195,7 @@ def principal_dashboard(request, template='dashboard.html', departamento_id=None
         gasto_fuera_finca = float(filtro.aggregate(t=Sum('gastoproduccion__total'))['t'] / 12) / float(dividir_todo)
     except:
         pass
+    
     # grafico de ingresos
     try:
         tradicional = float(filtro.aggregate(t=Sum('cultivostradicionales__total'))['t'] / 12) / float(dividir_todo)
