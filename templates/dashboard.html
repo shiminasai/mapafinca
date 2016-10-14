@@ -133,16 +133,17 @@
     });
 });
 /**********************************/
+{% for k, v in tiempo_patron_gasto.items %}
 $(function () {
-    $('#grafico1').highcharts({
+    $('#grafico1-{{k}}').highcharts({
         chart: {
             type: 'column'
         },
         title: {
-            text: 'PATRÓN DE GASTOS'
+            text: 'PATRÓN DE GASTOS - {{k}}'
         },
         xAxis: {
-            categories: ['Gasto en {{request.session.departamento.0}}']
+            categories: ['Verano', 'Invierno']
         },
         yAxis: {
             min: 0,
@@ -182,16 +183,18 @@ $(function () {
         },
         series: [{
             name: 'Alimentarios',
-            data: [{% if gasto_finca == None %}0 {%else%}{{gasto_finca|floatformat:2}},{% endif %}]
+            data: [{{v.0|floatformat:2}},{{v.1|floatformat:2}}]
         }, {
             name: 'No alimentarios',
-            data: [{% if gasto_fuera_finca == None %}0 {%else%}{{gasto_fuera_finca|floatformat:2}},{% endif %}]
+            data: [{{v.2|floatformat:2}},{{v.3|floatformat:2}}]
         }]
     });
 });
+{% endfor %}
 
+{% for k, v in tiempo_ingresos.items %}
 $(function () {
-    $('#grafico2').highcharts({
+    $('#grafico2-{{k}}').highcharts({
         chart: {
             type: 'column'
         },
@@ -199,7 +202,7 @@ $(function () {
             text: 'INGRESOS EN {{request.session.departamento.0}}'
         },
         xAxis: {
-            categories: ['Ingresos en {{request.session.departamento.0}}']
+            categories: ['Verano', 'Invierno']
         },
         yAxis: {
             min: 0,
@@ -240,26 +243,26 @@ $(function () {
         series: [
             {
                 name: "Cultivos tradicionales",
-                data: [{% if tradicional == None %}0 {%else%}{{tradicional|floatformat:2}},{% endif %}]
+                data: [{{v.0|floatformat:2}},{{v.1|floatformat:2}}]
             }, {
                 name: "Cultivos huertos",
-                data: [{% if huertos == None %}0 {%else%}{{huertos|floatformat:2}},{% endif %}]
+                data: [{{v.2|floatformat:2}},{{v.3|floatformat:2}}]
             }, {
                 name: "Frutales",
-                data: [{% if frutas == None %}0 {%else%}{{frutas|floatformat:2}},{% endif %}]
+                data: [{{v.4|floatformat:2}},{{v.5|floatformat:2}}]
             }, {
                 name: "Otras fuentes",
-                data: [{% if fuente == None %}0 {%else%}{{fuente|floatformat:2}},{% endif %}]
+                data: [{{v.6|floatformat:2}},{{v.7|floatformat:2}}]
             }, {
                 name: "Ganado",
-                data: [{% if ganado == None %}0 {%else%}{{ganado|floatformat:2}},{% endif %}]
+                data: [{{v.8|floatformat:2}},{{v.9|floatformat:2}}]
             }, {
                 name: "Procesamientos",
-                data: [{% if procesamiento == None %}0 {%else%}{{procesamiento|floatformat:2}}{% endif %}]
+                data: [{{v.10|floatformat:2}},{{v.11|floatformat:2}}]
         }]
     });
 });
-
+{% endfor %}
 
 $(function () {
     $('#grafico3').highcharts({
@@ -596,54 +599,53 @@ $(function () {
         </div>
     </div>
 
-<!--            <div class="row">
-                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                    <div class="grafico-indicador" >
-                        <div class="titulo-grafico text-right">
-                            <a href="#">Ver detalle</a>
-                        </div>
-                        <div id="grafico1" style="height: 270px;"></div>
-                    </div>
-                </div>
-                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                    <div class="grafico-indicador" >
-                        <div class="titulo-grafico text-right">
-                            <a href="#">Ver detalle</a>
-                        </div>
-                        <div id="grafico2" style="height: 270px;"></div>
-                    </div>
-                </div>
-            </div>
-
-
-            <div class="row">
-                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                    <div class="grafico-indicador" >
-                        <div class="titulo-grafico text-right">
-                            <a href="#">Ver detalle</a>
-                        </div>
-                        <div id="grafico3" style="height: 270px;"></div>
-                    </div>
-                </div>
-                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                    <div class="grafico-indicador" >
-                        <div class="titulo-grafico text-right">
-                            <a href="#">Ver detalle</a>
-                        </div>
-                        <div id="grafico4" style="height: 270px;"></div>
-                    </div>
-                </div>
-            </div>
--->
     <div class="row fila3">
+
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 ">
             <div class="mapa-general ">
-                <div id="grafico1"></div>
+            <div>
+
+              <!-- Nav tabs -->
+              <ul class="nav nav-tabs" role="tablist">
+              {% for k, v in tiempo_patron_gasto.items %}
+                <li role="presentation" {% if forloop.counter == 1 %}class="active"{% endif %} ><a href="#home-{{k}}" aria-controls="home-{{k}}" role="tab" data-toggle="tab">{{k}}</a></li>
+              {% endfor %}
+              </ul>
+
+              <!-- Tab panes -->
+              <div class="tab-content">
+              {% for k, v in tiempo_patron_gasto.items %}
+                <div role="tabpanel" class="tab-pane {% if forloop.counter == 1 %}active{% endif %}" id="home-{{k}}">
+                    <div id="grafico1-{{k}}"></div>
+                </div>
+              {% endfor %}
+              </div>
+
+            </div>
+                
             </div>
         </div>
          <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 ">
             <div class="mapa-general ">
-                <div id="grafico2"></div>
+                <div>
+
+              <!-- Nav tabs -->
+              <ul class="nav nav-tabs" role="tablist">
+              {% for k, v in tiempo_ingresos.items %}
+                <li role="presentation" {% if forloop.counter == 1 %}class="active"{% endif %} ><a href="#home-{{k}}" aria-controls="home-{{k}}" role="tab" data-toggle="tab">{{k}}</a></li>
+              {% endfor %}
+              </ul>
+
+              <!-- Tab panes -->
+              <div class="tab-content">
+              {% for k, v in tiempo_ingresos.items %}
+                <div role="tabpanel" class="tab-pane {% if forloop.counter == 1 %}active{% endif %}" id="home-{{k}}">
+                    <div id="grafico2-{{k}}"></div>
+                </div>
+              {% endfor %}
+              </div>
+
+            </div>
             </div>
         </div>
 
@@ -691,33 +693,5 @@ $(function () {
     </div>
 </div>
 
-<!--
 
-
-
-
-
-	<div class="row">
-
-    <br>
-
-	</div>
-	{# indicadores #}
-	<div class="row">
-		<h1>indicadores</h1>
-	</div>
-	{# fichas familia #}
-	<div class="row">
-		<h1>Miembros familiares</h1>
-    {% for obj in ahora %}
-      <ul>
-        <li>{{obj.entrevistado}} || {{obj.entrevistado.finca}} | <a class='btn' href="{% url 'detalle-finca' obj.entrevistado.id %}">Detalle</a></li>
-      </ul>
-    {% endfor %}
-	</div>
-	{# clima #}
-	<div class="row">
-		<h1>Clima</h1>
-
-	</div>-->
 {% endblock contenido %}
