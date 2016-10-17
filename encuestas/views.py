@@ -193,6 +193,8 @@ def principal_dashboard(request, template='dashboard.html', departamento_id=None
 
     tiempo_patron_gasto = {}
     tiempo_ingresos = {}
+    tiempo_kcalorias = {}
+    tiempo_gastos_alimentarios = {}
     for anio in muchos_tiempo:
         # grafico de patron de gastos
         gasto_finca_verano=0
@@ -264,17 +266,20 @@ def principal_dashboard(request, template='dashboard.html', departamento_id=None
                                     frutas_verano,frutas_invierno,fuente_verano,fuente_invierno,ganado_verano,
                                     ganado_invierno,procesamiento_verano,procesamiento_invierno]
 
-    #grafico sobre gastos alimentarios
-    gastos_alimentarios = {}
-    for obj in ProductosFueraFinca.objects.all():
-        try:
-            cada_uno = float(filtro.filter(alimentosfuerafinca__producto=obj).aggregate(t=Avg('alimentosfuerafinca__total'))['t'] / 12) / float(dividir_todo)
-        except:
-            cada_uno = 0
-        if cada_uno == None:
-            cada_uno = 0
-        gastos_alimentarios[obj] = cada_uno
+        #Calculos de los kcalorias
+        tiempo_kcalorias[anio[1]] = [envio_calorias(request, anio[0], 1), envio_calorias(request, anio[0], 2)]
 
+    
+        #grafico sobre gastos alimentarios
+        
+        for obj in ProductosFueraFinca.objects.all():
+            try:
+                cada_uno = float(filtro.filter(year=anio[0],alimentosfuerafinca__producto=obj).aggregate(t=Avg('alimentosfuerafinca__total'))['t'] / 12) / float(dividir_todo)
+            except:
+                cada_uno = 0
+            if cada_uno == None:
+                cada_uno = 0
+            tiempo_gastos_alimentarios[anio[1]] = { obj.nombre: cada_uno}
     #grafico sobre clima
     lista_precipitacion = []
     lista_temperatura = []
@@ -311,8 +316,7 @@ def principal_dashboard(request, template='dashboard.html', departamento_id=None
                                         Q(escolaridad__pri_completa__gt=1) |  Q(escolaridad__secu_incompleta__gt=1) | Q(escolaridad__bachiller__gt=1) |  Q(escolaridad__uni_tecnico__gt=1)).count()
     capital_humano_ambos = filtro.filter(Q(sexomiembros__sexo=3),
                                         Q(escolaridad__pri_completa__gt=1) |  Q(escolaridad__secu_incompleta__gt=1) | Q(escolaridad__bachiller__gt=1) |  Q(escolaridad__uni_tecnico__gt=1)).count()
-    #Calculos de los kcalorias
-    kcalorias = envio_calorias(request)
+
 
     #Calculo de los rendimientos o productividad del maiz y frijol primera
 
@@ -1473,20 +1477,23 @@ def gastos(request, template="indicadores/gastos.html"):
     return render(request, template, locals())
 
 
-def envio_calorias(request):
-    filtro = Encuesta.objects.filter(entrevistado__departamento=request.session["departamento"])#.distinct('entrevistado__id')
+def envio_calorias(request, anio, tiempo):
+    filtro = Encuesta.objects.filter(year=anio,estacion=tiempo,entrevistado__departamento=request.session["departamento"])#.distinct('entrevistado__id')
     numero_total_habitante = filtro.aggregate(t=Sum('sexomiembros__cantidad'))['t']
 
     calorias_tradicional = {}
     for obj in Cultivos.objects.all():
         calculo = filtro.filter(cultivostradicionales__cultivo=obj).aggregate(t=Coalesce(Sum('cultivostradicionales__consumo_familia'), V(0)))['t']
         consumida = calculo / 12
-        consumida_gramos = consumida * obj.calorias
-        calorias_mes = float(consumida_gramos) / numero_total_habitante
-        calorias_dia = calorias_mes / 30
-        proteina = float(obj.proteinas*consumida)
-        if calorias_dia > 0:
-            calorias_tradicional[obj] = (consumida, obj.get_unidad_medida_display(),consumida_gramos,obj.calorias, obj.proteinas,calorias_dia,proteina)
+        try:
+            consumida_gramos = consumida * obj.calorias
+            calorias_mes = float(consumida_gramos) / numero_total_habitante
+            calorias_dia = calorias_mes / 30
+            proteina = float(obj.proteinas*consumida)
+            if calorias_dia > 0:
+                calorias_tradicional[obj] = (consumida, obj.get_unidad_medida_display(),consumida_gramos,obj.calorias, obj.proteinas,calorias_dia,proteina)
+        except:
+            pass
     total_calorias_tradicional = sum(list([ i[5] for i in calorias_tradicional.values()]))
     total_proteina_tradicional = sum(list([ i[6] for i in calorias_tradicional.values()]))
 
@@ -1494,12 +1501,15 @@ def envio_calorias(request):
     for obj in CultivosHuertos.objects.all():
         calculo = filtro.filter(cultivoshuertosfamiliares__cultivo=obj).aggregate(t=Coalesce(Sum('cultivoshuertosfamiliares__consumo_familia'), V(0)))['t']
         consumida = calculo / 12
-        consumida_gramos = consumida * obj.calorias
-        calorias_mes = float(consumida_gramos) / numero_total_habitante
-        calorias_dia = calorias_mes / 30
-        gramo_dia = float(obj.proteinas*consumida)
-        if calorias_dia > 0:
-            calorias_huerto[obj] = (consumida, obj.get_unidad_medida_display(),consumida_gramos,obj.calorias, obj.proteinas,calorias_dia,gramo_dia)
+        try:
+            consumida_gramos = consumida * obj.calorias
+            calorias_mes = float(consumida_gramos) / numero_total_habitante
+            calorias_dia = calorias_mes / 30
+            gramo_dia = float(obj.proteinas*consumida)
+            if calorias_dia > 0:
+                calorias_huerto[obj] = (consumida, obj.get_unidad_medida_display(),consumida_gramos,obj.calorias, obj.proteinas,calorias_dia,gramo_dia)
+        except:
+            pass
 
     total_calorias_huerto = sum(list([ i[5] for i in calorias_huerto.values()]))
     total_proteina_huerto = sum(list([ i[6] for i in calorias_huerto.values()]))
@@ -1508,12 +1518,15 @@ def envio_calorias(request):
     for obj in CultivosFrutas.objects.all():
         calculo = filtro.filter(cultivosfrutasfinca__cultivo=obj).aggregate(t=Coalesce(Sum('cultivosfrutasfinca__consumo_familia'), V(0)))['t']
         consumida = calculo / 12
-        consumida_gramos = consumida * obj.calorias
-        calorias_mes = float(consumida_gramos) / numero_total_habitante
-        calorias_dia = float(calorias_mes) / 30
-        gramo_dia = float(obj.proteinas*consumida)
-        if calorias_dia > 0:
-            calorias_fruta[obj] = (consumida, obj.get_unidad_medida_display(),consumida_gramos,obj.calorias, obj.proteinas,calorias_dia,gramo_dia)
+        try:
+            consumida_gramos = consumida * obj.calorias
+            calorias_mes = float(consumida_gramos) / numero_total_habitante
+            calorias_dia = float(calorias_mes) / 30
+            gramo_dia = float(obj.proteinas*consumida)
+            if calorias_dia > 0:
+                calorias_fruta[obj] = (consumida, obj.get_unidad_medida_display(),consumida_gramos,obj.calorias, obj.proteinas,calorias_dia,gramo_dia)
+        except:
+            pass
     total_calorias_fruta = sum(list([ i[5] for i in calorias_fruta.values()]))
     total_proteina_fruta = sum(list([ i[6] for i in calorias_fruta.values()]))
 
@@ -1521,13 +1534,15 @@ def envio_calorias(request):
     for obj in ProductoProcesado.objects.all():
         calculo = filtro.filter(procesamiento__producto=obj).aggregate(t=Coalesce(Sum('procesamiento__cantidad'), V(0)))['t']
         consumida = calculo / 12
-        consumida_gramos = consumida * obj.calorias
-        calorias_mes = float(consumida_gramos) / numero_total_habitante
-        calorias_dia = float(calorias_mes) / 30
-        gramo_dia = float(obj.proteinas)
-        if calorias_dia > 0:
-            calorias_procesado[obj] = (consumida, obj.get_unidad_medida_display(),consumida_gramos,obj.calorias, obj.proteinas,calorias_dia,gramo_dia)
-
+        try:
+            consumida_gramos = consumida * obj.calorias
+            calorias_mes = float(consumida_gramos) / numero_total_habitante
+            calorias_dia = float(calorias_mes) / 30
+            gramo_dia = float(obj.proteinas)
+            if calorias_dia > 0:
+                calorias_procesado[obj] = (consumida, obj.get_unidad_medida_display(),consumida_gramos,obj.calorias, obj.proteinas,calorias_dia,gramo_dia)
+        except:
+            pass
     total_calorias_procesado = sum(list([ i[5] for i in calorias_procesado.values()]))
     total_proteina_procesado = sum(list([ i[6] for i in calorias_procesado.values()]))
 
@@ -1535,25 +1550,32 @@ def envio_calorias(request):
     for obj in ProductosFueraFinca.objects.all():
         calculo = filtro.filter(alimentosfuerafinca__producto=obj).aggregate(t=Coalesce(Sum('alimentosfuerafinca__cantidad'), V(0)))['t']
         consumida = calculo / 12
-        consumida_gramos = consumida * obj.calorias
-        calorias_mes = float(consumida_gramos) / numero_total_habitante
-        calorias_dia = float(calorias_mes) / 30
-        gramo_dia = float(obj.proteinas)
-        if calorias_dia > 0:
-            calorias_fuera_finca[obj] = (consumida, obj.unidad_medida,consumida_gramos,obj.calorias, obj.proteinas,calorias_dia,gramo_dia)
-
+        try:
+            consumida_gramos = consumida * obj.calorias
+            calorias_mes = float(consumida_gramos) / numero_total_habitante
+            calorias_dia = float(calorias_mes) / 30
+            gramo_dia = float(obj.proteinas)
+            if calorias_dia > 0:
+                calorias_fuera_finca[obj] = (consumida, obj.unidad_medida,consumida_gramos,obj.calorias, obj.proteinas,calorias_dia,gramo_dia)
+        except:
+            pass
     total_calorias_fuera_finca = sum(list([ i[5] for i in calorias_fuera_finca.values()]))
     total_proteina_fuera_finca = sum(list([ i[6] for i in calorias_fuera_finca.values()]))
 
-    datos = {'Kcal Cultivos Tradicional':total_calorias_tradicional,
-            'Kcal Huertos de patio':total_calorias_huerto,
-            'Kcal Frutas':total_calorias_fruta,
-            'Kcal Productos procesados':total_calorias_procesado,
-            'Kcal Productos comprados': total_calorias_fuera_finca}
+    # datos = {'Kcal Cultivos Tradicional':total_calorias_tradicional,
+    #         'Kcal Huertos de patio':total_calorias_huerto,
+    #         'Kcal Frutas':total_calorias_fruta,
+    #         'Kcal Productos procesados':total_calorias_procesado,
+    #         'Kcal Productos comprados': total_calorias_fuera_finca}
+    datos = [total_calorias_tradicional,
+             total_calorias_huerto,
+             total_calorias_fruta,
+             total_calorias_procesado,
+             total_calorias_fuera_finca]
     return datos
 
-def envio_calorias_pais(request):
-    filtro = Encuesta.objects.filter(entrevistado__pais=request.session['pais'])
+def envio_calorias_pais(request, anio):
+    filtro = Encuesta.objects.filter(year=anio,entrevistado__pais=request.session['pais'])
     numero_total_habitante = filtro.aggregate(t=Sum('sexomiembros__cantidad'))['t']
 
     calorias_tradicional = {}
