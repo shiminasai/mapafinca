@@ -195,6 +195,8 @@ def principal_dashboard(request, template='dashboard.html', departamento_id=None
     tiempo_ingresos = {}
     tiempo_kcalorias = {}
     tiempo_gastos_alimentarios = {}
+    gastos_alimentarios = {}
+    tiempo_clima = {}
     for anio in muchos_tiempo:
         # grafico de patron de gastos
         gasto_finca_verano=0
@@ -274,24 +276,34 @@ def principal_dashboard(request, template='dashboard.html', departamento_id=None
         
         for obj in ProductosFueraFinca.objects.all():
             try:
-                cada_uno = float(filtro.filter(year=anio[0],alimentosfuerafinca__producto=obj).aggregate(t=Avg('alimentosfuerafinca__total'))['t'] / 12) / float(dividir_todo)
+                cada_uno_verano = float(filtro.filter(year=anio[0],estacion=1,alimentosfuerafinca__producto=obj).aggregate(t=Avg('alimentosfuerafinca__total'))['t'] / 12) / float(dividir_todo)
             except:
-                cada_uno = 0
-            if cada_uno == None:
-                cada_uno = 0
-            tiempo_gastos_alimentarios[anio[1]] = { obj.nombre: cada_uno}
-    #grafico sobre clima
-    lista_precipitacion = []
-    lista_temperatura = []
-    for mes in CHOICES_MESES:
-        precipitacion = Precipitacion.objects.filter(departamento__in=departamento_id,mes=mes[0]).aggregate(p=Avg('precipitacion'))['p']
-        temperatura = Temperatura.objects.filter(departamento__in=departamento_id,mes=mes[0]).aggregate(p=Avg('temperatura'))['p']
-        if precipitacion == None:
-            precipitacion = 0
-        lista_precipitacion.append(precipitacion)
-        if temperatura == None:
-            temperatura = 0
-        lista_temperatura.append(temperatura)
+                cada_uno_verano = 0
+            if cada_uno_verano == None:
+                cada_uno_verano = 0
+            try:
+                cada_uno_invierno = float(filtro.filter(year=anio[0],estacion=2,alimentosfuerafinca__producto=obj).aggregate(t=Avg('alimentosfuerafinca__total'))['t'] / 12) / float(dividir_todo)
+            except:
+                cada_uno_invierno = 0
+            if cada_uno_invierno == None:
+                cada_uno_invierno = 0
+            gastos_alimentarios[obj] = (cada_uno_verano,cada_uno_invierno)
+        tiempo_gastos_alimentarios[anio[1]] = gastos_alimentarios
+    
+
+        #grafico sobre clima
+        lista_precipitacion = []
+        lista_temperatura = []
+        for mes in CHOICES_MESES:
+            precipitacion = Precipitacion.objects.filter(year=anio[0],departamento=departamento_id,mes=mes[0]).aggregate(p=Avg('precipitacion'))['p']
+            temperatura = Temperatura.objects.filter(year=anio[0],departamento=departamento_id,mes=mes[0]).aggregate(p=Avg('temperatura'))['p']
+            if precipitacion == None:
+                precipitacion = 0
+            lista_precipitacion.append(precipitacion)
+            if temperatura == None:
+                temperatura = 0
+            lista_temperatura.append(temperatura)
+        tiempo_clima[anio[1]] = (lista_precipitacion,lista_temperatura)
 
     # grafico  de tela de araña : capital natural
     capital_natural_mujer = filtro.filter(sexomiembros__sexo=1, dueno=1).count()
