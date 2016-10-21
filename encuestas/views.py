@@ -195,8 +195,8 @@ def principal_dashboard(request, template='dashboard.html', departamento_id=None
     tiempo_ingresos = {}
     tiempo_kcalorias = {}
     tiempo_gastos_alimentarios = {}
-    gastos_alimentarios = {}
     tiempo_clima = {}
+    tiempo_arana = {}
     for anio in muchos_tiempo:
         # grafico de patron de gastos
         gasto_finca_verano=0
@@ -273,7 +273,7 @@ def principal_dashboard(request, template='dashboard.html', departamento_id=None
 
     
         #grafico sobre gastos alimentarios
-        
+        tiempo_gastos_alimentarios[anio[1]] = {}
         for obj in ProductosFueraFinca.objects.all():
             try:
                 cada_uno_verano = float(filtro.filter(year=anio[0],estacion=1,alimentosfuerafinca__producto=obj).aggregate(t=Avg('alimentosfuerafinca__total'))['t'] / 12) / float(dividir_todo)
@@ -287,9 +287,7 @@ def principal_dashboard(request, template='dashboard.html', departamento_id=None
                 cada_uno_invierno = 0
             if cada_uno_invierno == None:
                 cada_uno_invierno = 0
-            gastos_alimentarios[obj] = (cada_uno_verano,cada_uno_invierno)
-        tiempo_gastos_alimentarios[anio[1]] = gastos_alimentarios
-    
+            tiempo_gastos_alimentarios[anio[1]][obj]  = (cada_uno_verano, cada_uno_invierno)
 
         #grafico sobre clima
         lista_precipitacion = []
@@ -305,30 +303,34 @@ def principal_dashboard(request, template='dashboard.html', departamento_id=None
             lista_temperatura.append(temperatura)
         tiempo_clima[anio[1]] = (lista_precipitacion,lista_temperatura)
 
-    # grafico  de tela de araña : capital natural
-    capital_natural_mujer = filtro.filter(sexomiembros__sexo=1, dueno=1).count()
-    capital_natural_hombre = filtro.filter(sexomiembros__sexo=2, dueno=1).count()
-    capital_natural_ambos = filtro.filter(sexomiembros__sexo=3, dueno=1).count()
-    #capital social
-    capital_social_mujer = filtro.filter(sexomiembros__sexo=1, organizacioncomunitaria__pertenece=1).count()
-    capital_social_hombre = filtro.filter(sexomiembros__sexo=2, organizacioncomunitaria__pertenece=1).count()
-    capital_social_ambos = filtro.filter(sexomiembros__sexo=3, organizacioncomunitaria__pertenece=1).count()
-    #capital financiero
-    capital_financiero_mujer = filtro.filter(sexomiembros__sexo=1, totalingreso__total__gt=1).count()
-    capital_financiero_hombre = filtro.filter(sexomiembros__sexo=2, totalingreso__total__gt=1).count()
-    capital_financiero_ambos = filtro.filter(sexomiembros__sexo=3, totalingreso__total__gt=1).count()
-    #capital fisico
-    capital_fisico_mujer = filtro.filter(Q(sexomiembros__sexo=1), Q(totalingreso__total__gt=1) |  Q(tipoenergia__tipo=4)).count()
-    capital_fisico_hombre = filtro.filter(Q(sexomiembros__sexo=2), Q(totalingreso__total__gt=1) |  Q(tipoenergia__tipo=4)).count()
-    capital_fisico_ambos = filtro.filter(Q(sexomiembros__sexo=3), Q(totalingreso__total__gt=1) |  Q(tipoenergia__tipo=4)).count()
-    #capital humano
-    capital_humano_mujer = filtro.filter(Q(sexomiembros__sexo=1),
-                                        Q(escolaridad__pri_completa__gt=1) |  Q(escolaridad__secu_incompleta__gt=1) | Q(escolaridad__bachiller__gt=1) |  Q(escolaridad__uni_tecnico__gt=1)).count()
-    capital_humano_hombre = filtro.filter(Q(sexomiembros__sexo=2),
-                                        Q(escolaridad__pri_completa__gt=1) |  Q(escolaridad__secu_incompleta__gt=1) | Q(escolaridad__bachiller__gt=1) |  Q(escolaridad__uni_tecnico__gt=1)).count()
-    capital_humano_ambos = filtro.filter(Q(sexomiembros__sexo=3),
-                                        Q(escolaridad__pri_completa__gt=1) |  Q(escolaridad__secu_incompleta__gt=1) | Q(escolaridad__bachiller__gt=1) |  Q(escolaridad__uni_tecnico__gt=1)).count()
-
+        # grafico  de tela de araña : capital natural
+        capital_natural_mujer = filtro.filter(year=anio[0],sexomiembros__sexo=1, dueno=1).count()
+        capital_natural_hombre = filtro.filter(year=anio[0],sexomiembros__sexo=2, dueno=1).count()
+        capital_natural_ambos = filtro.filter(year=anio[0],sexomiembros__sexo=3, dueno=1).count()
+        #capital social
+        capital_social_mujer = filtro.filter(year=anio[0],sexomiembros__sexo=1, organizacioncomunitaria__pertenece=1).count()
+        capital_social_hombre = filtro.filter(year=anio[0],sexomiembros__sexo=2, organizacioncomunitaria__pertenece=1).count()
+        capital_social_ambos = filtro.filter(year=anio[0],sexomiembros__sexo=3, organizacioncomunitaria__pertenece=1).count()
+        #capital financiero
+        capital_financiero_mujer = filtro.filter(year=anio[0],sexomiembros__sexo=1, totalingreso__total__gt=1).count()
+        capital_financiero_hombre = filtro.filter(year=anio[0],sexomiembros__sexo=2, totalingreso__total__gt=1).count()
+        capital_financiero_ambos = filtro.filter(year=anio[0],sexomiembros__sexo=3, totalingreso__total__gt=1).count()
+        #capital fisico
+        capital_fisico_mujer = filtro.filter(Q(year=anio[0],sexomiembros__sexo=1), Q(year=anio[0],totalingreso__total__gt=1) |  Q(year=anio[0],tipoenergia__tipo=4)).count()
+        capital_fisico_hombre = filtro.filter(Q(year=anio[0],sexomiembros__sexo=2), Q(year=anio[0],totalingreso__total__gt=1) |  Q(year=anio[0],tipoenergia__tipo=4)).count()
+        capital_fisico_ambos = filtro.filter(Q(year=anio[0],sexomiembros__sexo=3), Q(year=anio[0],totalingreso__total__gt=1) |  Q(year=anio[0],tipoenergia__tipo=4)).count()
+        #capital humano
+        capital_humano_mujer = filtro.filter(Q(year=anio[0],sexomiembros__sexo=1),
+                                            Q(year=anio[0],escolaridad__pri_completa__gt=1) |  Q(year=anio[0],escolaridad__secu_incompleta__gt=1) | Q(year=anio[0],escolaridad__bachiller__gt=1) |  Q(year=anio[0],escolaridad__uni_tecnico__gt=1)).count()
+        capital_humano_hombre = filtro.filter(Q(year=anio[0],sexomiembros__sexo=2),
+                                            Q(year=anio[0],escolaridad__pri_completa__gt=1) |  Q(year=anio[0],escolaridad__secu_incompleta__gt=1) | Q(year=anio[0],escolaridad__bachiller__gt=1) |  Q(year=anio[0],escolaridad__uni_tecnico__gt=1)).count()
+        capital_humano_ambos = filtro.filter(Q(year=anio[0],sexomiembros__sexo=3),
+                                        Q(year=anio[0],escolaridad__pri_completa__gt=1) |  Q(year=anio[0],escolaridad__secu_incompleta__gt=1) | Q(year=anio[0],escolaridad__bachiller__gt=1) |  Q(year=anio[0],escolaridad__uni_tecnico__gt=1)).count()
+        tiempo_arana[anio[1]] = (   capital_natural_hombre, capital_natural_mujer, capital_natural_ambos,
+                                    capital_social_hombre, capital_social_mujer, capital_social_ambos,
+                                    capital_financiero_hombre, capital_financiero_mujer, capital_financiero_ambos,
+                                    capital_fisico_hombre, capital_fisico_mujer, capital_fisico_ambos,
+                                    capital_humano_hombre, capital_humano_mujer, capital_humano_ambos)
 
     #Calculo de los rendimientos o productividad del maiz y frijol primera
 
@@ -1586,8 +1588,8 @@ def envio_calorias(request, anio, tiempo):
              total_calorias_fuera_finca]
     return datos
 
-def envio_calorias_pais(request, anio):
-    filtro = Encuesta.objects.filter(year=anio,entrevistado__pais=request.session['pais'])
+def envio_calorias_pais(request):
+    filtro = Encuesta.objects.filter(entrevistado__pais=request.session['pais'])
     numero_total_habitante = filtro.aggregate(t=Sum('sexomiembros__cantidad'))['t']
 
     calorias_tradicional = {}
