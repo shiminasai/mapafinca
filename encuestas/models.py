@@ -34,7 +34,7 @@ CHOICE_DUENO_NO = (
                 (1, 'Arrendada'),
                 (2, 'Promesa de venta'),
                 (3, 'Prestada'),
-                (4, 'Tierra Indígena'),
+                (4, 'Tierra Indígena/Comunal'),
                 (5, 'Sin escritura'),
                 (6, 'Colectivo/Cooperativa'),
               )
@@ -106,7 +106,7 @@ class OrganizacionResp(models.Model):
 
 class Entrevistados(models.Model):
     nombre = models.CharField('Nombre Completo', max_length=250)
-    cedula = models.CharField('No. Cédula', max_length=50, null=True, blank=True)
+    cedula = models.CharField('No. Cédula/DPI', max_length=50, null=True, blank=True)
     ocupacion = models.CharField('Ocupación', max_length=150)
     sexo = models.IntegerField(choices=CHOICE_SEXO)
     jefe = models.IntegerField(choices=CHOICE_JEFE, verbose_name='Jefe del hogar')
@@ -460,7 +460,7 @@ class OrganizacionFinca(models.Model):
 
 CHOICE_TIERRA = (
         (1,'Bosque'),
-        (2,'Tacotal'),
+        (2,'Tacotal/Guamil/Machorra/Llano'),
         (3,'Cultivo anual'),
         (4,'Plantación forestal'),
         (5,'Potrero'),
@@ -956,6 +956,8 @@ CHOICE_FENOMENOS = (
 CHOICE_AGRICOLA = (
             ('A','Falta de semilla'),
             ('B','Mala calidad de la semilla'),
+            ('C','Falta de riego'),
+            ('D','Poca Tierra'),
         )
 CHOICE_MERCADO = (
             ('A','Bajo precio'),
