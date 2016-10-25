@@ -21,7 +21,7 @@ INSTALLED_APPS = (
     'selectable',
     'sorl.thumbnail',
     'endless_pagination',
-    'debug_toolbar',
+    #'debug_toolbar',
     'import_export',
 )
 
@@ -30,7 +30,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     #borrar una ves usado
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    #'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -40,8 +40,8 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'mapafinca.urls'
 
-SHOW_TOOLBAR_CALLBACK = True
-INTERNAL_IPS = '127.0.0.1'
+#SHOW_TOOLBAR_CALLBACK = True
+#INTERNAL_IPS = '127.0.0.1'
 
 
 TEMPLATES = [
