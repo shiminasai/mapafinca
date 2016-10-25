@@ -107,7 +107,7 @@ if (n<12) {
 		            </figure>
 
 	            {% endthumbnail %}
-	            <div class="g-datos">
+	            	<div class="g-datos">
 		            	<span>
 		            		{{obj.fecha|date:"d M Y"}}
 		            		
@@ -131,6 +131,15 @@ if (n<12) {
 		                <i class="fa fa-search"></i>
 		  				<a href="#"></a>
 		            </figure>
+		            <div class="g-datos">
+		            	<span>
+		            		{{obj.fecha|date:"d M Y"}}
+		            		
+		            	</span>
+		            	<span class="g-pais">
+		            		{{obj.entrevistado.pais}}
+		            	</span>
+		            </div>
 	          
 	      
 	  		</div>
