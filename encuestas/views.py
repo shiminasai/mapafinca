@@ -381,7 +381,8 @@ def principal_dashboard_pais(request, template='dashboard_pais.html', pais=None,
     
     paisid = Pais.objects.get(slug = pais)
     request.session["pais"] = paisid
-    ahora = Encuesta.objects.filter(entrevistado__pais_id=paisid).distinct('entrevistado__id')
+    filtro = Encuesta.objects.filter(entrevistado__pais_id=paisid)
+    ahora = filtro.distinct('entrevistado__id')
     dividir_todo = len(ahora)
 
     request.session['departamento'] = None
@@ -397,99 +398,142 @@ def principal_dashboard_pais(request, template='dashboard_pais.html', pais=None,
         years.append((en,en))
     muchos_tiempo = list(sorted(set(years)))
 
-    # grafico de patron de gastos
-    try:
-        gasto_finca = float(Encuesta.objects.filter(entrevistado__pais__slug=pais,gastohogar__tipo=5).aggregate(t=Sum('gastohogar__total'))['t'] / 12) / float(dividir_todo)
-    except:
-        pass
-    try:
-        gasto_fuera_finca = float(Encuesta.objects.filter(entrevistado__pais__slug=pais).aggregate(t=Sum('gastoproduccion__total'))['t'] / 12) / float(dividir_todo)
-    except:
-        pass
-    # grafico de ingresos
-    try:
-        tradicional = float(Encuesta.objects.filter(entrevistado__pais__slug=pais).aggregate(t=Sum('cultivostradicionales__total'))['t'] / 12) / float(dividir_todo)
-    except:
-        pass
-
-    try:
-        huertos = float(Encuesta.objects.filter(entrevistado__pais__slug=pais).aggregate(t=Sum('cultivoshuertosfamiliares__total'))['t'] / 12) / float(dividir_todo)
-    except:
-        pass
-
-    try:
-        frutas = float(Encuesta.objects.filter(entrevistado__pais__slug=pais).aggregate(t=Sum('cultivosfrutasfinca__total'))['t'] / 12 ) / float(dividir_todo)
-    except:
-        pass
-
-    try:
-        fuente = float(Encuesta.objects.filter(entrevistado__pais__slug=pais).aggregate(t=Sum('fuentes__total'))['t'] / 12) / float(dividir_todo)
-    except:
-        pass
-
-    try:
-        ganado = float(Encuesta.objects.filter(entrevistado__pais__slug=pais).aggregate(t=Sum('ganaderia__total'))['t'] / 12) / float(dividir_todo)
-    except:
-        pass
-
-    try:
-        procesamiento = float(Encuesta.objects.filter(entrevistado__pais__slug=pais).aggregate(t=Sum('procesamiento__total'))['t'] / 12) / float(dividir_todo)
-    except:
-        pass
-
-    #grafico de kcalorias aun esta en proceso
-
-    #grafico sobre gastos alimentarios
-    gastos_alimentarios = {}
-    for obj in ProductosFueraFinca.objects.all():
+    tiempo_patron_gasto = {}
+    tiempo_ingresos = {}
+    tiempo_kcalorias = {}
+    tiempo_gastos_alimentarios = {}
+    tiempo_clima = {}
+    tiempo_arana = {}
+    tiempo_rendimiento = {}
+    for anio in muchos_tiempo:
+        # grafico de patron de gastos
+        gasto_finca_verano=0
+        gasto_finca_invierno=0
+        gasto_fuera_finca_verano=0
+        gasto_fuera_finca_invierno=0
         try:
-            cada_uno = float(Encuesta.objects.filter(entrevistado__pais__slug=pais, alimentosfuerafinca__producto=obj).aggregate(t=Avg('alimentosfuerafinca__total'))['t'] / 12) / float(dividir_todo)
+            gasto_finca_verano = float(filtro.objects.filter(year=anio[0],estacion=1,entrevistado__pais__slug=pais,gastohogar__tipo=5).aggregate(t=Sum('gastohogar__total'))['t'] / 12) / float(dividir_todo)
+            gasto_finca_invierno = float(filtro.objects.filter(year=anio[0],estacion=2,entrevistado__pais__slug=pais,gastohogar__tipo=5).aggregate(t=Sum('gastohogar__total'))['t'] / 12) / float(dividir_todo)
         except:
             pass
-        if cada_uno == None:
-            cada_uno = 0
-        gastos_alimentarios[obj] = cada_uno
+        try:
+            gasto_fuera_finca_verano = float(filtro.objects.filter(year=anio[0],estacion=1,entrevistado__pais__slug=pais).aggregate(t=Sum('gastoproduccion__total'))['t'] / 12) / float(dividir_todo)
+            gasto_fuera_finca_invierno = float(filtro.objects.filter(year=anio[0],estacion=2,entrevistado__pais__slug=pais).aggregate(t=Sum('gastoproduccion__total'))['t'] / 12) / float(dividir_todo)
+        except:
+            pass
+        # grafico de ingresos
+        tradicional_verano = 0
+        tradicional_invierno = 0
+        huertos_verano = 0
+        huertos_invierno = 0
+        frutas_verano = 0
+        frutas_invierno = 0
+        fuente_verano = 0
+        fuente_invierno = 0
+        ganado_verano = 0
+        ganado_invierno = 0
+        procesamiento_verano = 0
+        procesamiento_invierno = 0
+        try:
+            tradicional_verano = float(filtro.objects.filter(year=anio[0],estacion=1,entrevistado__pais__slug=pais).aggregate(t=Sum('cultivostradicionales__total'))['t'] / 12) / float(dividir_todo)
+            tradicional_invierno = float(filtro.objects.filter(year=anio[0],estacion=2,entrevistado__pais__slug=pais).aggregate(t=Sum('cultivostradicionales__total'))['t'] / 12) / float(dividir_todo)
+        except:
+            pass
 
-    #grafico sobre clima
-    lista_precipitacion = []
-    lista_temperatura = []
-    for mes in CHOICES_MESES:
-        precipitacion = Precipitacion.objects.filter(pais__slug=pais,mes=mes[0]).aggregate(p=Avg('precipitacion'))['p']
-        temperatura = Temperatura.objects.filter(pais__slug=pais,mes=mes[0]).aggregate(p=Avg('temperatura'))['p']
-        if precipitacion == None:
-            precipitacion = 0
-        lista_precipitacion.append(precipitacion)
-        if temperatura == None:
-            temperatura = 0
-        lista_temperatura.append(temperatura)
+        try:
+            huertos_verano = float(filtro.objects.filter(year=anio[0],estacion=1,entrevistado__pais__slug=pais).aggregate(t=Sum('cultivoshuertosfamiliares__total'))['t'] / 12) / float(dividir_todo)
+            huertos_invierno = float(filtro.objects.filter(year=anio[0],estacion=2,entrevistado__pais__slug=pais).aggregate(t=Sum('cultivoshuertosfamiliares__total'))['t'] / 12) / float(dividir_todo)
+        except:
+            pass
 
-    # grafico  de tela de araña : capital natural
-    capital_natural_mujer = Encuesta.objects.filter(entrevistado__pais__slug=pais, sexomiembros__sexo=1, dueno=1).count()
-    capital_natural_hombre = Encuesta.objects.filter(entrevistado__pais__slug=pais, sexomiembros__sexo=2, dueno=1).count()
-    capital_natural_ambos = Encuesta.objects.filter(entrevistado__pais__slug=pais, sexomiembros__sexo=3, dueno=1).count()
-    #capital social
-    capital_social_mujer = Encuesta.objects.filter(entrevistado__pais__slug=pais, sexomiembros__sexo=1, organizacioncomunitaria__pertenece=1).count()
-    capital_social_hombre = Encuesta.objects.filter(entrevistado__pais__slug=pais, sexomiembros__sexo=2, organizacioncomunitaria__pertenece=1).count()
-    capital_social_ambos = Encuesta.objects.filter(entrevistado__pais__slug=pais, sexomiembros__sexo=3, organizacioncomunitaria__pertenece=1).count()
-    #capital financiero
-    capital_financiero_mujer = Encuesta.objects.filter(entrevistado__pais__slug=pais, sexomiembros__sexo=1, totalingreso__total__gt=1).count()
-    capital_financiero_hombre = Encuesta.objects.filter(entrevistado__pais__slug=pais, sexomiembros__sexo=2, totalingreso__total__gt=1).count()
-    capital_financiero_ambos = Encuesta.objects.filter(entrevistado__pais__slug=pais, sexomiembros__sexo=3, totalingreso__total__gt=1).count()
-    #capital fisico
-    capital_fisico_mujer = Encuesta.objects.filter(Q(entrevistado__pais__slug=pais), Q(sexomiembros__sexo=1), Q(totalingreso__total__gt=1) |  Q(tipoenergia__tipo=4)).count()
-    capital_fisico_hombre = Encuesta.objects.filter(Q(entrevistado__pais__slug=pais), Q(sexomiembros__sexo=2), Q(totalingreso__total__gt=1) |  Q(tipoenergia__tipo=4)).count()
-    capital_fisico_ambos = Encuesta.objects.filter(Q(entrevistado__pais__slug=pais), Q(sexomiembros__sexo=3), Q(totalingreso__total__gt=1) |  Q(tipoenergia__tipo=4)).count()
-    #capital humano
-    capital_humano_mujer = Encuesta.objects.filter(Q(entrevistado__pais__slug=pais), Q(sexomiembros__sexo=1),
-                                                                                    Q(escolaridad__pri_completa__gt=1) |  Q(escolaridad__secu_incompleta__gt=1) | Q(escolaridad__bachiller__gt=1) |  Q(escolaridad__uni_tecnico__gt=1)).count()
-    capital_humano_hombre = Encuesta.objects.filter(Q(entrevistado__pais__slug=pais), Q(sexomiembros__sexo=2),
-                                                                                    Q(escolaridad__pri_completa__gt=1) |  Q(escolaridad__secu_incompleta__gt=1) | Q(escolaridad__bachiller__gt=1) |  Q(escolaridad__uni_tecnico__gt=1)).count()
-    capital_humano_ambos = Encuesta.objects.filter(Q(entrevistado__pais__slug=pais), Q(sexomiembros__sexo=3),
-                                                                                    Q(escolaridad__pri_completa__gt=1) |  Q(escolaridad__secu_incompleta__gt=1) | Q(escolaridad__bachiller__gt=1) |  Q(escolaridad__uni_tecnico__gt=1)).count()
+        try:
+            frutas_verano = float(filtro.objects.filter(year=anio[0],estacion=1,entrevistado__pais__slug=pais).aggregate(t=Sum('cultivosfrutasfinca__total'))['t'] / 12 ) / float(dividir_todo)
+            frutas_invierno = float(filtro.objects.filter(year=anio[0],estacion=2,entrevistado__pais__slug=pais).aggregate(t=Sum('cultivosfrutasfinca__total'))['t'] / 12 ) / float(dividir_todo)
+        except:
+            pass
+
+        try:
+            fuente_verano = float(filtro.objects.filter(year=anio[0],estacion=1,entrevistado__pais__slug=pais).aggregate(t=Sum('fuentes__total'))['t'] / 12) / float(dividir_todo)
+            fuente_invierno = float(filtro.objects.filter(year=anio[0],estacion=2,entrevistado__pais__slug=pais).aggregate(t=Sum('fuentes__total'))['t'] / 12) / float(dividir_todo)
+        except:
+            pass
+
+        try:
+            ganado_verano = float(filtro.objects.filter(year=anio[0],estacion=1,entrevistado__pais__slug=pais).aggregate(t=Sum('ganaderia__total'))['t'] / 12) / float(dividir_todo)
+            ganado_invierno = float(filtro.objects.filter(year=anio[0],estacion=2,entrevistado__pais__slug=pais).aggregate(t=Sum('ganaderia__total'))['t'] / 12) / float(dividir_todo)
+        except:
+            pass
+
+        try:
+            procesamiento_verano = float(filtro.objects.filter(year=anio[0],estacion=1,entrevistado__pais__slug=pais).aggregate(t=Sum('procesamiento__total'))['t'] / 12) / float(dividir_todo)
+            procesamiento_verano = float(filtro.objects.filter(year=anio[0],estacion=2,entrevistado__pais__slug=pais).aggregate(t=Sum('procesamiento__total'))['t'] / 12) / float(dividir_todo)
+        except:
+            pass
+
+        #grafico sobre gastos alimentarios
+        tiempo_gastos_alimentarios[anio[1]] = {}
+        for obj in ProductosFueraFinca.objects.all():
+            try:
+                cada_uno_verano = float(filtro.filter(year=anio[0],entrevistado__pais__slug=pais,estacion=1,alimentosfuerafinca__producto=obj).aggregate(t=Avg('alimentosfuerafinca__total'))['t'] / 12) / float(dividir_todo)
+            except:
+                cada_uno_verano = 0
+            if cada_uno_verano == None:
+                cada_uno_verano = 0
+            try:
+                cada_uno_invierno = float(filtro.filter(year=anio[0],estacion=2,alimentosfuerafinca__producto=obj).aggregate(t=Avg('alimentosfuerafinca__total'))['t'] / 12) / float(dividir_todo)
+            except:
+                cada_uno_invierno = 0
+            if cada_uno_invierno == None:
+                cada_uno_invierno = 0
+            tiempo_gastos_alimentarios[anio[1]][obj]  = (cada_uno_verano, cada_uno_invierno)
+
+        #grafico sobre clima
+        lista_precipitacion = []
+        lista_temperatura = []
+        for mes in CHOICES_MESES:
+            precipitacion = Precipitacion.objects.filter(pais__slug=pais,year=anio[0],mes=mes[0]).aggregate(p=Avg('precipitacion'))['p']
+            temperatura = Temperatura.objects.filter(pais__slug=pais,year=anio[0],mes=mes[0]).aggregate(p=Avg('temperatura'))['p']
+            if precipitacion == None:
+                precipitacion = 0
+            lista_precipitacion.append(precipitacion)
+            if temperatura == None:
+                temperatura = 0
+            lista_temperatura.append(temperatura)
+        tiempo_clima[anio[1]] = (lista_precipitacion,lista_temperatura)
+
+        # grafico  de tela de araña : capital natural
+        capital_natural_mujer = filtro.filter(year=anio[0],sexomiembros__sexo=1, dueno=1).count()
+        capital_natural_hombre = filtro.filter(year=anio[0],sexomiembros__sexo=2, dueno=1).count()
+        capital_natural_ambos = filtro.filter(year=anio[0],sexomiembros__sexo=3, dueno=1).count()
+        #capital social
+        capital_social_mujer = filtro.filter(year=anio[0],sexomiembros__sexo=1, organizacioncomunitaria__pertenece=1).count()
+        capital_social_hombre = filtro.filter(year=anio[0],sexomiembros__sexo=2, organizacioncomunitaria__pertenece=1).count()
+        capital_social_ambos = filtro.filter(year=anio[0],sexomiembros__sexo=3, organizacioncomunitaria__pertenece=1).count()
+        #capital financiero
+        capital_financiero_mujer = filtro.filter(year=anio[0],sexomiembros__sexo=1, totalingreso__total__gt=1).count()
+        capital_financiero_hombre = filtro.filter(year=anio[0],sexomiembros__sexo=2, totalingreso__total__gt=1).count()
+        capital_financiero_ambos = filtro.filter(year=anio[0],sexomiembros__sexo=3, totalingreso__total__gt=1).count()
+        #capital fisico
+        capital_fisico_mujer = filtro.filter(Q(year=anio[0],sexomiembros__sexo=1), Q(year=anio[0],totalingreso__total__gt=1) |  Q(year=anio[0],tipoenergia__tipo=4)).count()
+        capital_fisico_hombre = filtro.filter(Q(year=anio[0],sexomiembros__sexo=2), Q(year=anio[0],totalingreso__total__gt=1) |  Q(year=anio[0],tipoenergia__tipo=4)).count()
+        capital_fisico_ambos = filtro.filter(Q(year=anio[0],sexomiembros__sexo=3), Q(year=anio[0],totalingreso__total__gt=1) |  Q(year=anio[0],tipoenergia__tipo=4)).count()
+        #capital humano
+        capital_humano_mujer = filtro.filter(Q(year=anio[0],sexomiembros__sexo=1),
+                                            Q(year=anio[0],escolaridad__pri_completa__gt=1) |  Q(year=anio[0],escolaridad__secu_incompleta__gt=1) | Q(year=anio[0],escolaridad__bachiller__gt=1) |  Q(year=anio[0],escolaridad__uni_tecnico__gt=1)).count()
+        capital_humano_hombre = filtro.filter(Q(year=anio[0],sexomiembros__sexo=2),
+                                            Q(year=anio[0],escolaridad__pri_completa__gt=1) |  Q(year=anio[0],escolaridad__secu_incompleta__gt=1) | Q(year=anio[0],escolaridad__bachiller__gt=1) |  Q(year=anio[0],escolaridad__uni_tecnico__gt=1)).count()
+        capital_humano_ambos = filtro.filter(Q(year=anio[0],sexomiembros__sexo=3),
+                                        Q(year=anio[0],escolaridad__pri_completa__gt=1) |  Q(year=anio[0],escolaridad__secu_incompleta__gt=1) | Q(year=anio[0],escolaridad__bachiller__gt=1) |  Q(year=anio[0],escolaridad__uni_tecnico__gt=1)).count()
+        tiempo_arana[anio[1]] = (   capital_natural_hombre, capital_natural_mujer, capital_natural_ambos,
+                                    capital_social_hombre, capital_social_mujer, capital_social_ambos,
+                                    capital_financiero_hombre, capital_financiero_mujer, capital_financiero_ambos,
+                                    capital_fisico_hombre, capital_fisico_mujer, capital_fisico_ambos,
+                                    capital_humano_hombre, capital_humano_mujer, capital_humano_ambos)
+
+        #Calculo de los rendimientos o productividad del maiz y frijol primera                                 Q(escolaridad__pri_completa__gt=1) |  Q(escolaridad__secu_incompleta__gt=1) | Q(escolaridad__bachiller__gt=1) |  Q(escolaridad__uni_tecnico__gt=1)).count()
     kcalorias = envio_calorias_pais(request)
 
     #Calculo de los rendimientos o productividad del maiz y frijol primera
-    filtro = Encuesta.objects.filter(entrevistado__pais__slug=pais)
 
     total_area_cosechada_maiz = filtro.filter(cultivostradicionales__cultivo=3,
                                 cultivostradicionales__periodo=1).aggregate(t=Sum('cultivostradicionales__area_cosechada'))['t']
