@@ -18,6 +18,9 @@ def _queryset_filtrado(request):
 
     #if request.session['fecha']:
     #    params['year__in'] = request.session['fecha']
+    if 'estacion' in request.session:
+        params['estacion'] = request.session['estacion']
+
     if 'pais' in request.session:
         params['entrevistado__pais'] = request.session['pais']
 
@@ -720,11 +723,12 @@ def indicadores(request, template='indicadores.html'):
 
 
 def indicadores1(request, template='indicadores1.html'):
-    familias = Entrevistados.objects.count()
+    request.session['encuestados'] = 0
     if request.method == 'POST':
         mensaje = None
         form = ConsultarForm(request.POST)
         if form.is_valid():
+            request.session['estacion'] = form.cleaned_data['estacion']
             request.session['pais'] = form.cleaned_data['pais']
             request.session['departamento'] = form.cleaned_data['departamento']
             request.session['organizacion'] = form.cleaned_data['organizacion']
@@ -734,6 +738,7 @@ def indicadores1(request, template='indicadores1.html'):
             mensaje = "Todas las variables estan correctamente :)"
             request.session['activo'] = True
             centinela = 1
+            request.session['encuestados'] = len(_queryset_filtrado(request))
 
             #return HttpResponseRedirect('/indicadores1/')
 
@@ -748,6 +753,7 @@ def indicadores1(request, template='indicadores1.html'):
         #filtro = _queryset_filtrado(request)
         if 'pais' in request.session:
             try:
+                del request.session['estacion']
                 del request.session['pais']
                 del request.session['departamento']
                 del request.session['organizacion']
@@ -771,7 +777,7 @@ def sexo_duenos(request, template="indicadores/sexo_duenos.html"):
 
     dicc_sexo_dueno = OrderedDict()
     for year in years:
-
+        filtro1 = filtro.filter(year=year[0]).count()
         si_dueno = filtro.filter(year=year[0], dueno=1).count()
         no_dueno = filtro.filter(year=year[0], dueno=2).count()
 
@@ -801,9 +807,10 @@ def sexo_duenos(request, template="indicadores/sexo_duenos.html"):
         detalle_edad = {}
         for obj in CHOICE_EDAD:
             conteos = filtro.filter(year=year[0], detallemiembros__edad=obj[0]).aggregate(t=Sum('detallemiembros__cantidad'))['t']
-            detalle_edad[obj[1]] = conteos
+            if conteos > 0:
+                detalle_edad[obj[1]] = conteos
 
-        dicc_sexo_dueno[year[1]] = (si_dueno,no_dueno,a_nombre,situacion,sexo_jefe_hogar,personas_habitan,detalle_edad,total_personas)
+        dicc_sexo_dueno[year[1]] = (si_dueno,no_dueno,a_nombre,situacion,sexo_jefe_hogar,personas_habitan,detalle_edad,total_personas,filtro1)
 
     return render(request, template, locals())
 
@@ -818,7 +825,7 @@ def escolaridad(request, template="indicadores/escolaridad.html"):
     dicc_escolaridad = OrderedDict()
     dicc_grafo_tipo_educacion = OrderedDict()
     for year in years:
-
+        filtro1 = filtro.filter(year=year[0]).count()
         cantidad_miembros_hombres = filtro.filter(year=year[0],
                                     entrevistado__departamento=request.session['departamento'],
                                     entrevistado__sexo=2,
@@ -901,7 +908,7 @@ def escolaridad(request, template="indicadores/escolaridad.html"):
                     saca_porcentajes(objeto['universitario'], objeto['num_total'], False),
                     ]
             tabla_educacion_mujer.append(fila)
-        dicc_escolaridad[year[1]] = (tabla_educacion_hombre,tabla_educacion_mujer)
+        dicc_escolaridad[year[1]] = (tabla_educacion_hombre,tabla_educacion_mujer,filtro1)
         dicc_grafo_tipo_educacion[year[1]] = (grafo_educacion_hombre, grafo_educacion_mujer, cantidad_miembros_hombres, cantidad_miembros_mujeres)
 
     return render(request, template, locals())
@@ -915,7 +922,7 @@ def energia(request, template="indicadores/energia.html"):
 
     dicc_energia = OrderedDict()
     for year in years:
-
+        filtro1 = filtro.filter(year=year[0]).count()
         grafo_tipo_energia = {}
         for obj in Energia.objects.all():
             valor = filtro.filter(year=year[0], tipoenergia__tipo=obj).count()
@@ -936,7 +943,7 @@ def energia(request, template="indicadores/energia.html"):
             valor = filtro.filter(year=year[0], tipococinas__cocina=obj).count()
             grafo_tipo_cocina[obj] =  valor
 
-        dicc_energia[year[1]] = (grafo_tipo_energia,grafo_panel_solar,grafo_fuente_energia,grafo_tipo_cocina)
+        dicc_energia[year[1]] = (grafo_tipo_energia,grafo_panel_solar,grafo_fuente_energia,grafo_tipo_cocina,filtro1)
 
     return render(request, template, locals())
 
@@ -949,7 +956,7 @@ def agua(request, template="indicadores/agua.html"):
 
     dicc_agua = OrderedDict()
     for year in years:
-
+        filtro1 = filtro.filter(year=year[0]).count()
         grafo_agua_consumo = {}
         for obj in AguaConsumo.objects.all():
             valor = filtro.filter(year=year[0], accesoagua__agua=obj).count()
@@ -980,7 +987,7 @@ def agua(request, template="indicadores/agua.html"):
             valor = filtro.filter(year=year[0], usosagua__uso=obj[0]).count()
             grafo_agua_usos[obj[1]] =  valor
 
-        dicc_agua[year[1]] = (grafo_agua_consumo,grafo_agua_disponibilidad,grafo_agua_calidad,grafo_agua_contaminada,grafo_agua_tratamiento,grafo_agua_usos)
+        dicc_agua[year[1]] = (grafo_agua_consumo,grafo_agua_disponibilidad,grafo_agua_calidad,grafo_agua_contaminada,grafo_agua_tratamiento,grafo_agua_usos,filtro1)
 
     return render(request, template, locals())
 
@@ -993,7 +1000,7 @@ def organizaciones(request, template="indicadores/organizaciones.html"):
 
     dicc_organizacion = OrderedDict()
     for year in years:
-
+        filtro1 = filtro.filter(year=year[0]).count()
         grafo_pertenece = {}
         for obj in CHOICE_JEFE:
             valor = filtro.filter(year=year[0], organizacioncomunitaria__pertenece=obj[0]).count()
@@ -1011,7 +1018,7 @@ def organizaciones(request, template="indicadores/organizaciones.html"):
             if valor > 0:
                 grafo_beneficios[obj] =  valor
 
-        dicc_organizacion[year[1]] = (grafo_pertenece,grafo_org_comunitarias, grafo_beneficios)
+        dicc_organizacion[year[1]] = (grafo_pertenece,grafo_org_comunitarias, grafo_beneficios,filtro1)
 
     return render(request, template, locals())
 
@@ -1025,6 +1032,7 @@ def tierra(request, template="indicadores/tierra.html"):
     dicc_tierra = OrderedDict()
     for year in years:
         #tabla distribucion de frecuencia
+        filtro1 = filtro.filter(year=year[0]).count()
         uno_num = filtro.filter(year=year[0], organizacionfinca__area_finca__range=(0.1,5.99)).count()
         seis_num = filtro.filter(year=year[0], organizacionfinca__area_finca__range=(6,10.99)).count()
         diez_mas = filtro.filter(year=year[0], organizacionfinca__area_finca__gt=11).count()
@@ -1037,7 +1045,7 @@ def tierra(request, template="indicadores/tierra.html"):
             valor = filtro.filter(year=year[0],entrevistado__departamento=request.session['departamento'], distribuciontierra__tierra=obj[0]).count()
             grafo_distribucion_tierra[obj[1]] =  valor
 
-        dicc_tierra[year[1]] = (uno_num,seis_num,diez_mas,promedio_mz,grafo_distribucion_tierra)
+        dicc_tierra[year[1]] = (uno_num,seis_num,diez_mas,promedio_mz,grafo_distribucion_tierra,filtro1)
 
 
     return render(request, template, locals())
