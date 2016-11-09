@@ -1059,7 +1059,7 @@ def prestamos(request, template="indicadores/prestamo.html"):
 
     dicc_prestamos = OrderedDict()
     for year in years:
-
+        filtro1 = filtro.filter(year=year[0]).count()
         grafo_prestamo_sino = {}
         for obj in CHOICE_JEFE:
             valor = filtro.filter(year=year[0], prestamo__algun_prestamo=obj[0]).count()
@@ -1077,7 +1077,7 @@ def prestamos(request, template="indicadores/prestamo.html"):
             if valor > 0:
                 grafo_uso_prestamo[obj] =  valor
 
-        dicc_prestamos[year[1]] = (grafo_prestamo_sino,grafo_recibe_prestamo,grafo_uso_prestamo)
+        dicc_prestamos[year[1]] = (grafo_prestamo_sino,grafo_recibe_prestamo,grafo_uso_prestamo,filtro1)
 
     return render(request, template, locals())
 
@@ -1090,7 +1090,7 @@ def practicas(request, template="indicadores/practicas.html"):
 
     dicc_practicas = OrderedDict()
     for year in years:
-
+        filtro1 = filtro.filter(year=year[0]).count()
         grafo_practicas_sino = {}
         for obj in CHOICE_JEFE:
             valor = filtro.filter(year=year[0], practicasagroecologicas__si_no=obj[0]).count()
@@ -1116,7 +1116,7 @@ def practicas(request, template="indicadores/practicas.html"):
             valor = filtro.filter(year=year[0], practicasagroecologicas__control=obj[0]).count()
             grafo_control[obj[1]] =  valor
 
-        dicc_practicas[year[1]] = (grafo_practicas_sino,grafo_manejo,grafo_traccion,grafo_fertilidad,grafo_control)
+        dicc_practicas[year[1]] = (grafo_practicas_sino,grafo_manejo,grafo_traccion,grafo_fertilidad,grafo_control,filtro1)
 
     return render(request, template, locals())
 
@@ -1129,7 +1129,7 @@ def seguridad(request, template="indicadores/seguridad.html"):
 
     dicc_seguridad = OrderedDict()
     for year in years:
-
+        filtro1 = filtro.filter(year=year[0]).count()
         grafo_economico = {}
         for obj in CHOICE_JEFE:
             valor = filtro.filter(year=year[0], seguridadalimentaria__economico=obj[0]).count()
