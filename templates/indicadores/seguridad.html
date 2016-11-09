@@ -215,7 +215,7 @@ $('#container2-{{key}}').highcharts({
               {% for k,v in dicc_seguridad.items %}
 
                  <li class="col-xs-6 col-sm-4 col-md-2 col-lg-2 {% if forloop.counter == 1 %}active{% endif %}" role="presentation">
-                    <a class="btn btn-anos" href="#home-{{k}}" aria-controls="home{{forloop.counter}}" role="tab" data-toggle="tab">{{k}}</a>
+                    <a class="btn btn-anos" href="#home-{{k}}" aria-controls="home{{forloop.counter}}" role="tab" data-toggle="tab">{{k}}- fam({{v.14}})</a>
                  </li>
               {% endfor %}
 

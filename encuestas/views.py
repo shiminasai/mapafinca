@@ -1214,7 +1214,8 @@ def seguridad(request, template="indicadores/seguridad.html"):
                                     conteo_inversion,
                                     grafo_adquiere_agua,
                                     grafo_tratamiento_agua,
-                                    grafo_tipo_tratamientos)
+                                    grafo_tipo_tratamientos,
+                                    filtro1)
 
     return render(request, template, locals())
 
@@ -1227,7 +1228,7 @@ def genero(request, template="indicadores/genero.html"):
 
     dicc_genero = OrderedDict()
     for year in years:
-
+        filtro1 = filtro.filter(year=year[0]).count()
         porcentaje_aporta_mujer = OrderedDict()
         for obj in CHOICER_INGRESO:
             porcentaje_aporta_mujer[obj[1]] = OrderedDict()
@@ -1245,7 +1246,7 @@ def genero(request, template="indicadores/genero.html"):
         grafo_bienes_mujer = {}
         for obj in CHOICER_COSAS_MUJER:
             valor_si = filtro.filter(year=year[0], genero2__pregunta=obj[0], genero2__respuesta=1).count()
-            valor_no = Encuesta.objects.filter(year=year[0], genero2__pregunta=obj[0], genero2__respuesta=2).count()
+            valor_no = filtro.filter(year=year[0], genero2__pregunta=obj[0], genero2__respuesta=2).count()
             grafo_bienes_mujer[obj[1]] =  (valor_si, valor_no)
 
         grafo_organizacion_mujer = {}
@@ -1255,25 +1256,24 @@ def genero(request, template="indicadores/genero.html"):
 
         mujer_organizacion = {}
         for obj in OrgComunitarias.objects.all():
-            dato = OrganizacionComunitaria.objects.filter(encuesta__year=year[0],encuesta__entrevistado__departamento=request.session['departamento'],
-                                                        caso_si=obj, encuesta__entrevistado__jefe=1).count()
+            dato = filtro.filter(year=year[0],organizacioncomunitaria__caso_si=obj,entrevistado__jefe=1).count()
             if dato > 0:
                 mujer_organizacion[obj] = dato
 
 
         nivel_educacion_mujer = OrderedDict()
         for obj in CHOICER_NIVEL_MUJER:
-            valor = Genero4.objects.filter(encuesta__year=year[0],encuesta__entrevistado__departamento=request.session['departamento'],
-                                            opcion=obj[0]).count()
+            valor = filtro.filter(year=year[0],genero4__opcion=obj[0]).count()
             nivel_educacion_mujer[obj[1]] =  valor
 
         dicc_genero[year[1]] = (porcentaje_aporta_mujer,
-                                                  grafo_credito_mujer,
-                                                  grafo_bienes_mujer,
-                                                  grafo_organizacion_mujer,
-                                                  mujer_organizacion,
-                                                  nivel_educacion_mujer,
-                                                  )
+                                  grafo_credito_mujer,
+                                  grafo_bienes_mujer,
+                                  grafo_organizacion_mujer,
+                                  mujer_organizacion,
+                                  nivel_educacion_mujer,
+                                  filtro1,
+                                  )
 
     return render(request, template, locals())
 
@@ -1343,7 +1343,7 @@ def ingresos(request, template="indicadores/ingresos.html"):
 
     dicc_ingresos = OrderedDict()
     for year in years:
-
+        filtro1 = filtro.filter(year=year[0]).count()
         percibe_ingreso = {}
         for obj in CHOICE_JEFE:
             valor = filtro.filter(year=year[0], percibeingreso__si_no=obj[0]).count()
@@ -1485,7 +1485,7 @@ def ingresos(request, template="indicadores/ingresos.html"):
                                         'ingreso': ingreso,
                                         }
         total_ingreso_procesado = sum(list([ i['ingreso'] for i in ingreso_procesado.values()]))
-        gran_total_ingresos = float(total_utilidad_tradicional + utilidad_huerto_patio + utilidad_frutas + total_ingreso_ganado + total_ingreso_procesado) / filtro.count()
+        gran_total_ingresos = float(total_utilidad_tradicional + utilidad_huerto_patio + utilidad_frutas + total_ingreso_ganado + total_ingreso_procesado) / filtro1
         dicc_ingresos[year[1]] = (percibe_ingreso,
                                 fuente_ingresos,
                                 ingreso_cultivo_tradicional,
@@ -1504,7 +1504,8 @@ def ingresos(request, template="indicadores/ingresos.html"):
                                 costo_huerto,
                                 costo_fruta,
                                 ingreso_fruta,
-                                gran_total_ingresos
+                                gran_total_ingresos,
+                                filtro1,
                                 )
 
     return render(request, template, locals())
@@ -1518,7 +1519,7 @@ def gastos(request, template="indicadores/gastos.html"):
 
     dicc_gastos = OrderedDict()
     for year in years:
-
+        filtro1 = filtro.filter(year=year[0]).count()
         introducido_tradicional = {}
         for obj in Cultivos.objects.all():
             valor = filtro.filter(year=year[0],
@@ -1548,10 +1549,11 @@ def gastos(request, template="indicadores/gastos.html"):
             gasto_produccion[obj] =  valor
 
         dicc_gastos[year[1]] = (introducido_tradicional,
-                                                introducido_huerto,
-                                                gasto_hogar,
-                                                gasto_produccion
-                                                )
+                                introducido_huerto,
+                                gasto_hogar,
+                                gasto_produccion,
+                                filtro1,
+                                )
 
     return render(request, template, locals())
 
@@ -1760,7 +1762,7 @@ def calorias(request, template="indicadores/calorias.html"):
 
     dicc_calorias = OrderedDict()
     for year in years:
-
+        filtro1 = filtro.filter(year=year[0]).count()
         calorias_tradicional = {}
         for obj in Cultivos.objects.all():
             calculo = filtro.filter(year=year[0],
@@ -1835,20 +1837,21 @@ def calorias(request, template="indicadores/calorias.html"):
         total_proteina_fuera_finca = sum(list([ i[6] for i in calorias_fuera_finca.values()]))
 
         dicc_calorias[year[1]] = (calorias_tradicional,
-                                                    total_calorias_tradicional,
-                                                    total_proteina_tradicional,
-                                                    calorias_huerto,
-                                                    total_calorias_huerto,
-                                                    total_proteina_huerto,
-                                                    calorias_fruta,
-                                                    total_calorias_fruta,
-                                                    total_proteina_fruta,
-                                                    calorias_procesado,
-                                                    total_calorias_procesado,
-                                                    total_proteina_procesado,
-                                                    calorias_fuera_finca,
-                                                    total_calorias_fuera_finca,
-                                                    total_proteina_fuera_finca)
+                                    total_calorias_tradicional,
+                                    total_proteina_tradicional,
+                                    calorias_huerto,
+                                    total_calorias_huerto,
+                                    total_proteina_huerto,
+                                    calorias_fruta,
+                                    total_calorias_fruta,
+                                    total_proteina_fruta,
+                                    calorias_procesado,
+                                    total_calorias_procesado,
+                                    total_proteina_procesado,
+                                    calorias_fuera_finca,
+                                    total_calorias_fuera_finca,
+                                    total_proteina_fuera_finca,
+                                    filtro1)
 
     return render(request, template, locals())
 
