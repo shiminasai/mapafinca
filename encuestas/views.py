@@ -144,7 +144,7 @@ def galeria_mapas_fincas(request, template='galeria.html'):
     else:
         object_list = _queryset_galeria(request)
         print len(object_list)
-    
+
     return render(request, template, locals())
 
 class DetailIndicadorView(TemplateView):
@@ -186,8 +186,11 @@ def principal_dashboard(request, template='dashboard.html', departamento_id=None
     request.session['departamento'] = depart
     request.session['encuestados'] = dividir_todo
 
-    latitud = pais.latitud
-    longitud = pais.longitud
+    try:
+        latitud = pais.latitud
+        longitud = pais.longitud
+    except:
+        pass
 
     years = []
     for en in Encuesta.objects.order_by('year').values_list('year', flat=True):
@@ -218,7 +221,7 @@ def principal_dashboard(request, template='dashboard.html', departamento_id=None
         except:
             pass
         tiempo_patron_gasto[anio[0]] = [gasto_finca_verano,gasto_finca_invierno,gasto_fuera_finca_verano,gasto_fuera_finca_invierno]
-    
+
         # grafico de ingresos
         tradicional_verano = 0
         tradicional_invierno = 0
@@ -275,7 +278,7 @@ def principal_dashboard(request, template='dashboard.html', departamento_id=None
         #Calculos de los kcalorias
         tiempo_kcalorias[anio[1]] = [envio_calorias(request, anio[0], 1), envio_calorias(request, anio[0], 2)]
 
-    
+
         #grafico sobre gastos alimentarios
         tiempo_gastos_alimentarios[anio[1]] = {}
         for obj in ProductosFueraFinca.objects.all():
@@ -381,7 +384,7 @@ def principal_dashboard(request, template='dashboard.html', departamento_id=None
     return render(request,template,locals())
 
 def principal_dashboard_pais(request, template='dashboard_pais.html', pais=None,):
-    
+
     paisid = Pais.objects.get(slug = pais)
     request.session["pais"] = paisid
     filtro = Encuesta.objects.filter(entrevistado__pais_id=paisid)
@@ -575,8 +578,8 @@ def principal_dashboard_pais(request, template='dashboard_pais.html', pais=None,
                                        rendimiento_frijol_verano,
                                        rendimiento_frijol_invierno)
         #Calculos de los kcalorias
-        tiempo_kcalorias[anio[1]] = [envio_calorias_pais(request, anio[0], 1), envio_calorias_pais(request, anio[0], 2)]                               
-        
+        tiempo_kcalorias[anio[1]] = [envio_calorias_pais(request, anio[0], 1), envio_calorias_pais(request, anio[0], 2)]
+
 
     return render(request,template,locals())
 
