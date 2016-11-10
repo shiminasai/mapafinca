@@ -181,16 +181,13 @@ def principal_dashboard(request, template='dashboard.html', departamento_id=None
     ahora = filtro.distinct('entrevistado__id')
     dividir_todo = len(ahora)
     depart = Departamento.objects.filter(id=departamento_id)
-    pais = Pais.objects.filter(departamento=departamento_id)
-    request.session['pais'] = pais[0]
+    pais = Pais.objects.get(departamento=departamento_id)
+    request.session['pais'] = pais
     request.session['departamento'] = depart
     request.session['encuestados'] = dividir_todo
 
-    try:
-        latitud = pais.latitud
-        longitud = pais.longitud
-    except:
-        pass
+    latitud = pais.latitud
+    longitud = pais.longitud
 
     years = []
     for en in Encuesta.objects.order_by('year').values_list('year', flat=True):
