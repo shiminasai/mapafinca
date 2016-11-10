@@ -386,11 +386,10 @@ def principal_dashboard_pais(request, template='dashboard_pais.html', pais=None,
     request.session["pais"] = paisid
     filtro = Encuesta.objects.filter(entrevistado__pais_id=paisid)
     ahora = filtro.distinct('entrevistado__id')
-    dividir_todo = len(ahora)
 
     request.session['departamento'] = None
     request.session['pais'] = paisid
-    request.session['encuestados'] = dividir_todo
+    request.session['encuestados'] = filtro.count()
 
 
     latitud = paisid.latitud
