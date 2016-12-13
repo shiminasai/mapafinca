@@ -175,17 +175,19 @@ class MapaView(TemplateView):
         return context
 
 def principal_dashboard(request, template='dashboard.html', departamento_id=None):
-
-    filtro = Encuesta.objects.filter(entrevistado__departamento=departamento_id) #.distinct('entrevistado__id')
+    
+    filtro = Encuesta.objects.filter(entrevistado__municipio__departamento__id=departamento_id) #.distinct('entrevistado__id')
     ahora = filtro.distinct('entrevistado__id')
-    dividir_todo = len(ahora)
+    dividir_todo = ahora.count()
     depart = Departamento.objects.filter(id=departamento_id)
     pais = Pais.objects.get(departamento=departamento_id)
     request.session['pais'] = pais
     request.session['departamento'] = depart
+
     request.session['encuestados'] = dividir_todo
     request.session['hombres'] = ahora.filter(entrevistado__sexo=2,entrevistado__jefe=1).count() / filtro.count() * 100
     request.session['mujeres'] = ahora.filter(entrevistado__sexo=1,entrevistado__jefe=1).count() / filtro.count() * 100
+
 
     latitud = pais.latitud
     longitud = pais.longitud
@@ -384,9 +386,9 @@ def principal_dashboard(request, template='dashboard.html', departamento_id=None
 def principal_dashboard_pais(request, template='dashboard_pais.html', pais=None,):
 
     paisid = Pais.objects.get(slug = pais)
-    request.session["pais"] = paisid
     filtro = Encuesta.objects.filter(entrevistado__pais_id=paisid)
     ahora = filtro.distinct('entrevistado__id')
+    dividir_todo = ahora.count()
 
     request.session['departamento'] = None
     request.session['pais'] = paisid
@@ -418,15 +420,21 @@ def principal_dashboard_pais(request, template='dashboard_pais.html', pais=None,
         gasto_fuera_finca_verano=0
         gasto_fuera_finca_invierno=0
         try:
-            gasto_finca_verano = float(filtro.objects.filter(year=anio[0],estacion=1,entrevistado__pais__slug=pais,gastohogar__tipo=5).aggregate(t=Sum('gastohogar__total'))['t'] / 12) / float(dividir_todo)
-            gasto_finca_invierno = float(filtro.objects.filter(year=anio[0],estacion=2,entrevistado__pais__slug=pais,gastohogar__tipo=5).aggregate(t=Sum('gastohogar__total'))['t'] / 12) / float(dividir_todo)
+            gasto_finca_verano = float(filtro.filter(year=anio[0],estacion=1,gastohogar__tipo=5).aggregate(t=Sum('gastohogar__total'))['t'] / 12) / float(dividir_todo)
+            gasto_finca_invierno = float(filtro.filter(year=anio[0],estacion=2,gastohogar__tipo=5).aggregate(t=Sum('gastohogar__total'))['t'] / 12) / float(dividir_todo)
+            print gasto_finca_verano
+            print "mierda imprime algo"
         except:
             pass
+
         try:
-            gasto_fuera_finca_verano = float(filtro.objects.filter(year=anio[0],estacion=1,entrevistado__pais__slug=pais).aggregate(t=Sum('gastoproduccion__total'))['t'] / 12) / float(dividir_todo)
-            gasto_fuera_finca_invierno = float(filtro.objects.filter(year=anio[0],estacion=2,entrevistado__pais__slug=pais).aggregate(t=Sum('gastoproduccion__total'))['t'] / 12) / float(dividir_todo)
+            gasto_fuera_finca_verano = float(filtro.filter(year=anio[0],estacion=1).aggregate(t=Sum('gastoproduccion__total'))['t'] / 12) / float(dividir_todo)
+            gasto_fuera_finca_invierno = float(filtro.filter(year=anio[0],estacion=2).aggregate(t=Sum('gastoproduccion__total'))['t'] / 12) / float(dividir_todo)
         except:
             pass
+
+        tiempo_patron_gasto[anio[0]] = [gasto_finca_verano,gasto_finca_invierno,gasto_fuera_finca_verano,gasto_fuera_finca_invierno]
+        
         # grafico de ingresos
         tradicional_verano = 0
         tradicional_invierno = 0
@@ -441,46 +449,50 @@ def principal_dashboard_pais(request, template='dashboard_pais.html', pais=None,
         procesamiento_verano = 0
         procesamiento_invierno = 0
         try:
-            tradicional_verano = float(filtro.objects.filter(year=anio[0],estacion=1,entrevistado__pais__slug=pais).aggregate(t=Sum('cultivostradicionales__total'))['t'] / 12) / float(dividir_todo)
-            tradicional_invierno = float(filtro.objects.filter(year=anio[0],estacion=2,entrevistado__pais__slug=pais).aggregate(t=Sum('cultivostradicionales__total'))['t'] / 12) / float(dividir_todo)
+            tradicional_verano = float(filtro.filter(year=anio[0],estacion=1).aggregate(t=Sum('cultivostradicionales__total'))['t'] / 12) / float(dividir_todo)
+            tradicional_invierno = float(filtro.filter(year=anio[0],estacion=2).aggregate(t=Sum('cultivostradicionales__total'))['t'] / 12) / float(dividir_todo)
         except:
             pass
 
         try:
-            huertos_verano = float(filtro.objects.filter(year=anio[0],estacion=1,entrevistado__pais__slug=pais).aggregate(t=Sum('cultivoshuertosfamiliares__total'))['t'] / 12) / float(dividir_todo)
-            huertos_invierno = float(filtro.objects.filter(year=anio[0],estacion=2,entrevistado__pais__slug=pais).aggregate(t=Sum('cultivoshuertosfamiliares__total'))['t'] / 12) / float(dividir_todo)
+            huertos_verano = float(filtro.filter(year=anio[0],estacion=1).aggregate(t=Sum('cultivoshuertosfamiliares__total'))['t'] / 12) / float(dividir_todo)
+            huertos_invierno = float(filtro.filter(year=anio[0],estacion=2).aggregate(t=Sum('cultivoshuertosfamiliares__total'))['t'] / 12) / float(dividir_todo)
         except:
             pass
 
         try:
-            frutas_verano = float(filtro.objects.filter(year=anio[0],estacion=1,entrevistado__pais__slug=pais).aggregate(t=Sum('cultivosfrutasfinca__total'))['t'] / 12 ) / float(dividir_todo)
-            frutas_invierno = float(filtro.objects.filter(year=anio[0],estacion=2,entrevistado__pais__slug=pais).aggregate(t=Sum('cultivosfrutasfinca__total'))['t'] / 12 ) / float(dividir_todo)
+            frutas_verano = float(filtro.filter(year=anio[0],estacion=1).aggregate(t=Sum('cultivosfrutasfinca__total'))['t'] / 12 ) / float(dividir_todo)
+            frutas_invierno = float(filtro.filter(year=anio[0],estacion=2).aggregate(t=Sum('cultivosfrutasfinca__total'))['t'] / 12 ) / float(dividir_todo)
         except:
             pass
 
         try:
-            fuente_verano = float(filtro.objects.filter(year=anio[0],estacion=1,entrevistado__pais__slug=pais).aggregate(t=Sum('fuentes__total'))['t'] / 12) / float(dividir_todo)
-            fuente_invierno = float(filtro.objects.filter(year=anio[0],estacion=2,entrevistado__pais__slug=pais).aggregate(t=Sum('fuentes__total'))['t'] / 12) / float(dividir_todo)
+            fuente_verano = float(filtro.filter(year=anio[0],estacion=1).aggregate(t=Sum('fuentes__total'))['t'] / 12) / float(dividir_todo)
+            fuente_invierno = float(filtro.filter(year=anio[0],estacion=2).aggregate(t=Sum('fuentes__total'))['t'] / 12) / float(dividir_todo)
         except:
             pass
 
         try:
-            ganado_verano = float(filtro.objects.filter(year=anio[0],estacion=1,entrevistado__pais__slug=pais).aggregate(t=Sum('ganaderia__total'))['t'] / 12) / float(dividir_todo)
-            ganado_invierno = float(filtro.objects.filter(year=anio[0],estacion=2,entrevistado__pais__slug=pais).aggregate(t=Sum('ganaderia__total'))['t'] / 12) / float(dividir_todo)
+            ganado_verano = float(filtro.objects.filter(year=anio[0],estacion=1).aggregate(t=Sum('ganaderia__total'))['t'] / 12) / float(dividir_todo)
+            ganado_invierno = float(filtro.objects.filter(year=anio[0],estacion=2).aggregate(t=Sum('ganaderia__total'))['t'] / 12) / float(dividir_todo)
         except:
             pass
 
         try:
-            procesamiento_verano = float(filtro.objects.filter(year=anio[0],estacion=1,entrevistado__pais__slug=pais).aggregate(t=Sum('procesamiento__total'))['t'] / 12) / float(dividir_todo)
-            procesamiento_verano = float(filtro.objects.filter(year=anio[0],estacion=2,entrevistado__pais__slug=pais).aggregate(t=Sum('procesamiento__total'))['t'] / 12) / float(dividir_todo)
+            procesamiento_verano = float(filtro.objects.filter(year=anio[0],estacion=1).aggregate(t=Sum('procesamiento__total'))['t'] / 12) / float(dividir_todo)
+            procesamiento_verano = float(filtro.objects.filter(year=anio[0],estacion=2).aggregate(t=Sum('procesamiento__total'))['t'] / 12) / float(dividir_todo)
         except:
             pass
+
+        tiempo_ingresos[anio[1]] = [tradicional_verano,tradicional_invierno,huertos_verano,huertos_invierno,
+                                    frutas_verano,frutas_invierno,fuente_verano,fuente_invierno,ganado_verano,
+                                    ganado_invierno,procesamiento_verano,procesamiento_invierno]
 
         #grafico sobre gastos alimentarios
         tiempo_gastos_alimentarios[anio[1]] = {}
         for obj in ProductosFueraFinca.objects.all():
             try:
-                cada_uno_verano = float(filtro.filter(year=anio[0],entrevistado__pais__slug=pais,estacion=1,alimentosfuerafinca__producto=obj).aggregate(t=Avg('alimentosfuerafinca__total'))['t'] / 12) / float(dividir_todo)
+                cada_uno_verano = float(filtro.filter(year=anio[0],estacion=1,alimentosfuerafinca__producto=obj).aggregate(t=Avg('alimentosfuerafinca__total'))['t'] / 12) / float(dividir_todo)
             except:
                 cada_uno_verano = 0
             if cada_uno_verano == None:

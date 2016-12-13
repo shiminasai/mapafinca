@@ -19,7 +19,7 @@
     	                    {% endfor %}</li>
     {% endif %}
     {% if request.session.encuestados %}
-        <li>NÚMERO DE ENTREVISTADO: <strong>{{request.session.encuestados|upper}}</strong></li>
+        <li>NÚMERO DE ENCUESTAS: <strong>{{request.session.encuestados|upper}}</strong></li>
     {% endif %}
     {% if request.session.hombres %}
         <li>% HOMBRES JEFES: <strong>{{request.session.hombres|upper}}</strong></li>
