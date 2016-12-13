@@ -177,7 +177,6 @@ class MapaView(TemplateView):
 def principal_dashboard(request, template='dashboard.html', departamento_id=None):
 
     filtro = Encuesta.objects.filter(entrevistado__departamento=departamento_id) #.distinct('entrevistado__id')
-
     ahora = filtro.distinct('entrevistado__id')
     dividir_todo = len(ahora)
     depart = Departamento.objects.filter(id=departamento_id)
@@ -185,6 +184,8 @@ def principal_dashboard(request, template='dashboard.html', departamento_id=None
     request.session['pais'] = pais
     request.session['departamento'] = depart
     request.session['encuestados'] = dividir_todo
+    request.session['hombres'] = ahora.filter(entrevistado__sexo=2,entrevistado__jefe=1).count() / filtro.count() * 100
+    request.session['mujeres'] = ahora.filter(entrevistado__sexo=1,entrevistado__jefe=1).count() / filtro.count() * 100
 
     latitud = pais.latitud
     longitud = pais.longitud
@@ -390,6 +391,9 @@ def principal_dashboard_pais(request, template='dashboard_pais.html', pais=None,
     request.session['departamento'] = None
     request.session['pais'] = paisid
     request.session['encuestados'] = filtro.count()
+    request.session['hombres'] = ahora.filter(entrevistado__sexo=2,entrevistado__jefe=1).count() / filtro.count() * 100
+    request.session['mujeres'] = ahora.filter(entrevistado__sexo=1,entrevistado__jefe=1).count() / filtro.count() * 100
+
 
 
     latitud = paisid.latitud
