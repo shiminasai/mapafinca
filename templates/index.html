@@ -5,15 +5,16 @@
 {% block extra_js %}
 	<script src="/static/js/modernizr.custom.js"></script>
 	<script src="/static/js/classie.js"></script>
+	{% for k,v in paises.items %}
 	<script>
-		var elems = document.getElementsByClassName('valorBadge');
+		var elems = document.getElementsByClassName('valorBadge-{{k|slugify}}');
 		var sum = 0;
 			for (var i = 0;i < elems.length; i++) {
 			sum += parseInt(elems[i].innerHTML, 10);
 			}
-		document.getElementById('totalBadge').innerHTML = sum;
-
+		document.getElementById('totalBadge-{{k|slugify}}').innerHTML = sum;
 	</script>
+	{% endfor %}
 
 {% endblock extra_js %}
 {% block contenido %}
@@ -40,18 +41,18 @@
 						  <span class="glyphicon glyphicon-chevron-down"> {{k}}</span>
 						</a>
 					</div>
-					<div class="collapse in panel-body " id="{{k|slugify}}" >
+					<div class="collapse {% if forloop.counter == 1 %}in{% endif %} panel-body " id="{{k|slugify}}" >
 						 <ul>
 							{% for key,value in v.items %}
 							<ul class="list-group">
 								<li class="list-group-item">
-									<span class="badge valorBadge" >{{value.0}}</span>
+									<span class="badge valorBadge-{{k|slugify}}" >{{value.0}}</span>
 									<a href="/dashboard-principal/{{value.1}}">{{key}}</a>
 								</li>
 							</ul>
 							{% endfor %}
 							<li class="list-group-item">
-								<span class="badge"><div id="totalBadge"></div></span>
+								<span class="badge"><div id="totalBadge-{{k|slugify}}"></div></span>
 								<a href="/dashboard-principal-pais/{{k|slugify}}">Todo {{k}}</a>
 							</li>
 						 </ul>

@@ -60,7 +60,7 @@
               {% for k,v in dicc_ingresos.items %}
 
                  <li class="col-xs-6 col-sm-4 col-md-2 col-lg-2 {% if forloop.counter == 1 %}active{% endif %}" role="presentation">
-                    <a class="btn btn-anos" href="#home-{{k}}" aria-controls="home{{forloop.counter}}" role="tab" data-toggle="tab">{{k}}</a>
+                    <a class="btn btn-anos" href="#home-{{k}}" aria-controls="home{{forloop.counter}}" role="tab" data-toggle="tab">{{k}}- fam({{v.19}})</a>
                  </li>
               {% endfor %}
 
@@ -329,32 +329,32 @@
                                         <tr>
                                             <td>Cultivo tradicional</td>
                                             <td>{{v.3|floatformat:2|intcomma}}</td>
-                                            <td>{{request.session.encuestados}}</td>
-                                            <td class="valor" >{{v.3|calcularIngresoXfamilia:request.session.encuestados|floatformat:2|intcomma}}</td>
+                                            <td>{{v.19}}</td>
+                                            <td class="valor" >{{v.3|calcularIngresoXfamilia:v.19|floatformat:2|intcomma}}</td>
                                         </tr>
                                         <tr>
                                             <td>Cultivo huertos de patio</td>
                                             <td>{{v.7|floatformat:2|intcomma}}</td>
-                                            <td>{{request.session.encuestados}}</td>
-                                            <td class="valor">{{v.7|calcularIngresoXfamilia:request.session.encuestados|floatformat:2|intcomma}}</td>
+                                            <td>{{v.19}}</td>
+                                            <td class="valor">{{v.7|calcularIngresoXfamilia:v.19|floatformat:2|intcomma}}</td>
                                         </tr>
                                         <tr>
                                             <td>Cultivo Frutales</td>
                                             <td>{{v.9|floatformat:2|intcomma}}</td>
-                                            <td>{{request.session.encuestados}}</td>
-                                            <td class="valor">{{v.9|calcularIngresoXfamilia:request.session.encuestados|floatformat:2|intcomma}}</td>
+                                            <td>{{v.19}}</td>
+                                            <td class="valor">{{v.9|calcularIngresoXfamilia:v.19|floatformat:2|intcomma}}</td>
                                         </tr>
                                         <tr>
                                             <td>Animales en la finca</td>
                                             <td>{{v.11|floatformat:2|intcomma}}</td>
-                                            <td>{{request.session.encuestados}}</td>
-                                            <td class="valor">{{v.11|calcularIngresoXfamilia:request.session.encuestados|floatformat:2|intcomma}}</td>
+                                            <td>{{v.19}}</td>
+                                            <td class="valor">{{v.11|calcularIngresoXfamilia:v.19|floatformat:2|intcomma}}</td>
                                         </tr>
                                         <tr>
                                             <td>Productos procesados</td>
                                             <td>{{v.13|floatformat:2|intcomma}}</td>
-                                            <td>{{request.session.encuestados}}</td>
-                                            <td class="valor">{{v.13|calcularIngresoXfamilia:request.session.encuestados|floatformat:2|intcomma}}</td>
+                                            <td>{{v.19}}</td>
+                                            <td class="valor">{{v.13|calcularIngresoXfamilia:v.19|floatformat:2|intcomma}}</td>
                                         </tr>
                                     </tbody>
                                     <tfoot>

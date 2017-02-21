@@ -551,7 +551,7 @@ class Cultivos(models.Model):
 
 
     def __unicode__(self):
-        return u'%s-%s' % (self.codigo, self.nombre)
+        return u'%s - %s - %s' % (self.codigo, self.nombre, self.get_unidad_medida_display())
 
 class TipoMercado(models.Model):
     codigo = models.CharField(max_length=4)
@@ -599,7 +599,7 @@ class CultivosHuertos(models.Model):
     proteinas = models.FloatField(null=True, blank=True)
 
     def __unicode__(self):
-        return u'%s-%s' % (self.codigo, self.nombre)
+        return u'%s - %s - %s' % (self.codigo, self.nombre, self.get_unidad_medida_display())
 
 
 class CultivosHuertosFamiliares(models.Model):
@@ -647,7 +647,7 @@ class CultivosFrutas(models.Model):
     proteinas = models.FloatField(null=True, blank=True)
 
     def __unicode__(self):
-        return u'%s-%s' % (self.codigo, self.nombre)
+        return u'%s - %s - %s' % (self.codigo, self.nombre, self.get_unidad_medida_display())
 
 
 class CultivosFrutasFinca(models.Model):
@@ -725,7 +725,7 @@ class ProductoProcesado(models.Model):
     proteinas = models.FloatField(null=True, blank=True)
 
     def __unicode__(self):
-        return u'%s-%s' % (self.codigo, self.nombre)
+        return u'%s - %s - %s' % (self.codigo, self.nombre, self.get_unidad_medida_display())
 
 
 class Procesamiento(models.Model):
