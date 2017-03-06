@@ -422,8 +422,6 @@ def principal_dashboard_pais(request, template='dashboard_pais.html', pais=None,
         try:
             gasto_finca_verano = float(filtro.filter(year=anio[0],estacion=1,gastohogar__tipo=5).aggregate(t=Sum('gastohogar__total'))['t'] / 12) / float(dividir_todo)
             gasto_finca_invierno = float(filtro.filter(year=anio[0],estacion=2,gastohogar__tipo=5).aggregate(t=Sum('gastohogar__total'))['t'] / 12) / float(dividir_todo)
-            print gasto_finca_verano
-            print "mierda imprime algo"
         except:
             pass
 

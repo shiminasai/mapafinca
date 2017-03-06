@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% load helpertags %}
+
+{% block extra_js %}
+<script>
+
+	{% for k,v in tiempo_kcalorias.items %}
+		var sum_verano_{{k}} = {{v.0}}.reduce(add, 0);
+		var sum_invierno_{{k}} = {{v.1}}.reduce(add, 0);
+	{% endfor %}
+	
+	function add(a, b) {
+    return a + b;
+	}
+
+</script>
+{% endblock extra_js %}
+
+{% block contenido %}
+
+titulo: {{titulo}} <br>
+pais: {{pais}} <br>
+total familia: {{total}} <br>
+jefe masculino: {{hombres|floatformat:2}} % <br>
+jefe femenino: {{mujeres|floatformat:2}} % <br> <br>
+
+{% for k,v in tiempo_kcalorias.items %}
+	{{k}}<br>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+      	<th></th>
+        <th>Cultivo tradicionales</th>
+        <th>Cultivos de huertos</th>
+        <th>Frutales</th>
+        <th>Procesados</th>
+        <th>Compran fuera de la finca</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Verano</td>
+        <td>{{v.0.0|floatformat:2}} ({{v.0.0|calculaperct2:v.0|floatformat:2}} % )</td>
+        <td>{{v.0.1|floatformat:2}} ({{v.0.1|calculaperct2:v.0|floatformat:2}} % )</td>
+        <td>{{v.0.2|floatformat:2}} ({{v.0.2|calculaperct2:v.0|floatformat:2}} % )</td>
+        <td>{{v.0.3|floatformat:2}} ({{v.0.3|calculaperct2:v.0|floatformat:2}} % )</td>
+        <td>{{v.0.4|floatformat:2}} ({{v.0.4|calculaperct2:v.0|floatformat:2}} % )</td>
+      </tr>
+      <tr>
+        <td>Invierno</td>
+        <td>{{v.1.0|floatformat:2}} ({{v.1.0|calculaperct2:v.0|floatformat:2}} % )</td>
+        <td>{{v.1.1|floatformat:2}} ({{v.1.1|calculaperct2:v.0|floatformat:2}} % )</td>
+        <td>{{v.1.2|floatformat:2}} ({{v.1.2|calculaperct2:v.0|floatformat:2}} % )</td>
+        <td>{{v.1.3|floatformat:2}} ({{v.1.3|calculaperct2:v.0|floatformat:2}} % )</td>
+        <td>{{v.1.4|floatformat:2}} ({{v.1.4|calculaperct2:v.0|floatformat:2}} % )</td>
+      </tr>
+    </tbody>
+  </table>
+	
+{% endfor %}
+
+{% endblock contenido %}

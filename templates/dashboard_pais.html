@@ -605,6 +605,7 @@ $(function () {
               {% for k, v in tiempo_ingresos.items %}
                 <li role="presentation" {% if forloop.counter == 1 %}class="active"{% endif %} ><a href="#ingreso-{{k}}" aria-controls="ingreso-{{k}}" role="tab" data-toggle="tab">{{k}}</a></li>
               {% endfor %}
+              <li role="presentation"><a href="/infografias/info-ingresos-pais/">Infografía</a></li>
               </ul>
 
               <!-- Tab panes -->
@@ -614,6 +615,7 @@ $(function () {
                     <div id="grafico2-{{k}}"></div>
                 </div>
               {% endfor %}
+
               </div>
 
             </div>
@@ -636,6 +638,7 @@ $(function () {
               {% for k, v in tiempo_kcalorias.items %}
                 <li role="presentation" {% if forloop.counter == 1 %}class="active"{% endif %} ><a href="#calorias-{{k}}" aria-controls="calorias-{{k}}" role="tab" data-toggle="tab">{{k}}</a></li>
               {% endfor %}
+              <li role="presentation"><a href="/infografias/info-kcal-pais/">Infografía</a></li>
               </ul>
 
               <!-- Tab panes -->
