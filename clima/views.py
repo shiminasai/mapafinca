@@ -204,3 +204,42 @@ def infografia_ingreso_pais(request, template='infografias/info_ingresos_pais.ht
     
  
     return render(request, template, locals())
+
+
+def info_patron_gasto_pais(request, template='infografias/patron_gasto_pais.html'):
+    
+    pais = get_object_or_404(Pais, slug=slugify(request.session['pais']))
+    filtro_general = Encuesta.objects.filter(entrevistado__pais_id=pais.id)
+    total_distinct = filtro_general.distinct('entrevistado__id')
+
+    titulo = 'PATRON DE GASTO'
+    pais = request.session['pais']
+    total = total_distinct.count()
+    hombres = float(total_distinct.filter(entrevistado__sexo=2,entrevistado__jefe=1).count()) / float(total) * 100
+    mujeres = float(total_distinct.filter(entrevistado__sexo=1,entrevistado__jefe=1).count()) / float(total) * 100
+
+    years = []
+    for en in Encuesta.objects.order_by('year').values_list('year', flat=True):
+        years.append((en,en))
+    muchos_tiempo = list(sorted(set(years)))
+
+    tiempo_patron_gasto = OrderedDict()
+    for anio in muchos_tiempo:
+        gasto_finca_verano=0
+        gasto_finca_invierno=0
+        gasto_fuera_finca_verano=0
+        gasto_fuera_finca_invierno=0
+        try:
+            gasto_finca_verano = float(filtro_general.filter(year=anio[0],estacion=1,gastohogar__tipo=5).aggregate(t=Sum('gastohogar__total'))['t'] / 12) / float(total)
+            gasto_finca_invierno = float(filtro_general.filter(year=anio[0],estacion=2,gastohogar__tipo=5).aggregate(t=Sum('gastohogar__total'))['t'] / 12) / float(total)
+        except:
+            pass
+        try:
+            gasto_fuera_finca_verano = float(filtro_general.filter(year=anio[0],estacion=1).aggregate(t=Sum('gastoproduccion__total'))['t'] / 12) / float(total)
+            gasto_fuera_finca_invierno = float(filtro_general.filter(year=anio[0],estacion=2).aggregate(t=Sum('gastoproduccion__total'))['t'] / 12) / float(total)
+        except:
+            pass
+        tiempo_patron_gasto[anio[0]] = [gasto_finca_verano,gasto_finca_invierno,gasto_fuera_finca_verano,gasto_fuera_finca_invierno]
+
+
+    return render(request, template, locals())
