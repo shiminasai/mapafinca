@@ -578,6 +578,7 @@ $(function () {
               {% for k, v in tiempo_patron_gasto.items %}
                 <li role="presentation" {% if forloop.counter == 1 %}class="active"{% endif %} ><a href="#patron-{{k}}" aria-controls="patron-{{k}}" role="tab" data-toggle="tab">{{k}}</a></li>
               {% endfor %}
+              <li role="presentation"><a href="/infografias/info-patron-gasto-pais/">Infografía</a></li>
               </ul>
 
               <!-- Tab panes -->

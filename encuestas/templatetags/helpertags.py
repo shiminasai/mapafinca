@@ -54,3 +54,22 @@ def calculaperct2(value1, listas):
         return resultado
     except:
         return 0
+
+@register.simple_tag
+def calculaperct3(value1, value2, *args, **kwargs):
+    suma = float(value1) + float(value2)
+    try:
+        resultado = (float(value1) / float(suma) * 100)
+        return round(resultado,2)
+    except:
+        return 0
+
+@register.simple_tag
+def calculaperct4(value1, value2, *args, **kwargs):
+    suma = float(value1) + float(value2) + float(kwargs['v4']) + float(kwargs['v6']) \
+            + float(kwargs['v8']) + float(kwargs['v10'])
+    try:
+        resultado = (float(value1) / float(suma) * 100)
+        return round(resultado,2)
+    except:
+        return 0

@@ -11,7 +11,7 @@ jefe masculino: {{hombres|floatformat:2}} % <br>
 jefe femenino: {{mujeres|floatformat:2}} % <br> <br>
 
 {% for k,v in tiempo_ingresos.items %}
-	{{k}} -- {{v}}<br>
+	{{k}}<br>
   <table class="table table-striped">
     <thead>
       <tr>
@@ -27,21 +27,21 @@ jefe femenino: {{mujeres|floatformat:2}} % <br> <br>
     <tbody>
       <tr>
         <td>Verano</td>
-        <td>{{v.0|floatformat:2}} </td>
-        <td>{{v.2|floatformat:2}} </td>
-        <td>{{v.4|floatformat:2}} </td>
-        <td>{{v.6|floatformat:2}} </td>
-        <td>{{v.8|floatformat:2}} </td>
-        <td>{{v.10|floatformat:2}}</td>
+        <td>{{v.0|floatformat:2}} ({% calculaperct4 v.0 v.2 v4=v.4 v6=v.6 v8=v.8 v10=v.10%}) %</td>
+        <td>{{v.2|floatformat:2}} ({% calculaperct4 v.2 v.0 v4=v.4 v6=v.6 v8=v.8 v10=v.10%}) %</td>
+        <td>{{v.4|floatformat:2}} ({% calculaperct4 v.4 v.0 v4=v.2 v6=v.6 v8=v.8 v10=v.10%}) %</td>
+        <td>{{v.6|floatformat:2}} ({% calculaperct4 v.6 v.0 v4=v.4 v6=v.2 v8=v.8 v10=v.10%}) %</td>
+        <td>{{v.8|floatformat:2}} ({% calculaperct4 v.8 v.0 v4=v.4 v6=v.6 v8=v.2 v10=v.10%}) %</td>
+        <td>{{v.10|floatformat:2}}({% calculaperct4 v.10 v.0 v4=v.4 v6=v.6 v8=v.8 v10=v.2%}) %</td>
       </tr>
       <tr>
         <td>Invierno</td>
-        <td>{{v.1|floatformat:2}}</td>
-        <td>{{v.3|floatformat:2}}</td>
-        <td>{{v.5|floatformat:2}}</td>
-        <td>{{v.7|floatformat:2}}</td>
-        <td>{{v.9|floatformat:2}}</td>
-        <td>{{v.11|floatformat:2}}</td>
+        <td>{{v.1|floatformat:2}}({% calculaperct4 v.1 v.3 v4=v.5 v6=v.7 v8=v.9 v10=v.11%}) %</td>
+        <td>{{v.3|floatformat:2}}({% calculaperct4 v.3 v.1 v4=v.5 v6=v.7 v8=v.9 v10=v.11%}) %</td>
+        <td>{{v.5|floatformat:2}}({% calculaperct4 v.5 v.1 v4=v.3 v6=v.7 v8=v.9 v10=v.11%}) %</td>
+        <td>{{v.7|floatformat:2}}({% calculaperct4 v.7 v.1 v4=v.5 v6=v.3 v8=v.9 v10=v.11%}) %</td>
+        <td>{{v.9|floatformat:2}}({% calculaperct4 v.9 v.1 v4=v.5 v6=v.7 v8=v.3 v10=v.11%}) %</td>
+        <td>{{v.11|floatformat:2}}({% calculaperct4 v.11 v.1 v4=v.5 v6=v.7 v8=v.9 v10=v.3%}) %</td>
       </tr>
     </tbody>
   </table>

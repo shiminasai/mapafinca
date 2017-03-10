@@ -204,3 +204,105 @@ def infografia_ingreso_pais(request, template='infografias/info_ingresos_pais.ht
     
  
     return render(request, template, locals())
+
+
+def info_patron_gasto_pais(request, template='infografias/patron_gasto_pais.html'):
+    
+    pais = get_object_or_404(Pais, slug=slugify(request.session['pais']))
+    filtro_general = Encuesta.objects.filter(entrevistado__pais_id=pais.id)
+    total_distinct = filtro_general.distinct('entrevistado__id')
+
+    titulo = 'PATRON DE GASTO'
+    pais = request.session['pais']
+    total = total_distinct.count()
+    hombres = float(total_distinct.filter(entrevistado__sexo=2,entrevistado__jefe=1).count()) / float(total) * 100
+    mujeres = float(total_distinct.filter(entrevistado__sexo=1,entrevistado__jefe=1).count()) / float(total) * 100
+
+    years = []
+    for en in Encuesta.objects.order_by('year').values_list('year', flat=True):
+        years.append((en,en))
+    muchos_tiempo = list(sorted(set(years)))
+
+    tiempo_patron_gasto = OrderedDict()
+    for anio in muchos_tiempo:
+        gasto_finca_verano=0
+        gasto_finca_invierno=0
+        gasto_fuera_finca_verano=0
+        gasto_fuera_finca_invierno=0
+        try:
+            gasto_finca_verano = float(filtro_general.filter(year=anio[0],estacion=1,gastohogar__tipo=5).aggregate(t=Sum('gastohogar__total'))['t'] / 12) / float(total)
+            gasto_finca_invierno = float(filtro_general.filter(year=anio[0],estacion=2,gastohogar__tipo=5).aggregate(t=Sum('gastohogar__total'))['t'] / 12) / float(total)
+        except:
+            pass
+        try:
+            gasto_fuera_finca_verano = float(filtro_general.filter(year=anio[0],estacion=1).aggregate(t=Sum('gastoproduccion__total'))['t'] / 12) / float(total)
+            gasto_fuera_finca_invierno = float(filtro_general.filter(year=anio[0],estacion=2).aggregate(t=Sum('gastoproduccion__total'))['t'] / 12) / float(total)
+        except:
+            pass
+        tiempo_patron_gasto[anio[0]] = [gasto_finca_verano,gasto_finca_invierno,gasto_fuera_finca_verano,gasto_fuera_finca_invierno]
+
+
+    return render(request, template, locals())
+
+def info_rendimientos_pais(request, template='infografias/rendimientos_pais.html'):
+    
+    pais = get_object_or_404(Pais, slug=slugify(request.session['pais']))
+    filtro_general = Encuesta.objects.filter(entrevistado__pais_id=pais.id)
+    total_distinct = filtro_general.distinct('entrevistado__id')
+
+    titulo = 'RENDIMIENTOS'
+    pais = request.session['pais']
+    total = total_distinct.count()
+    hombres = float(total_distinct.filter(entrevistado__sexo=2,entrevistado__jefe=1).count()) / float(total) * 100
+    mujeres = float(total_distinct.filter(entrevistado__sexo=1,entrevistado__jefe=1).count()) / float(total) * 100
+
+    years = []
+    for en in Encuesta.objects.order_by('year').values_list('year', flat=True):
+        years.append((en,en))
+    muchos_tiempo = list(sorted(set(years)))
+
+    tiempo_rendimiento = OrderedDict()
+    for anio in muchos_tiempo:
+        #Calculo de los rendimientos o productividad del maiz y frijol primera
+        total_area_cosechada_maiz_verano = filtro_general.filter(cultivostradicionales__cultivo=3,
+                                    year=anio[0],estacion=1).aggregate(t=Sum('cultivostradicionales__area_cosechada'))['t']
+        total_cosecha_maiz_verano = filtro_general.filter(cultivostradicionales__cultivo=3,
+                                    year=anio[0],estacion=1).aggregate(t=Sum('cultivostradicionales__cantidad_cosechada'))['t']
+        try:
+            rendimiento_maiz_verano = total_cosecha_maiz_verano / total_area_cosechada_maiz_verano
+        except:
+            rendimiento_maiz_verano = 0
+
+        total_area_cosechada_frijol_verano = filtro_general.filter(cultivostradicionales__cultivo=2,
+                                            year=anio[0],estacion=1).aggregate(t=Sum('cultivostradicionales__area_cosechada'))['t']
+        total_cosecha_frijol_verano = filtro_general.filter(cultivostradicionales__cultivo=2,
+                                            year=anio[0],estacion=1).aggregate(t=Sum('cultivostradicionales__cantidad_cosechada'))['t']
+        try:
+            rendimiento_frijol_verano = total_cosecha_frijol_verano / total_area_cosechada_frijol_verano
+        except:
+            rendimiento_frijol_verano = 0
+
+        #calculo de los rendimiento invierno
+        total_area_cosechada_maiz_invierno = filtro_general.filter(cultivostradicionales__cultivo=3,
+                                    year=anio[0],estacion=2).aggregate(t=Sum('cultivostradicionales__area_cosechada'))['t'] or 0
+        total_cosecha_maiz_invierno = filtro_general.filter(cultivostradicionales__cultivo=3,
+                                    year=anio[0],estacion=2).aggregate(t=Sum('cultivostradicionales__cantidad_cosechada'))['t'] or 0
+        try:
+            rendimiento_maiz_invierno = total_cosecha_maiz_invierno / total_area_cosechada_maiz_invierno
+        except:
+            rendimiento_maiz_invierno = 0
+
+        total_area_cosechada_frijol_invierno = filtro_general.filter(cultivostradicionales__cultivo=2,
+                                            year=anio[0],estacion=2).aggregate(t=Sum('cultivostradicionales__area_cosechada'))['t'] or 0
+        total_cosecha_frijol_invierno = filtro_general.filter(cultivostradicionales__cultivo=2,
+                                            year=anio[0],estacion=2).aggregate(t=Sum('cultivostradicionales__cantidad_cosechada'))['t'] or 0
+        try:
+            rendimiento_frijol_invierno = total_cosecha_frijol_invierno / total_area_cosechada_frijol_invierno
+        except:
+            rendimiento_frijol_invierno = 0
+        tiempo_rendimiento[anio[1]] = (rendimiento_maiz_verano,
+                                       rendimiento_maiz_invierno,
+                                       rendimiento_frijol_verano,
+                                       rendimiento_frijol_invierno)
+        
+    return render(request, template, locals())

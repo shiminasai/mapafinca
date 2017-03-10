@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% load helpertags %}
+
+{% block contenido %}
+
+titulo: {{titulo}} <br>
+pais: {{pais}} <br>
+total familia: {{total}} <br>
+jefe masculino: {{hombres|floatformat:2}} % <br>
+jefe femenino: {{mujeres|floatformat:2}} % <br> <br>
+
+{% for k,v in tiempo_patron_gasto.items %}
+	{{k}}<br>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+      	<th></th>
+        <th>Alimentarios</th>
+        <th>No alimentarios</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Verano</td>
+        <td>{{v.0|floatformat:2}} ({% calculaperct3 v.0 v.2 %}) %</td>
+        <td>{{v.2|floatformat:2}} ({% calculaperct3 v.2 v.0 %}) %</td>
+      </tr>
+      <tr>
+        <td>Invierno</td>
+        <td>{{v.1|floatformat:2}} ({% calculaperct3 v.1 v.3 %}) %</td>
+        <td>{{v.3|floatformat:2}} ({% calculaperct3 v.3 v.1 %}) %</td>
+      </tr>
+    </tbody>
+  </table>
+	
+{% endfor %}
+
+{% endblock contenido %}
