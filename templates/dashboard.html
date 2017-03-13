@@ -514,11 +514,9 @@ $(function () {
         margin: 0 auto;
         background-color: #CCC;
       }
-
     </style>
 
 {% include "breadcrumb.html" %}
-
 <div class="contenido-general">
     <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 ">
@@ -584,7 +582,7 @@ $(function () {
               <div class="tab-content">
               {% for k, v in tiempo_patron_gasto.items %}
                 <div role="tabpanel" class="tab-pane {% if forloop.counter == 1 %}active{% endif %}" id="patron-{{k}}">
-                    <div id="grafico1-{{k}}" width='100%'></div>
+                    <div id="grafico1-{{k}}"></div>
                 </div>
               {% endfor %}
               </div>
@@ -608,7 +606,7 @@ $(function () {
               <div class="tab-content">
               {% for k, v in tiempo_ingresos.items %}
                 <div role="tabpanel" class="tab-pane {% if forloop.counter == 1 %}active{% endif %}" id="ingreso-{{k}}">
-                    <div id="grafico2-{{k}}" width='100%'></div>
+                    <div id="grafico2-{{k}}"></div>
                 </div>
               {% endfor %}
               </div>
@@ -636,7 +634,7 @@ $(function () {
               <div class="tab-content">
               {% for k, v in tiempo_kcalorias.items %}
                 <div role="tabpanel" class="tab-pane {% if forloop.counter == 1 %}active{% endif %}" id="calorias-{{k}}">
-                    <div id="grafico3-{{k}}" width='100%'></div>
+                    <div id="grafico3-{{k}}"></div>
                 </div>
               {% endfor %}
               </div>
@@ -661,7 +659,7 @@ $(function () {
               <div class="tab-content">
               {% for k, v in tiempo_gastos_alimentarios.items %}
                 <div role="tabpanel" class="tab-pane {% if forloop.counter == 1 %}active{% endif %}" id="alimentarios-{{k}}">
-                    <div id="grafico4-{{k}}" width='100%'></div>
+                    <div id="grafico4-{{k}}"></div>
                 </div>
               {% endfor %}
               </div>
@@ -688,7 +686,7 @@ $(function () {
               <div class="tab-content">
               {% for k, v in tiempo_arana.items %}
                 <div role="tabpanel" class="tab-pane {% if forloop.counter == 1 %}active{% endif %}" id="aranaa-{{k}}">
-                    <div id="arana-{{k}}" width='100%'></div>
+                    <div id="arana-{{k}}"></div>
                 </div>
               {% endfor %}
               </div>
@@ -711,7 +709,7 @@ $(function () {
               <div class="tab-content">
               {% for k, v in tiempo_clima.items %}
                 <div role="tabpanel" class="tab-pane {% if forloop.counter == 1 %}active{% endif %}" id="clima-{{k}}">
-                    <div id="grafico5-{{k}}" width='100%'></div>
+                    <div id="grafico5-{{k}}"></div>
                 </div>
               {% endfor %}
               </div>
@@ -724,14 +722,6 @@ $(function () {
     <div class="row fila3">
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 ">
             <div class="mapa-general ">
-<<<<<<< HEAD
-                <div id="rendimientos1" width='100%'></div>
-            </div>
-        </div>
-        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 ">
-            <div class="mapa-general ">
-                <div id="rendimientos2" width='100%'></div>
-=======
                 <div>
 
               <!-- Nav tabs -->
@@ -751,7 +741,6 @@ $(function () {
               </div>
 
             </div>
->>>>>>> carlos/master
             </div>
         </div>
 
