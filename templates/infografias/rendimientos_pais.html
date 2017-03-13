@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% load helpertags %}
+
+{% block contenido %}
+
+titulo: {{titulo}} <br>
+pais: {{pais}} <br>
+total familia: {{total}} <br>
+jefe masculino: {{hombres|floatformat:2}} % <br>
+jefe femenino: {{mujeres|floatformat:2}} % <br> <br>
+
+{% for k,v in tiempo_rendimiento.items %}
+	{{k}}<br>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+      	<th></th>
+        <th>Maiz</th>
+        <th>Frijol</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Verano</td>
+        <td>{{v.0|floatformat:2}} qq</td>
+        <td>{{v.2|floatformat:2}} qq</td>
+      </tr>
+      <tr>
+        <td>Invierno</td>
+        <td>{{v.1|floatformat:2}} qq</td>
+        <td>{{v.3|floatformat:2}} qq</td>
+      </tr>
+    </tbody>
+  </table>
+	
+{% endfor %}
+
+{% endblock contenido %}
