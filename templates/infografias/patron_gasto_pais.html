@@ -57,7 +57,52 @@
                 
     <div class="container">
         {% for k,v in tiempo_patron_gasto.items %}
-            <div class="row">
+            <div class="container">
+                <div class="row">
+
+                    <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 bg-r3">
+                        <div class="row">
+
+                            <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5">
+                                <p class="t-alimentario"><span>ALIMENTARIO</span></p>
+                                <p class="d-maiz"><!--{{v.0|floatformat:2}}--> {% calculaperct3 v.0 v.2 %} %</p>
+                               <img class="center-block" src="/static/img/infografias/Recurso3.png" alt=""> 
+                            </div>
+                            <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5">
+                                <p class="t-noalimentario"><span>NO ALIMENTARIO</span></p>
+                                <p class="d-frijol"><!--{{v.2|floatformat:2}}--> {% calculaperct3 v.2 v.0 %} %</p>
+
+                                <img class="center-block" src="/static/img/infografias/Recurso1.png" alt=""> 
+                            </div>
+                            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2 sin-padding">
+                        <div class="r-year2">{{k}}</div>
+                    </div>
+                    <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 bg-r4">
+                        <div class="row">
+                            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                                
+                            </div>
+                            <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5">
+                                <p class="t-noalimentario"><span>NO ALIMENTARIO</span></p>
+                                <p class="d-frijol2"><!--{{v.3|floatformat:2}}--> {% calculaperct3 v.3 v.1 %} %</p>
+
+                                <img class="center-block" src="/static/img/infografias/Recurso1.png" alt=""> 
+                            </div>
+                            <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5">
+                                <p class="t-alimentario"><span>ALIMENTARIO</span></p>
+                                <p class="d-maiz2"><!--{{v.1|floatformat:2}}--> {% calculaperct3 v.1 v.3 %} %</p>
+                               <img class="center-block" src="/static/img/infografias/Recurso3.png" alt=""> 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> 
+            <!--<div class="row">
                 <div class="table-responsive">
                     <table class="table">
                         <caption>{{k}}</caption>
@@ -71,18 +116,18 @@
                         <tbody>
                             <tr>
                                 <td>Verano</td>
-                                <td>{{v.0|floatformat:2}} ({% calculaperct3 v.0 v.2 %}) %</td>
-                                <td>{{v.2|floatformat:2}} ({% calculaperct3 v.2 v.0 %}) %</td>
+                                <td>{{v.0|floatformat:2}} ({% calculaperct3 v.0 v.2 %}) % al</td>
+                                <td>{{v.2|floatformat:2}} ({% calculaperct3 v.2 v.0 %}) % na</td>
                             </tr>
                             <tr>
                                 <td>Invierno</td>
-                                <td>{{v.1|floatformat:2}} ({% calculaperct3 v.1 v.3 %}) %</td>
-                                <td>{{v.3|floatformat:2}} ({% calculaperct3 v.3 v.1 %}) %</td>
+                                <td>{{v.1|floatformat:2}} ({% calculaperct3 v.1 v.3 %}) % al</td>
+                                <td>{{v.3|floatformat:2}} ({% calculaperct3 v.3 v.1 %}) % na</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-            </div>
+            </div>-->
             
         {% endfor %}
     </div>
