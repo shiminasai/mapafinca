@@ -514,6 +514,24 @@ $(function () {
         margin: 0 auto;
         background-color: #CCC;
       }
+      .nav-tabs>li>a.modal-info:hover{
+        background: transparent;
+      } 
+      /* </li>.modal-info{
+        border-radius: 100px;
+        background: black;
+        color: white;
+        display: block;
+        float: right;
+        height: 20px;
+        width: 20px;
+        text-align: center;
+        margin: 10px;
+      }
+      .modal-info:hover{
+        background: #93c55e;
+        color: white;
+      } */
     </style>
 
 {% include "breadcrumb.html" %}
@@ -679,6 +697,45 @@ $(function () {
               {% for k, v in tiempo_arana.items %}
                 <li role="presentation" {% if forloop.counter == 1 %}class="active"{% endif %} ><a href="#aranaa-{{k}}" aria-controls="aranaa-{{k}}" role="tab" data-toggle="tab">{{k}}</a></li>
               {% endfor %}
+               <li><a class="modal-info" data-toggle="modal" href='#modal-id'><i class="fa fa-question-circle" aria-hidden="true"></i></a></li>
+
+                <div class="modal fade" id="modal-id">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h4 class="modal-title"></h4>
+                            </div>
+                            <div class="modal-body">
+                                <p>
+                                    Los Medios de Vida, se entenderá como el sustento que tiene una persona a los medios que le permiten asegurar sus necesidades vitales.
+                                </p>
+                                <p>
+                                    <b>Capital Humano: </b>Cuando el jefe de familia (Hombre, mujer, ambos) ha cursado primaria completa, secundaria incompleta, bachillerato o estudios técnicos.
+                                </p>
+                                <p>
+                                  <b>Capital Natural: </b>Cuando el jefe de familia (Hombre, mujer, ambos) es dueño de la propiedad.  
+                                </p>
+                                <p>
+                                    <b>Capital Social: </b>Cuando el jefe de familia (Hombre, mujer , ambos) participan de una vida organizativa en su entorno social.
+                                </p>
+                                <p>
+                                    <b>Capital Financiero: </b>Cuando el jefe de familia (Hombre, mujer, ambos) tenga ingresos y acceso a crédito.
+                                </p>
+                                <p>
+                                    <b>Capital Físico: </b>Cuando el jefe de familia (Hombre, mujer , ambos) cuando tienen ingresos económicos de ganado (mayor y menor), panel solar y tractor.
+                                </p>
+                                
+                                
+                                
+                                
+                                
+                                
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
               </ul>
 
               <!-- Tab panes -->
